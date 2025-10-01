@@ -8,6 +8,7 @@ import sharp from 'sharp'
 import { Media } from './collections/Media'
 import {s3Storage} from '@payloadcms/storage-s3'
 import { Users } from './collections/Users/config'
+import Categories from './collections/Categories'
 
 
 
@@ -21,7 +22,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Categories],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
