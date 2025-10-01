@@ -1,8 +1,19 @@
 import type { CollectionConfig } from 'payload'
 import { protectRoles } from './hooks/protectRoles'
+import editor from './access/editor'
+import user from './access/user'
+import admin from './access/admin'
+import { checkRole } from './access/checkRole'
+import { User } from '@/payload-types'
 
 export const Users: CollectionConfig = {
   slug: 'users',
+  access: {
+    create: editor,
+    read: user,
+    update: user,
+    delete: admin,
+  },
   admin: {
     useAsTitle: 'email',
   },
@@ -28,6 +39,10 @@ export const Users: CollectionConfig = {
       type: 'select',
       hasMany: true,
       saveToJWT: true,
+      access: {
+        update: ({req: {user}}) => checkRole(['admin'], user as User),
+      },
+
       hooks: {
         beforeChange: [protectRoles],
       },
@@ -45,6 +60,7 @@ export const Users: CollectionConfig = {
           value: 'user',
         },
       ],
+    
     },
     
   ],
