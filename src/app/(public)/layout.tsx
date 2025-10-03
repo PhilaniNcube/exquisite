@@ -3,6 +3,7 @@ import React from "react";
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
+import { getCategories } from "@/lib/queries/categories";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,14 +15,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const PublicLayout = ({ children }: { children: React.ReactNode }) => {
+const PublicLayout = async ({ children, modal }: { children: React.ReactNode, modal: React.ReactNode }) => {
+
+  const { docs:categories } = await getCategories();
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <PublicNavigation />
+        <PublicNavigation categories={categories} />
         {children}
+        {modal}
       </body>
     </html>
   );
