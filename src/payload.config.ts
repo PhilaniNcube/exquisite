@@ -10,6 +10,7 @@ import {s3Storage} from '@payloadcms/storage-s3'
 import { Users } from './collections/Users/config'
 import Categories from './collections/Categories'
 import Photos from './collections/Photos'
+import { Customers } from './collections/Customers/config'
 
 
 
@@ -23,7 +24,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Categories, Photos],
+  collections: [Users, Media, Categories, Photos, Customers],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
