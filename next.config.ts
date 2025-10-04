@@ -6,7 +6,13 @@ const nextConfig: NextConfig = {
   /* config options here */
   typedRoutes: true,
   images:{
-    qualities: [25, 50, 70, 75, 80, 85, 90, 95, 100]
+    qualities: [25, 50, 70, 75, 80, 85, 90, 95, 100],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'pub-6c1050288c7041a9a3c730794fa669ba.r2.dev',        
+      },
+    ],
   }
 };
 
