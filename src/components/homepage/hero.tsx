@@ -7,10 +7,10 @@ const Hero = () => {
       <Image
         src={`/api/media/file/IMG_0874.JPG`}
         alt="Hero Image"
-        width={1920}
-        height={1080}
+        fill
+        priority
         quality={80}
-        className="w-full object-top h-auto object-cover inset-0 absolute"
+        className="w-full object-top object-cover"
       />
       <div className="relative h-full flex flex-col bg-slate-600/30 items-center justify-center z-10 p-8 text-center text-white">
         <h1 className="text-4xl font-bold">Photography</h1>
