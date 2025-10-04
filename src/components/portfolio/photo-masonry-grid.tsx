@@ -2,24 +2,22 @@
 
 import { Photo } from '@/payload-types'
 import React from 'react'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
-  const router = useRouter()
-
-  const handlePhotoClick = (photoId: number) => {
-    router.push(`/photo/${photoId}`)
-  }
+  const pathname = usePathname()
 
   return (
     <div className='max-w-7xl mx-auto py-12 px-4'>
       <div className='columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4'>
         {photos.map((photo) => (
-          <div 
+          <Link 
             key={photo.id}
-            className='break-inside-avoid mb-4 cursor-pointer group'
-            onClick={() => handlePhotoClick(photo.id)}
+            href={`/photo/${photo.id}?from=${pathname}`}
+            scroll={false}
+            className='break-inside-avoid cursor-pointer group mb-4 block'
           >
             <div className='relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300'>
               {typeof photo.image === 'object' && photo.image?.url && (
@@ -37,7 +35,7 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                 </div>
               )}
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

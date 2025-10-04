@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const PublicLayout = async ({ children}: { children: React.ReactNode,  }) => {
+const PublicLayout = async ({ children, modal }: { children: React.ReactNode, modal: React.ReactNode }) => {
 
   const { docs:categories } = await getCategories();
 
@@ -26,7 +26,8 @@ const PublicLayout = async ({ children}: { children: React.ReactNode,  }) => {
       >
         <PublicNavigation categories={categories} />
         {children}
-
+        {modal}
+        <div id='modal-root' />
       </body>
     </html>
   );

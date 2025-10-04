@@ -1,9 +1,8 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-const payload = await getPayload({ config })
-
 export const getCategories = async () => {
+  const payload = await getPayload({ config })
   const categories = await payload.find({
     collection: 'categories',
     limit: 50,
@@ -13,6 +12,7 @@ export const getCategories = async () => {
 }
 
 export const getCategoryBySlug = async (slug: string) => {
+  const payload = await getPayload({ config })
   const category = await payload.find({
     collection: 'categories',
     where: { slug: { equals: slug } },

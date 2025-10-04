@@ -1,9 +1,10 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
 
-const payload = await getPayload({ config });
+
 
 export const getCategoryPhotos = async (categoryId: number) => {
+  const payload = await getPayload({ config });
   const photos = await payload.find({
     collection: "photos",
     where: { category: { equals: categoryId } },
@@ -13,6 +14,7 @@ export const getCategoryPhotos = async (categoryId: number) => {
 
 
 export const getCategoryPhotosBySlug = async (slug: string) => {
+  const payload = await getPayload({ config });
   const category = await payload.find({
     collection: "categories",
     where: { slug: { equals: slug } },
@@ -32,6 +34,7 @@ export const getCategoryPhotosBySlug = async (slug: string) => {
 
 
 export const getPhotoById = async (id: number) => {
+  const payload = await getPayload({ config });
   const photo = await payload.findByID({
     collection: "photos",
     id,
