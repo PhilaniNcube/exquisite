@@ -11,6 +11,7 @@ import { Users } from './collections/Users/config'
 import Categories from './collections/Categories'
 import Photos from './collections/Photos'
 import { Customers } from './collections/Customers/config'
+import { ClientGalleries } from './collections/ClientGalleries/config'
 
 
 
@@ -24,7 +25,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Categories, Photos, Customers],
+  collections: [Users, Media, Categories, Photos, Customers, ClientGalleries],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -35,19 +35,24 @@ export async function createAccount({
 
     if (find.totalDocs === 0) {
       try {
-        await payload.create({
-          collection: "users",
+        const newAccount = await payload.create({
+          collection: "customers",
           data: {
             email,
             password,
-            firstName: firstName || "",
-            lastName: lastName || "",
+            firstName,
+            lastName,
+            // Add the required userType property
+            
           },
+          disableVerificationEmail: true,
         });
+
+        console.log("New account created:", newAccount);
 
         return { success: true };
       } catch (error) {
-        console.error(error);
+        console.error(JSON.stringify(error, null, 2));
         return {
           success: false,
           error: "There was an error creating your account. Please try again.",

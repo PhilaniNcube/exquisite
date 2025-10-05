@@ -2,6 +2,7 @@
 
 import { getPayload } from "payload";
 import config from "@payload-config";
+import {cookies} from 'next/headers';
 
 interface LoginParams {
   email: string;
@@ -21,26 +22,36 @@ export async function loginUser({
 
   try {
     const result = await payload.login({
-      collection: "users",
+      collection: "customers",
       data: {
         email,
         password,
       },
+      // req: req, // optional, pass a Request object to be provided to all hooks
+      depth: 2,
+      locale: "en",
+      overrideAccess: false,
+      showHiddenFields: true,
     });
 
-    if (result.user) {
-      return { success: true };
+    if (result.token) {
+       const cookieStore = await cookies();
+       cookieStore.set("payload-token", result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+       })
+       return { success: true };
     } else {
-      return {
-        success: false,
-        error: "Invalid email or password.",
-      };
+      return { success: false, error: "Invalid email or password." };
     }
+
+
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      error: "Invalid email or password.",
+      error: "An error occurred during login. Please try again.",
     };
   }
 }

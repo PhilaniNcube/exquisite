@@ -2,6 +2,7 @@
 
 import { getPayload } from "payload";
 import config from "@payload-config";
+import { revalidatePath } from "next/cache";
 
 interface LoginParams {
   email: string;
@@ -18,12 +19,15 @@ export async function login({ email, password }: LoginParams): Promise<Response>
 
     try {
     await payload.login({
-      collection: "users",
+      collection: "customers",
       data: {
         email,
         password,
       },
     });
+
+    revalidatePath("/", "layout");
+
   } catch (error) {
     console.error(error);
     return { success: false, error: "Invalid email or password" };

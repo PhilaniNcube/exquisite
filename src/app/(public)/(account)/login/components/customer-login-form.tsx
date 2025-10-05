@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -32,7 +32,7 @@ interface FormState {
 }
 
 export function CustomerLoginForm() {
-  const router = useRouter();
+
   const [isPending, startTransition] = useTransition();
 
   const [state, formAction] = useActionState<FormState, FormData>(
@@ -40,7 +40,8 @@ export function CustomerLoginForm() {
       const result = await loginUser(formData);
       if (result.success) {
         startTransition(() => {
-          router.push("/");
+          // router.push("/");
+          console.log("Login successful", { result });
         });
       }
       return result;

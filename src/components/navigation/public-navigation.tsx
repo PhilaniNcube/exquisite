@@ -26,9 +26,10 @@ type PortfolioCategory = {
 
 type PublicNavigationProps = {
   categories: PortfolioCategory[];
+  children?: React.ReactNode;
 };
 
-const PublicNavigation = ({ categories }: PublicNavigationProps) => {
+const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
   const portfolioItems: PortfolioItem[] = categories.map((category) => ({
     href: `/portfolio/${category.slug}` as Route,
     label: category.name,
@@ -44,7 +45,7 @@ const PublicNavigation = ({ categories }: PublicNavigationProps) => {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center">
+        <div className="hidden md:flex items-center space-x-8">
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem asChild>
@@ -103,6 +104,8 @@ const PublicNavigation = ({ categories }: PublicNavigationProps) => {
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
+
+          {children}
         </div>
 
         {/* Mobile Navigation */}

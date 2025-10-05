@@ -4,7 +4,7 @@ export const Customers:CollectionConfig = {
     slug: 'customers',
     auth: {
         tokenExpiration: 12 * 60 * 60, // 12 hours
-        verify: true,
+        // verify: true,
         cookies: {
             secure: true,
             sameSite: 'None',
@@ -47,7 +47,7 @@ export const Customers:CollectionConfig = {
                 "Client"
             ],
             defaultValue: "Client",
-            required: true,
+            required: false,
             admin: {width: '50%'}
         } 
     ]

@@ -4,6 +4,8 @@ import React from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { getCategories } from "@/lib/queries/categories";
+import AuthLinks from "@/components/navigation/auth-links";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,19 +17,26 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const PublicLayout = async ({ children, modal }: { children: React.ReactNode, modal: React.ReactNode }) => {
-
-  const { docs:categories } = await getCategories();
+const PublicLayout = async ({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  modal: React.ReactNode;
+}) => {
+  const { docs: categories } = await getCategories();
 
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <PublicNavigation categories={categories} />
+        <PublicNavigation categories={categories}>
+          <AuthLinks />
+        </PublicNavigation>
         {children}
         {modal}
-        <div id='modal-root' />
+        <div id="modal-root" />
       </body>
     </html>
   );

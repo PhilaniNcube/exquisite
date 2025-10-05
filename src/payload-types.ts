@@ -10,7 +10,7 @@
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "UserTypeRadio".
  */
-export type UserTypeRadio = 'Parent/Guardian' | 'Student' | 'Teacher/Staff' | 'Client';
+export type UserTypeRadio = ('Parent/Guardian' | 'Student' | 'Teacher/Staff' | 'Client') | null;
 /**
  * Supported timezones in IANA format.
  *
@@ -78,6 +78,7 @@ export interface Config {
     categories: Category;
     photos: Photo;
     customers: Customer;
+    'client-galleries': ClientGallery;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -89,6 +90,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     photos: PhotosSelect<false> | PhotosSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
+    'client-galleries': ClientGalleriesSelect<false> | ClientGalleriesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -238,7 +240,7 @@ export interface Customer {
   id: number;
   firstName?: string | null;
   lastName?: string | null;
-  userType: UserTypeRadio;
+  userType?: UserTypeRadio;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -246,8 +248,6 @@ export interface Customer {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
-  _verified?: boolean | null;
-  _verificationToken?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -258,6 +258,29 @@ export interface Customer {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "client-galleries".
+ */
+export interface ClientGallery {
+  id: number;
+  title: string;
+  description?: string | null;
+  /**
+   * Select customers who have access to this gallery
+   */
+  customers: (number | Customer)[];
+  /**
+   * Media files included in this gallery
+   */
+  media?: (number | Media)[] | null;
+  /**
+   * Gallery is active and accessible to assigned customers
+   */
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -285,6 +308,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'customers';
         value: number | Customer;
+      } | null)
+    | ({
+        relationTo: 'client-galleries';
+        value: number | ClientGallery;
       } | null);
   globalSlug?: string | null;
   user:
@@ -419,8 +446,6 @@ export interface CustomersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
-  _verified?: T;
-  _verificationToken?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -430,6 +455,19 @@ export interface CustomersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "client-galleries_select".
+ */
+export interface ClientGalleriesSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  customers?: T;
+  media?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
