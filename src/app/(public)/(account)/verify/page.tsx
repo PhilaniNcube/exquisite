@@ -9,7 +9,7 @@ interface SearchParams {
 export default async function VerifyPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
   const { token } = await searchParams;
 

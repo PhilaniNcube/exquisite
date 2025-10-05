@@ -30,6 +30,7 @@ export default buildConfig({
     defaultFromAddress: 'dev@athenamedia.co.za',
     defaultFromName: 'Exquisite Photography',
     apiKey: process.env.RESEND_API_KEY || '',
+    
   }),
   collections: [Users, Media, Categories, Photos, Customers, ClientGalleries],
   editor: lexicalEditor(),

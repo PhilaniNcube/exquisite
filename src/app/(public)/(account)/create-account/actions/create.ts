@@ -25,7 +25,7 @@ export async function createAccount({
 
   try {
     const find = await payload.find({
-      collection: "users",
+      collection: "customers",
       where: {
         email: {
           equals: email,
@@ -42,9 +42,7 @@ export async function createAccount({
             password,
             firstName,
             lastName,
-            // Add the required userType property
           },
-          disableVerificationEmail: false,
         });
 
         console.log("New account created:", newAccount);
@@ -71,3 +69,4 @@ export async function createAccount({
     };
   }
 }
+
