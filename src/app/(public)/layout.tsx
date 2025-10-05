@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { getCategories } from "@/lib/queries/categories";
 import AuthLinks from "@/components/navigation/auth-links";
+import { Footer } from "@/components/navigation/footer";
 
 
 const geistSans = Geist({
@@ -37,6 +38,7 @@ const PublicLayout = async ({
         {children}
         {modal}
         <div id="modal-root" />
+        <Footer />
       </body>
     </html>
   );

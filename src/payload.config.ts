@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { Media } from './collections/Media'
 import {s3Storage} from '@payloadcms/storage-s3'
+import { resendAdapter } from '@payloadcms/email-resend'
 import { Users } from './collections/Users/config'
 import Categories from './collections/Categories'
 import Photos from './collections/Photos'
@@ -25,6 +26,11 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+  email: resendAdapter({
+    defaultFromAddress: 'dev@athenamedia.co.za',
+    defaultFromName: 'Exquisite Photography',
+    apiKey: process.env.RESEND_API_KEY || '',
+  }),
   collections: [Users, Media, Categories, Photos, Customers, ClientGalleries],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
