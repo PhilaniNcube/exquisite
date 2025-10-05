@@ -175,7 +175,9 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
           </div>
 
           {/* Mobile Navigation */}
-          <MobileSheet />
+          <MobileSheet>
+            {children}
+          </MobileSheet>
         </div>
       </div>
     </header>

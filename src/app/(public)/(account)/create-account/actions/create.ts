@@ -43,9 +43,8 @@ export async function createAccount({
             firstName,
             lastName,
             // Add the required userType property
-            
           },
-          disableVerificationEmail: true,
+          disableVerificationEmail: false,
         });
 
         console.log("New account created:", newAccount);

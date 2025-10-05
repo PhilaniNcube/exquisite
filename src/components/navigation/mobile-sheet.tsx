@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import React from 'react'
-import Link from 'next/link'
-import { Menu } from 'lucide-react'
+import React from "react";
+import Link from "next/link";
+import { Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -10,24 +10,24 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import { Button } from '@/components/ui/button'
-import { Route } from 'next'
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Route } from "next";
 
 const navigationItems: { href: Route; label: string }[] = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/portfolio', label: 'Portfolio' },
-  { href: '/orders', label: 'Orders' },
-  { href: '/contact', label: 'Contact Us' },
-]
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+  { href: "/portfolio", label: "Portfolio" },
+  { href: "/orders", label: "Orders" },
+  { href: "/contact", label: "Contact Us" },
+];
 
-const MobileSheet = () => {
-  const [open, setOpen] = React.useState(false)
+const MobileSheet = ({ children }: { children: React.ReactNode }) => {
+  const [open, setOpen] = React.useState(false);
 
   const handleLinkClick = () => {
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -44,9 +44,7 @@ const MobileSheet = () => {
       </SheetTrigger>
       <SheetContent side="left" className="w-[300px] sm:w-[350px]">
         <SheetHeader>
-          <SheetTitle className="text-left">
-            Exquisite Photography
-          </SheetTitle>
+          <SheetTitle className="text-left">Exquisite Photography</SheetTitle>
           <SheetDescription className="text-left">
             Navigate through our photography services
           </SheetDescription>
@@ -62,10 +60,11 @@ const MobileSheet = () => {
               {item.label}
             </Link>
           ))}
+         <div className="mt-auto pt-6">{children}</div>
         </nav>
       </SheetContent>
     </Sheet>
-  )
-}
+  );
+};
 
-export default MobileSheet
+export default MobileSheet;

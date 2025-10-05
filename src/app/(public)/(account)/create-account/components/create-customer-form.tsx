@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createAccount } from "../actions/create";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -64,7 +65,10 @@ export function CreateCustomerForm() {
             <h3 className="font-semibold mb-2">
               Account Created Successfully!
             </h3>
-            <p>Your account has been created. Please sign in to continue.</p>
+            <p>
+              Your account has been created. Please check your email for a
+              confirmation link.
+            </p>
           </div>
           <Button asChild className="w-full">
             <Link href="/login">Go to Sign In</Link>
@@ -76,93 +80,105 @@ export function CreateCustomerForm() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <Card>
+        <CardTitle className="text-center text-2xl font-bold pt-6">
+          Create Account
+        </CardTitle>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="Enter your email"
+                        disabled={isPending}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Enter your password"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Enter your password"
+                        disabled={isPending}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>First Name (Optional)</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your first name"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name (Optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your first name"
+                        disabled={isPending}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name (Optional)</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your last name"
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name (Optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your last name"
+                        disabled={isPending}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {state.error && (
-            <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200">
-              <strong>Error:</strong> {state.error}
-            </div>
-          )}
+              {state.error && (
+                <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200">
+                  <strong>Error:</strong> {state.error}
+                </div>
+              )}
 
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? "Creating Account..." : "Create Account"}
+              <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending ? "Creating Account..." : "Create Account"}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+        <CardFooter>
+          <Button asChild variant='ghost' className="w-full">
+            <Link href="/login">Go to Sign In</Link>
           </Button>
-        </form>
-      </Form>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

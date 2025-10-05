@@ -4,15 +4,16 @@ export const Customers:CollectionConfig = {
     slug: 'customers',
     auth: {
         tokenExpiration: 12 * 60 * 60, // 12 hours
-        // verify: true,
+        verify: true,
         cookies: {
             secure: true,
             sameSite: 'None',
             domain: process.env.COOKIE_DOMAIN || 'localhost',
-        }
+        },
+        
     },
     admin: {
-        useAsTitle: 'firstName',
+        useAsTitle: 'firstName + " " + lastName' + ' (" + email + ")',
 
     },
     access: {
