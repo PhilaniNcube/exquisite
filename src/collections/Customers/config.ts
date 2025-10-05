@@ -13,7 +13,7 @@ export const Customers:CollectionConfig = {
         
     },
     admin: {
-        useAsTitle: 'firstName + " " + lastName' + ' (" + email + ")',
+        useAsTitle: 'email',
 
     },
     access: {
