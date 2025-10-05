@@ -48,11 +48,11 @@ export function AboutSection() {
           </div>
 
           <div className="relative">
-            <div className="aspect-[4/5] rounded-lg overflow-hidden shadow-2xl">
+            <div className="aspect-square rounded-lg overflow-hidden shadow-2xl">
               <img
-                src="/photographer-in-studio.png"
+                src="/api/media/file/studio.jpg"
                 alt="Professional photographer"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover object-left"
               />
             </div>
             <div className="absolute -bottom-6 -left-6 w-48 h-48 bg-accent/20 rounded-lg -z-10" />
