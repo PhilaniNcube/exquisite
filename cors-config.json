@@ -1,0 +1,31 @@
+[
+  {
+    "AllowedOrigins": [
+      "https://exquisite-five.vercel.app",
+      "http://localhost:3000",
+      "https://localhost:3000"
+    ],
+    "AllowedMethods": [
+      "GET",
+      "PUT",
+      "POST",
+      "DELETE",
+      "HEAD",
+      "OPTIONS"
+    ],
+    "AllowedHeaders": [
+      "*",
+      "Authorization",
+      "Content-Type",
+      "Content-Length",
+      "x-amz-*",
+      "X-Amz-*"
+    ],
+    "ExposeHeaders": [
+      "ETag",
+      "x-amz-meta-*",
+      "X-Amz-*"
+    ],
+    "MaxAgeSeconds": 3600
+  }
+]
