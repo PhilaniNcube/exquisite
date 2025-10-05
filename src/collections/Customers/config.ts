@@ -4,7 +4,16 @@ export const Customers:CollectionConfig = {
     slug: 'customers',
     auth: {
         tokenExpiration: 12 * 60 * 60, // 12 hours
-        verify: true,
+        verify: {
+            generateEmailSubject: (args) => `Please verify your email, ${args.user.firstName}`,
+            generateEmailHTML: ({ token }) => {
+                return `
+                <p>Thank you for creating an account. Please click the link below to verify your email address:</p>
+                <a href="${process.env.NEXT_PUBLIC_SITE_URL}/verify?token=${token}">Verify Email</a>
+                <p>This link will expire in 24 hours.</p>
+              `;
+            }
+        },
         cookies: {
             secure: true,
             sameSite: 'None',
