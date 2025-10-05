@@ -84,7 +84,7 @@ export function ContactSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 container mx-auto">
           {/* Contact Information */}
           <div>
             <h3 className="font-serif text-2xl font-semibold text-foreground mb-6">
