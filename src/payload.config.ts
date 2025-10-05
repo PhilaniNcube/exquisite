@@ -1,23 +1,21 @@
 // storage-adapter-import-placeholder
-import { postgresAdapter } from '@payloadcms/db-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import path from 'path'
-import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
-import sharp from 'sharp'
-import { Media } from './collections/Media'
-import {s3Storage} from '@payloadcms/storage-s3'
-import { resendAdapter } from '@payloadcms/email-resend'
-import { Users } from './collections/Users/config'
-import Categories from './collections/Categories'
-import Photos from './collections/Photos'
-import { Customers } from './collections/Customers/config'
-import { ClientGalleries } from './collections/ClientGalleries/config'
+import { postgresAdapter } from "@payloadcms/db-postgres";
+import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import path from "path";
+import { buildConfig } from "payload";
+import { fileURLToPath } from "url";
+import sharp from "sharp";
+import { Media } from "./collections/Media";
+import { s3Storage } from "@payloadcms/storage-s3";
+import { resendAdapter } from "@payloadcms/email-resend";
+import { Users } from "./collections/Users/config";
+import Categories from "./collections/Categories";
+import Photos from "./collections/Photos";
+import { Customers } from "./collections/Customers/config";
+import { ClientGalleries } from "./collections/ClientGalleries/config";
 
-
-
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 export default buildConfig({
   admin: {
@@ -27,16 +25,15 @@ export default buildConfig({
     },
   },
   email: resendAdapter({
-    defaultFromAddress: 'dev@athenamedia.co.za',
-    defaultFromName: 'Exquisite Photography',
-    apiKey: process.env.RESEND_API_KEY || '',
-    
+    defaultFromAddress: "dev@athenamedia.co.za",
+    defaultFromName: "Exquisite Photography",
+    apiKey: process.env.RESEND_API_KEY || "",
   }),
   collections: [Users, Media, Categories, Photos, Customers, ClientGalleries],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
+    outputFile: path.resolve(dirname, "payload-types.ts"),
   },
   // database-adapter-config-start
   db: postgresAdapter({
@@ -50,21 +47,20 @@ export default buildConfig({
     // payloadCloudPlugin(),
     // storage-adapter-placeholder
     s3Storage({
-      collections:{
-        media:true
-        
+      collections: {
+        media: true,
       },
       clientUploads: true,
-      bucket: process.env.S3_BUCKET || '',
+      bucket: process.env.S3_BUCKET || "",
       config: {
         credentials: {
-          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-          secretAccessKey: process.env.S3_ACCESS_SECRET || '',
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || "",
+          secretAccessKey: process.env.S3_ACCESS_SECRET || "",
         },
-        region: 'auto',
-        endpoint: process.env.S3_ENDPOINT || '',
+        region: "auto",
+        endpoint: process.env.S3_ENDPOINT || "",
         forcePathStyle: true, // Required for non-AWS S3 providers to use path-style URLs
-      }
-    })
+      },
+    }),
   ],
-})
+});
