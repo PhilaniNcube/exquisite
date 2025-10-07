@@ -10,7 +10,7 @@ const CategoryPage = async ({ params }: { params: Promise<{ slug: string }> }) =
     console.log(photos);
 
   return (
-    <div>
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
       <PhotoMasonryGrid photos={photos} />
     </div>
   )

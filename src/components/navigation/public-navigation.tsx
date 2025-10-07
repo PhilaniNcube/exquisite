@@ -32,7 +32,7 @@ type PublicNavigationProps = {
 
 const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
 
   useEffect(() => {
     const handleScroll = () => {
