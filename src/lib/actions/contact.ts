@@ -1,11 +1,11 @@
 "use server";
 
+import { z } from "zod";
 import { Resend } from "resend";
-import * as z from "zod";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 
-const contactFormSchema = z.object({
+// Schema for homepage contact form (without date field)
+const homepageContactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   phone: z.string().optional(),
@@ -13,22 +13,31 @@ const contactFormSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
-const getServiceDisplayName = (service: string) => {
-  const services: Record<string, string> = {
-    wedding: "Wedding Photography",
-    matric: "Matric Farewells",
-    schools: "Schools",
-    creches: "Creches",
-    families: "Families & Couples",
-    portraits: "Portraits",
-  };
-  return services[service] || service;
+// Schema for contact page form (with date field)
+const contactFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  phone: z.string().optional(),
+  service: z.string().min(1, "Please select a service"),
+  date: z.string().optional(),
+  message: z.string().min(10, "Message must be at least 10 characters"),
+});
+
+type ContactFormData = z.infer<typeof contactFormSchema>;
+type HomepageContactData = z.infer<typeof homepageContactSchema>;
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const serviceMap: Record<string, string> = {
+  wedding: "Wedding Photography",
+  matric: "Matric Farewells",
+  schools: "Schools",
+  creches: "Creches",
+  families: "Families & Couples",
+  portraits: "Portraits",
 };
 
-export async function sendContactEmail(
-  prevState: { success: boolean; message: string },
-  formData: FormData
-) {
+export async function sendContactEmail(prevState: unknown, formData: FormData) {
   try {
     const data = {
       name: formData.get("name") as string,
@@ -39,75 +48,49 @@ export async function sendContactEmail(
     };
 
     // Validate the form data
-    const validatedData = contactFormSchema.parse(data);
+    const validatedData = homepageContactSchema.parse(data);
+    const serviceName = serviceMap[validatedData.service] || validatedData.service;
 
-    const serviceDisplayName = getServiceDisplayName(validatedData.service);
-
-    // Send email using Resend with plain HTML
+    // Send email to admin
     await resend.emails.send({
-      from: "Contact Form <dev@athenamedia.co.za>",
-      to: ["ncbphi001@gmail.com"],
-      replyTo: validatedData.email,
-      subject: `New Contact Form Submission - ${serviceDisplayName}`,
+      from: process.env.FROM_EMAIL || "hello@exquisitephotography.com",
+      to: [process.env.ADMIN_EMAIL || "admin@exquisitephotography.com"],
+      subject: `Homepage Inquiry: ${serviceName} - ${validatedData.name}`,
       html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <title>New Contact Form Submission</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background-color: #f8f9fa; padding: 30px; border-radius: 10px;">
-            <h1 style="color: #2c3e50; margin-bottom: 30px; text-align: center;">New Contact Form Submission</h1>
-            
-            <div style="background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-              <div style="margin-bottom: 20px;">
-                <strong style="color: #34495e; font-size: 16px;">Name:</strong>
-                <p style="margin: 5px 0; font-size: 16px;">${validatedData.name}</p>
-              </div>
-              
-              <div style="margin-bottom: 20px;">
-                <strong style="color: #34495e; font-size: 16px;">Email:</strong>
-                <p style="margin: 5px 0; font-size: 16px;">
-                  <a href="mailto:${validatedData.email}" style="color: #3498db; text-decoration: none;">${validatedData.email}</a>
-                </p>
-              </div>
-              
-              <div style="margin-bottom: 20px;">
-                <strong style="color: #34495e; font-size: 16px;">Phone:</strong>
-                <p style="margin: 5px 0; font-size: 16px;">${validatedData.phone || "Not provided"}</p>
-              </div>
-              
-              <div style="margin-bottom: 20px;">
-                <strong style="color: #34495e; font-size: 16px;">Service of Interest:</strong>
-                <p style="margin: 5px 0; font-size: 16px; color: #e74c3c; font-weight: 600;">${serviceDisplayName}</p>
-              </div>
-              
-              <div style="margin-bottom: 20px;">
-                <strong style="color: #34495e; font-size: 16px;">Message:</strong>
-                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 5px; border-left: 4px solid #3498db;">
-                  <p style="margin: 0; font-size: 16px; white-space: pre-wrap;">${validatedData.message}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
-              <p style="color: #7f8c8d; font-size: 14px; margin: 0;">
-                This email was sent from the Exquisite Photography contact form.
-              </p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333; border-bottom: 2px solid #e1e1e1; padding-bottom: 10px;">
+            New Homepage Contact Form Submission
+          </h2>
+          
+          <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>Name:</strong> ${validatedData.name}</p>
+            <p><strong>Email:</strong> ${validatedData.email}</p>
+            <p><strong>Phone:</strong> ${validatedData.phone || "Not provided"}</p>
+            <p><strong>Service:</strong> ${serviceName}</p>
+          </div>
+          
+          <div style="margin: 20px 0;">
+            <h3 style="color: #333;">Message:</h3>
+            <div style="background: white; padding: 15px; border-left: 4px solid #007bff; margin: 10px 0;">
+              ${validatedData.message.replace(/\n/g, "<br>")}
             </div>
           </div>
-        </body>
-        </html>
+          
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e1e1e1;">
+          <p style="color: #666; font-size: 12px;">
+            <em>This email was sent from the Exquisite Photography homepage contact form.</em>
+          </p>
+        </div>
       `,
+      replyTo: validatedData.email,
     });
 
     return {
       success: true,
-      message: "Thank you! Your message has been sent successfully. We'll get back to you soon.",
+      message: "Thank you for your message! We'll get back to you within 24 hours.",
     };
   } catch (error) {
-    console.error("Error sending contact email:", error);
+    console.error("Homepage contact form error:", error);
     
     if (error instanceof z.ZodError) {
       return {
@@ -115,10 +98,118 @@ export async function sendContactEmail(
         message: "Please check your form data and try again.",
       };
     }
-
+    
     return {
       success: false,
-      message: "Sorry, there was an error sending your message. Please try again later.",
+      message: "Failed to send message. Please try again later.",
+    };
+  }
+}
+
+export async function submitContactForm(data: ContactFormData) {
+  try {
+    // Validate the form data
+    const validatedData = contactFormSchema.parse(data);
+
+    // Service type mapping for better readability
+    const serviceMap: Record<string, string> = {
+      wedding: "Wedding Photography",
+      matric: "Matric Farewells",
+      schools: "Schools",
+      creches: "Creches",
+      families: "Families & Couples",
+      portraits: "Portraits",
+    };
+
+    const serviceName = serviceMap[validatedData.service] || validatedData.service;
+
+    // Send email to admin
+    await resend.emails.send({
+      from: process.env.FROM_EMAIL || "hello@exquisitephotography.com",
+      to: [process.env.ADMIN_EMAIL || "admin@exquisitephotography.com"],
+      subject: `New Inquiry: ${serviceName} - ${validatedData.name}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333; border-bottom: 2px solid #e1e1e1; padding-bottom: 10px;">
+            New Contact Form Submission
+          </h2>
+          
+          <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>Name:</strong> ${validatedData.name}</p>
+            <p><strong>Email:</strong> ${validatedData.email}</p>
+            <p><strong>Phone:</strong> ${validatedData.phone || "Not provided"}</p>
+            <p><strong>Service:</strong> ${serviceName}</p>
+            <p><strong>Preferred Date:</strong> ${validatedData.date || "Not specified"}</p>
+          </div>
+          
+          <div style="margin: 20px 0;">
+            <h3 style="color: #333;">Message:</h3>
+            <div style="background: white; padding: 15px; border-left: 4px solid #007bff; margin: 10px 0;">
+              ${validatedData.message.replace(/\n/g, "<br>")}
+            </div>
+          </div>
+          
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e1e1e1;">
+          <p style="color: #666; font-size: 12px;">
+            <em>This email was sent from the Exquisite Photography contact form.</em>
+          </p>
+        </div>
+      `,
+      replyTo: validatedData.email,
+    });
+
+    // Send confirmation email to customer
+    await resend.emails.send({
+      from: process.env.FROM_EMAIL || "noreply@athenamedia.co.za",
+      to: [validatedData.email],
+      subject: "Thank you for your inquiry - Exquisite Photography",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333; border-bottom: 2px solid #e1e1e1; padding-bottom: 10px;">
+            Thank you for contacting Exquisite Photography!
+          </h2>
+          
+          <p>Dear ${validatedData.name},</p>
+          
+          <p>We've received your inquiry about our <strong>${serviceName}</strong> services and will get back to you within 24 hours.</p>
+          
+          <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #333; margin-top: 0;">Your inquiry details:</h3>
+            <p><strong>Service:</strong> ${serviceName}</p>
+            <p><strong>Preferred Date:</strong> ${validatedData.date || "Not specified"}</p>
+            <p><strong>Your Message:</strong></p>
+            <div style="background: white; padding: 10px; border-left: 4px solid #007bff; margin: 10px 0;">
+              ${validatedData.message.replace(/\n/g, "<br>")}
+            </div>
+          </div>
+          
+          <p>In the meantime, feel free to browse our portfolio or call us directly at <strong>+27 (0) 123 456 789</strong> for urgent inquiries.</p>
+          
+          <p>Best regards,<br>
+          <strong>The Exquisite Photography Team</strong></p>
+          
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e1e1e1;">
+          <p style="color: #666; font-size: 12px;">
+            <em>This is an automated confirmation email. Please do not reply to this email.</em>
+          </p>
+        </div>
+      `,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Contact form submission error:", error);
+    
+    if (error instanceof z.ZodError) {
+      return { 
+        success: false, 
+        error: "Please check your form data and try again." 
+      };
+    }
+    
+    return { 
+      success: false, 
+      error: "Failed to send message. Please try again later." 
     };
   }
 }
