@@ -1,6 +1,6 @@
 import { CollectionConfig } from "payload";
 import editor from "../Users/access/editor";
-import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import { FixedToolbarFeature, lexicalEditor } from "@payloadcms/richtext-lexical";
 
 export const Products: CollectionConfig = {
   slug: "products",
@@ -28,10 +28,12 @@ export const Products: CollectionConfig = {
     },
     {
       name: "description",
-      type: "richText",
-      required: true,
       label: "Product Description (Includes)",
-      editor: lexicalEditor(),
+      type: 'richText',
+      required: true,
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [...defaultFeatures, FixedToolbarFeature()],
+      }),
     },
     {
       name: "image",
