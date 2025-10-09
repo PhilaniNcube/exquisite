@@ -26,22 +26,7 @@ export const Products: CollectionConfig = {
       required: true,
       label: "Product Price",
     },
-    {
-      name: "content",
-      label: "Product Content",
-      type: 'richText',
-      required: true,
-      editor: lexicalEditor({
-        features: ({ defaultFeatures }) => [
-          ...defaultFeatures,
-          FixedToolbarFeature(),
-          HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3'] }),
-          BoldFeature(),
-          ItalicFeature(),
-          UnderlineFeature(),
-        ],
-      }),
-    },
+
     {
       name: "image",
       type: "relationship",
@@ -49,5 +34,21 @@ export const Products: CollectionConfig = {
       required: true,
       label: "Product Image",
     },
+    {
+        name: "productDetails",
+        type: "richText",
+        required: true,
+        label: "Product Details",
+        editor: lexicalEditor({
+            features: ({ defaultFeatures }) => [
+                ...defaultFeatures,
+                FixedToolbarFeature(),
+                HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3'] }),
+                BoldFeature(),
+                ItalicFeature(),
+                UnderlineFeature(),
+            ],
+        }),
+    }
   ],
 };
