@@ -1,5 +1,6 @@
 import { CollectionConfig } from "payload";
 import editor from "../Users/access/editor";
+import { lexicalEditor } from "@payloadcms/richtext-lexical";
 
 export const Products: CollectionConfig = {
   slug: "products",
@@ -30,6 +31,7 @@ export const Products: CollectionConfig = {
       type: "richText",
       required: true,
       label: "Product Description (Includes)",
+      editor: lexicalEditor(),
     },
     {
       name: "image",
