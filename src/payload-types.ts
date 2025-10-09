@@ -328,7 +328,7 @@ export interface Product {
   id: number;
   title: string;
   price: number;
-  description: {
+  content: {
     root: {
       type: string;
       children: {
@@ -625,7 +625,7 @@ export interface ClassesSelect<T extends boolean = true> {
 export interface ProductsSelect<T extends boolean = true> {
   title?: T;
   price?: T;
-  description?: T;
+  content?: T;
   image?: T;
   updatedAt?: T;
   createdAt?: T;

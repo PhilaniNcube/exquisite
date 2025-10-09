@@ -27,8 +27,8 @@ export const Products: CollectionConfig = {
       label: "Product Price",
     },
     {
-      name: "description",
-      label: "Product Description (Includes)",
+      name: "content",
+      label: "Product Content",
       type: 'richText',
       required: true,
       editor: lexicalEditor({
