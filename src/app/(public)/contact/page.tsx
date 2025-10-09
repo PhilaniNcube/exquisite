@@ -68,6 +68,7 @@ export default function ContactPage() {
         toast.error(result.error || "Failed to send message. Please try again.");
       }
     } catch (error) {
+      console.error("Error submitting contact form:", error);
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -294,6 +295,7 @@ export default function ContactPage() {
                 </p>
 
                 <div className="aspect-video rounded-lg overflow-hidden shadow-lg mb-6">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/api/media/file/william-thomas.jpg"
                     alt="Photography studio interior"

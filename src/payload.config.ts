@@ -13,6 +13,11 @@ import Categories from "./collections/Categories";
 import Photos from "./collections/Photos";
 import { Customers } from "./collections/Customers/config";
 import { ClientGalleries } from "./collections/ClientGalleries/config";
+import { Schools } from "./collections/Schools/config";
+import { Classes } from "./collections/Classes/config";
+import { Products } from "./collections/Products/config";
+import { SchoolPhotos } from "./collections/SchoolPhotos/config";
+import { Orders } from "./collections/Orders/config";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -29,7 +34,19 @@ export default buildConfig({
     defaultFromName: "Exquisite Photography",
     apiKey: process.env.RESEND_API_KEY || "",
   }),
-  collections: [Users, Media, Categories, Photos, Customers, ClientGalleries],
+  collections: [
+    Users,
+    Media,
+    Categories,
+    Photos,
+    Customers,
+    ClientGalleries,
+    Schools,
+    Classes,
+    Products,
+    SchoolPhotos,
+    Orders,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {

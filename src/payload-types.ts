@@ -12,6 +12,11 @@
  */
 export type UserTypeRadio = ('Parent/Guardian' | 'Student' | 'Teacher/Staff' | 'Client') | null;
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PhotoTypeRadio".
+ */
+export type PhotoTypeRadio = ('Individual' | 'Class' | 'Sports' | 'Group') | null;
+/**
  * Supported timezones in IANA format.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -79,6 +84,11 @@ export interface Config {
     photos: Photo;
     customers: Customer;
     'client-galleries': ClientGallery;
+    schools: School;
+    classes: Class;
+    products: Product;
+    schoolPhotos: SchoolPhoto;
+    orders: Order;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -91,6 +101,11 @@ export interface Config {
     photos: PhotosSelect<false> | PhotosSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
     'client-galleries': ClientGalleriesSelect<false> | ClientGalleriesSelect<true>;
+    schools: SchoolsSelect<false> | SchoolsSelect<true>;
+    classes: ClassesSelect<false> | ClassesSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    schoolPhotos: SchoolPhotosSelect<false> | SchoolPhotosSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -286,6 +301,97 @@ export interface ClientGallery {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schools".
+ */
+export interface School {
+  id: number;
+  name: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "classes".
+ */
+export interface Class {
+  id: number;
+  name: string;
+  school: number | School;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  title: string;
+  price: number;
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  image: number | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schoolPhotos".
+ */
+export interface SchoolPhoto {
+  id: number;
+  name: string;
+  photoType?: PhotoTypeRadio;
+  schoolDetails: {
+    school: number | School;
+    class?: (number | null) | Class;
+  };
+  studentName?: string | null;
+  photo: number | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  customerDetails: {
+    customer: number | Customer;
+    cellNumber: string;
+  };
+  productDetails: {
+    orderItems: {
+      product: number | Product;
+      quantity: number;
+      priceAtPurchase: number;
+      linePrice: number;
+      picture: number | SchoolPhoto;
+      id?: string | null;
+    }[];
+  };
+  orderTotal?: number | null;
+  orderStatus?: ('pending' | 'processing' | 'completed' | 'cancelled') | null;
+  paymentReference?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -314,6 +420,26 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'client-galleries';
         value: number | ClientGallery;
+      } | null)
+    | ({
+        relationTo: 'schools';
+        value: number | School;
+      } | null)
+    | ({
+        relationTo: 'classes';
+        value: number | Class;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'schoolPhotos';
+        value: number | SchoolPhoto;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: number | Order;
       } | null);
   globalSlug?: string | null;
   user:
@@ -470,6 +596,86 @@ export interface ClientGalleriesSelect<T extends boolean = true> {
   customers?: T;
   media?: T;
   isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schools_select".
+ */
+export interface SchoolsSelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "classes_select".
+ */
+export interface ClassesSelect<T extends boolean = true> {
+  name?: T;
+  school?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  title?: T;
+  price?: T;
+  description?: T;
+  image?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schoolPhotos_select".
+ */
+export interface SchoolPhotosSelect<T extends boolean = true> {
+  name?: T;
+  photoType?: T;
+  schoolDetails?:
+    | T
+    | {
+        school?: T;
+        class?: T;
+      };
+  studentName?: T;
+  photo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  customerDetails?:
+    | T
+    | {
+        customer?: T;
+        cellNumber?: T;
+      };
+  productDetails?:
+    | T
+    | {
+        orderItems?:
+          | T
+          | {
+              product?: T;
+              quantity?: T;
+              priceAtPurchase?: T;
+              linePrice?: T;
+              picture?: T;
+              id?: T;
+            };
+      };
+  orderTotal?: T;
+  orderStatus?: T;
+  paymentReference?: T;
   updatedAt?: T;
   createdAt?: T;
 }

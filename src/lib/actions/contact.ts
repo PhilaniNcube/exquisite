@@ -24,7 +24,6 @@ const contactFormSchema = z.object({
 });
 
 type ContactFormData = z.infer<typeof contactFormSchema>;
-type HomepageContactData = z.infer<typeof homepageContactSchema>;
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
