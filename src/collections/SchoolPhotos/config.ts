@@ -44,6 +44,16 @@ export const SchoolPhotos: CollectionConfig = {
           relationTo: "classes",
           required: false,
           label: "Class",
+          filterOptions: ({ data }) => {
+            if (data?.schoolDetails?.school) {
+              return {
+                school: {
+                  equals: data.schoolDetails.school,
+                },
+              };
+            }
+            return true;
+          },
         },
       ],
     },
