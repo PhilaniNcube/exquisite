@@ -44,15 +44,16 @@ export const SchoolPhotos: CollectionConfig = {
           relationTo: "classes",
           required: false,
           label: "Class",
-          filterOptions: ({ data }) => {
-            if (data?.schoolDetails?.school) {
+          filterOptions: ({ siblingData }) => {
+            const data = siblingData as { school?: string };
+            if (data?.school) {
               return {
                 school: {
-                  equals: data.schoolDetails.school,
+                  equals: data.school,
                 },
               };
             }
-            return true;
+            return false;
           },
         },
       ],
