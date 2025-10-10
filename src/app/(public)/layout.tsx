@@ -1,5 +1,6 @@
 import PublicNavigation from "@/components/navigation/public-navigation";
 import React from "react";
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
@@ -35,8 +36,10 @@ const PublicLayout = async ({
         <PublicNavigation categories={categories}>
           <AuthLinks />
         </PublicNavigation>
-        {children}
-        {modal}
+        <NuqsAdapter>
+          {children}
+          {modal}
+        </NuqsAdapter>
         <div id="modal-root" />
         <Footer />
       </body>
