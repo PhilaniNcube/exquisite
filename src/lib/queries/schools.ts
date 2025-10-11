@@ -15,6 +15,21 @@ export const getSchools = async (options?: {
   return schools;
 };
 
+export const searchSchools = async (searchTerm: string) => {
+  const payload = await getPayload({ config });
+
+  const schools = await payload.find({
+    collection: "schools",
+    where: {
+      name: {
+        contains: searchTerm,
+      },
+    },
+  });
+
+  return schools;
+};
+
 export const getSchoolsWithClasses = async (options?: {
   page?: number;
   limit?: number;
