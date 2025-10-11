@@ -56,3 +56,13 @@ export const getSchoolPhotosByClassId = async (
   });
   return photosData;
 };
+
+
+export async function getSchoolPhotoById(id: string) {
+  const payload = await getPayload({ config });
+  const photo = await payload.findByID({
+    collection: "schoolPhotos",
+    id: id,
+  });
+  return photo;
+}
