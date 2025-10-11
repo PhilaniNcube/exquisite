@@ -15,5 +15,14 @@ export function formatPrice(price: number) {
   return new Intl.NumberFormat("en-ZA", {
     style: "currency",
     currency: "ZAR",
-  }).format(price);
+    signDisplay: "never",
+    unitDisplay: "narrow",
+    useGrouping: true,
+    currencySign: "accounting",
+    localeMatcher: "lookup",
+  })
+    .format(price)
+    .localeCompare("ZAR") === -1
+    ? `R${price.toFixed(2)}`
+    : price.toLocaleString("en-ZA", { style: "currency", currency: "ZAR" });
 }

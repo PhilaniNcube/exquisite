@@ -142,12 +142,12 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
                     asChild
                     className={`${navigationMenuTriggerStyle()} bg-transparent`}
                   >
-                    <Link href="/orders" passHref>
+                    <Link href="/products" passHref>
                       <span className={cn(
                         isScrolled ? "text-black" : "text-white",
                         "font-medium"
                       )}>
-                      Orders
+                      Products
                       </span>
                     </Link>
                   </NavigationMenuLink>

@@ -9,9 +9,10 @@ import { RichText } from "@payloadcms/richtext-lexical/react";
 
 interface ProductInfoProps {
   product: Product;
+  children?: React.ReactNode;
 }
 
-export function ProductInfo({ product }: ProductInfoProps) {
+export function ProductInfo({ product, children }: ProductInfoProps) {
   const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = () => {
@@ -35,6 +36,8 @@ export function ProductInfo({ product }: ProductInfoProps) {
       <div className="prose prose-neutral max-w-none">
         <RichText data={product.productDetails} />
       </div>
+
+      {children}
 
       {/* Quantity Selector */}
       <div className="space-y-3">
@@ -83,21 +86,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       </Button>
 
       {/* Product Details */}
-      <div className="pt-6 border-t border-border space-y-4">
-        <h2 className="font-serif text-xl text-foreground">Product Details</h2>
-        <dl className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <dt className="text-muted-foreground">Product ID</dt>
-            <dd className="text-foreground">{product.id}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="text-muted-foreground">Last Updated</dt>
-            <dd className="text-foreground">
-              {new Date(product.updatedAt).toLocaleDateString()}
-            </dd>
-          </div>
-        </dl>
-      </div>
+ 
     </div>
   );
 }
