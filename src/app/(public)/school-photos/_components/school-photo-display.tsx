@@ -1,40 +1,46 @@
-"use client"
+"use client";
 
-
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import Image from "next/image"
-import { Class, Media, School, SchoolPhoto } from "@/payload-types"
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+import { Class, Media, School, SchoolPhoto } from "@/payload-types";
+import { unstable_ViewTransition as ViewTransition } from "react";
 
 interface SchoolPhotoDisplayProps {
-  photo: SchoolPhoto
+  photo: SchoolPhoto;
 }
 
 export function SchoolPhotoDisplay({ photo }: SchoolPhotoDisplayProps) {
-  const photoMedia = typeof photo.photo === "number" ? null : (photo.photo as Media)
-  const school = typeof photo.schoolDetails.school === "number" ? null : (photo.schoolDetails.school as School)
+  const photoMedia =
+    typeof photo.photo === "number" ? null : (photo.photo as Media);
+  const school =
+    typeof photo.schoolDetails.school === "number"
+      ? null
+      : (photo.schoolDetails.school as School);
   const classInfo =
     photo.schoolDetails.class && typeof photo.schoolDetails.class !== "number"
       ? (photo.schoolDetails.class as Class)
-      : null
+      : null;
 
   const photoTypeLabels: Record<string, string> = {
     individual: "Individual Photo",
     class: "Class Photo",
     group: "Group Photo",
-  }
+  };
 
   return (
     <Card className="overflow-hidden border-2">
       <div className="aspect-[4/5] relative bg-muted">
         {photoMedia?.url ? (
-          <Image
-            src={photoMedia.url || "/placeholder.svg"}
-            alt={photoMedia.alt || photo.name}
-            fill
-            className="object-cover"
-            priority
-          />
+          <ViewTransition enter={"auto"} key="photo-image">
+            <Image
+              src={photoMedia.url || "/placeholder.svg"}
+              alt={photoMedia.alt || photo.name}
+              fill
+              className="object-cover"
+              priority
+            />
+          </ViewTransition>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <span className="text-muted-foreground">No photo available</span>
@@ -44,7 +50,9 @@ export function SchoolPhotoDisplay({ photo }: SchoolPhotoDisplayProps) {
 
       <div className="p-6 space-y-4">
         <div>
-          <h2 className="text-2xl font-semibold text-balance mb-2">{photo.name}</h2>
+          <h2 className="text-2xl font-semibold text-balance mb-2">
+            {photo.name}
+          </h2>
           {photo.photoType && (
             <Badge variant="secondary" className="text-sm">
               {photoTypeLabels[photo.photoType] || photo.photoType}
@@ -75,8 +83,10 @@ export function SchoolPhotoDisplay({ photo }: SchoolPhotoDisplayProps) {
           )}
         </div>
 
-        <div className="pt-2 border-t text-xs text-muted-foreground">Photo ID: {photo.id}</div>
+        <div className="pt-2 border-t text-xs text-muted-foreground">
+          Photo ID: {photo.id}
+        </div>
       </div>
     </Card>
-  )
+  );
 }
