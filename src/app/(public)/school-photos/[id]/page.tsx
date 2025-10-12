@@ -32,7 +32,7 @@ const SchoolPhoto = async ({ params }: { params: Promise<{ id: string }> }) => {
             <SchoolPhotoDisplay photo={schoolPhoto} />
           </div>
            <div>
-            <ProductSelector products={products.docs}  />
+            <ProductSelector products={products.docs} schoolPhoto={schoolPhoto} />
           </div>
         </div>
       </div>

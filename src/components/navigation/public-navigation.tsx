@@ -14,6 +14,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { Cart } from "@/components/cart/cart";
 
 type PortfolioItem = {
   href: Route;
@@ -32,7 +33,6 @@ type PublicNavigationProps = {
 
 const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
-
 
   useEffect(() => {
     const handleScroll = () => {
@@ -171,7 +171,10 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
               </NavigationMenuList>
             </NavigationMenu>
 
-            {children}
+            <div className="flex items-center gap-4">
+              {children}
+              <Cart />
+            </div>
           </div>
 
           {/* Mobile Navigation */}

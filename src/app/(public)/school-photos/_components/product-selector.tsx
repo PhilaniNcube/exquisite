@@ -1,54 +1,48 @@
 "use client";
 
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { Check } from "lucide-react";
-import { Media, Product } from "@/payload-types";
+import { ShoppingCart } from "lucide-react";
+import { Media, Product, SchoolPhoto } from "@/payload-types";
 import { toast } from "sonner";
+import { useCartStore } from "@/store/cart-store";
+import { formatPrice } from "@/lib/utils";
 
 interface ProductSelectorProps {
   products: Product[];
+  schoolPhoto: SchoolPhoto;
 }
 
 export function ProductSelector({
   products,
+  schoolPhoto,
 }: ProductSelectorProps) {
-  const [selectedProducts, setSelectedProducts] = useState<Set<number>>(
-    new Set()
-  );
+  const { addItem } = useCartStore();
 
-  const toggleProduct = (productId: number) => {
-    const newSelected = new Set(selectedProducts);
-    if (newSelected.has(productId)) {
-      newSelected.delete(productId);
-    } else {
-      newSelected.add(productId);
-    }
-    setSelectedProducts(newSelected);
+  const handleAddToCart = (product: Product) => {
+    const productImage =
+      typeof product.image === "number" ? null : (product.image as Media);
+
+    addItem({
+      id: `${product.id}-${schoolPhoto.id}`,
+      product: product.id.toString(),
+      priceAtPurchase: product.price,
+      picture: schoolPhoto.id.toString(),
+      productDetails: {
+        name: product.title,
+        price: product.price,
+        image: productImage?.url ?? undefined,
+      },
+      pictureDetails: {
+        name: schoolPhoto.name,
+        url: productImage?.url ?? undefined,
+      },
+    });
+
+    toast.success(`Added ${product.title} to cart!`);
   };
-
-    const handleOrderSubmit = (selectedProducts: Product[]) => {
-    toast(`Order Submitted! You've ordered ${selectedProducts.length} product${
-      selectedProducts.length === 1 ? "" : "s"
-    }. Total: $${selectedProducts.reduce((sum, p) => sum + p.price, 0).toFixed(2)}`);
-  }
-
-  const handleSubmit = () => {
-    const selected = products.filter((p) => selectedProducts.has(p.id));
-    handleOrderSubmit(selected);
-  };
-
-  
-
-
-
-
-  const totalPrice = products
-    .filter((p) => selectedProducts.has(p.id))
-    .reduce((sum, p) => sum + p.price, 0);
 
   return (
     <div className="space-y-6">
@@ -57,23 +51,19 @@ export function ProductSelector({
           Choose Your Products
         </h2>
         <p className="text-muted-foreground leading-relaxed">
-          Select one or more products to print your school photo on
+          Select products to print your school photo on
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {products.map((product) => {
-          const isSelected = selectedProducts.has(product.id);
           const productImage =
             typeof product.image === "number" ? null : (product.image as Media);
 
           return (
             <Card
               key={product.id}
-              className={`overflow-hidden cursor-pointer transition-all hover:shadow-lg p-0 ${
-                isSelected ? "ring-2 ring-accent" : ""
-              }`}
-              onClick={() => toggleProduct(product.id)}
+              className="overflow-hidden transition-all hover:shadow-lg p-0"
             >
               <div className="aspect-square relative bg-muted">
                 {productImage?.url ? (
@@ -90,48 +80,35 @@ export function ProductSelector({
                     </span>
                   </div>
                 )}
-
-                {isSelected && (
-                  <div className="absolute top-3 right-3 bg-accent text-accent-foreground rounded-full p-2">
-                    <Check className="w-4 h-4" />
-                  </div>
-                )}
               </div>
 
-              <div className="p-4">
-                <h3 className="font-semibold text-lg mb-2 text-balance">
-                  {product.title}
-                </h3>
-                <Badge variant="outline" className="text-base font-semibold">
-                  ${product.price.toFixed(2)}
-                </Badge>
+              <div className="p-4 space-y-3">
+                <div>
+                  <h3 className="font-semibold text-lg mb-2 text-balance">
+                    {product.title}
+                  </h3>
+                  <div className="flex items-center justify-between">
+                    <Badge
+                      variant="outline"
+                      className="text-base font-semibold"
+                    >
+                      {formatPrice(product.price)}
+                    </Badge>
+                    <Button
+                      size="sm"
+                      className="cursor-pointer hover:bg-gray-800"
+                      onClick={() => handleAddToCart(product)}
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                     
+                    </Button>
+                  </div>
+                </div>
               </div>
             </Card>
           );
         })}
       </div>
-
-      {selectedProducts.size > 0 && (
-        <Card className="p-6 bg-secondary/50 border-2">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">
-                {selectedProducts.size}{" "}
-                {selectedProducts.size === 1 ? "product" : "products"} selected
-              </p>
-              <p className="text-3xl font-bold">${totalPrice.toFixed(2)}</p>
-            </div>
-
-            <Button
-              size="lg"
-              className="bg-accent hover:bg-accent/90 text-accent-foreground w-full sm:w-auto"
-              onClick={handleSubmit}
-            >
-              Order Now
-            </Button>
-          </div>
-        </Card>
-      )}
     </div>
   );
 }

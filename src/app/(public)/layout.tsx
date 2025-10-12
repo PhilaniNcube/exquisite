@@ -7,6 +7,7 @@ import "../globals.css";
 import { getCategories } from "@/lib/queries/categories";
 import AuthLinks from "@/components/navigation/auth-links";
 import { Footer } from "@/components/navigation/footer";
+import { CartProvider } from "@/components/providers/cart-provider";
 
 
 const geistSans = Geist({
@@ -33,15 +34,17 @@ const PublicLayout = async ({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <PublicNavigation categories={categories}>
-          <AuthLinks />
-        </PublicNavigation>
-        <NuqsAdapter>
-          {children}
-          {modal}
-        </NuqsAdapter>
-        <div id="modal-root" />
-        <Footer />
+        <CartProvider>
+          <PublicNavigation categories={categories}>
+            <AuthLinks />
+          </PublicNavigation>
+          <NuqsAdapter>
+            {children}
+            {modal}
+          </NuqsAdapter>
+          <div id="modal-root" />
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );
