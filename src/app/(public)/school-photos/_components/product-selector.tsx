@@ -9,6 +9,7 @@ import { Media, Product, SchoolPhoto } from "@/payload-types";
 import { toast } from "sonner";
 import { useCartStore } from "@/store/cart-store";
 import { formatPrice } from "@/lib/utils";
+import { ImageGenerationModal } from "./image-generation-modal";
 
 interface ProductSelectorProps {
   products: Product[];
@@ -87,7 +88,7 @@ export function ProductSelector({
                   <h3 className="font-semibold text-lg mb-2 text-balance">
                     {product.title}
                   </h3>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-2">
                     <Badge
                       variant="outline"
                       className="text-base font-semibold"
@@ -100,9 +101,9 @@ export function ProductSelector({
                       onClick={() => handleAddToCart(product)}
                     >
                       <ShoppingCart className="w-4 h-4" />
-                     
                     </Button>
                   </div>
+                 
                 </div>
               </div>
             </Card>

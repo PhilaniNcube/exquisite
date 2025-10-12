@@ -12,6 +12,9 @@
     "generate:types": "node --import tsx/esm ./node_modules/payload/bin.js generate:types"
   },
   "dependencies": {
+    "@ai-sdk/google": "^2.0.20",
+    "@ai-sdk/google-vertex": "^3.0.40",
+    "@google/genai": "^1.24.0",
     "@hookform/resolvers": "^5.2.2",
     "@neondatabase/serverless": "^1.0.2",
     "@payloadcms/db-postgres": "^3.58.0",
@@ -47,6 +50,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@react-email/components": "^0.5.5",
     "@react-email/render": "^1.3.1",
+    "ai": "^5.0.68",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
