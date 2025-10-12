@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { loginUser } from "../actions/login";
-
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -32,16 +32,15 @@ interface FormState {
 }
 
 export function CustomerLoginForm() {
-
   const [isPending, startTransition] = useTransition();
-
+  const router = useRouter();
   const [state, formAction] = useActionState<FormState, FormData>(
     async (prevState, formData) => {
       const result = await loginUser(formData);
       if (result.success) {
         startTransition(() => {
-          // router.push("/");
           console.log("Login successful", { result });
+          router.push("/");
         });
       }
       return result;
@@ -59,7 +58,7 @@ export function CustomerLoginForm() {
 
   const onSubmit = (data: FormData) => {
     startTransition(() => {
-        formAction(data);
+      formAction(data);
     });
   };
 
@@ -129,4 +128,3 @@ export function CustomerLoginForm() {
     </div>
   );
 }
-

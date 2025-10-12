@@ -1,15 +1,15 @@
-import { getUser } from "@/lib/auth";
+import { getAuthState } from "@/lib/auth-state";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { User, UserPlus } from "lucide-react";
 import Logout from "@/app/(public)/(account)/logout/logout";
 
 const AuthLinks = async () => {
-  const user = await getUser();
+  const { isLoggedIn } = await getAuthState();
 
-  console.log("User in AuthLinks:", user);
+  console.log("Auth state in AuthLinks:", isLoggedIn);
 
-  if (user) {
+  if (isLoggedIn) {
     return (
       <div className="flex items-center space-x-4">
         <Logout />
