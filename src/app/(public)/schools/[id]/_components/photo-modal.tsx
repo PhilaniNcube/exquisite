@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { X, ExternalLink } from "lucide-react";
+import {  ExternalLink } from "lucide-react";
 import { unstable_ViewTransition as ViewTransition } from "react";
 
 interface PhotoModalProps {

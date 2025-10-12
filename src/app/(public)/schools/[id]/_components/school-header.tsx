@@ -1,7 +1,5 @@
 import { School } from "@/payload-types";
-import Image from "next/image";
-import { MapPin, Calendar, Users } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+
 
 interface SchoolHeaderProps {
   school: School;

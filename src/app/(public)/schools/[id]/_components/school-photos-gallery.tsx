@@ -2,9 +2,9 @@
 
 import { SchoolPhoto, Class } from "@/payload-types";
 import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Camera } from "lucide-react";
+import {  Camera } from "lucide-react";
 import { useState, useMemo } from "react";
 import PhotoModal from "./photo-modal";
 import PhotoFilters from "./photo-filters";
