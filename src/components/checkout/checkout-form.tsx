@@ -13,11 +13,7 @@ import { formatPrice } from "@/lib/utils";
 import { Customer } from "@/payload-types";
 import { createOrder } from "@/lib/actions/orders";
 
-interface CheckoutFormProps {
-  user: Customer;
-}
-
-export function CheckoutForm({ user }: CheckoutFormProps) {
+export function CheckoutForm() {
   const { items, getTotalPrice, clearCart } = useCartStore();
   const [cellNumber, setCellNumber] = useState("");
   const router = useRouter();
@@ -92,26 +88,12 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
           <form action={formAction} className="space-y-4">
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={user.email}
-                disabled
-                className="bg-muted"
-              />
+              <Input id="email" type="email" disabled className="bg-muted" />
             </div>
 
             <div>
               <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                value={
-                  `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-                  user.email
-                }
-                disabled
-                className="bg-muted"
-              />
+              <Input id="name" type="text" disabled className="bg-muted" />
             </div>
 
             <div>

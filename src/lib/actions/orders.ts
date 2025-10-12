@@ -6,6 +6,7 @@ import { getUser } from "@/lib/auth";
 import { Order } from "@/payload-types";
 import { z } from "zod";
 import { redirect } from "next/navigation";
+import {headers as getHeaders} from "next/headers";
 
 // Validation schema for order creation
 const orderItemSchema = z.object({
@@ -29,7 +30,12 @@ const orderSchema = z.object({
 export const createOrder = async (prevState: unknown, formData: FormData) => {
   try {
     const payload = await getPayload({ config });
-    const user = await getUser();
+    const headers = await getHeaders();
+    const result = await payload.auth({ headers, canSetHeaders: false })
+
+    // get the user from the customers collection
+    const user = result.user?.collection === "customers" ? result.user : null;
+
 
     if (!user) {
       return {
@@ -56,6 +62,7 @@ export const createOrder = async (prevState: unknown, formData: FormData) => {
     // Validate the data
     const orderData = {
       customerDetails: {
+        customer: user.id,
         cellNumber,
       },
       productDetails: {

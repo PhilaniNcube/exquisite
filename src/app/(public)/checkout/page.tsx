@@ -1,12 +1,12 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { CheckoutForm } from "@/components/checkout/checkout-form";
-import { getUser } from "@/lib/auth";
+import { getAuthState } from "@/lib/auth-state";
 
 const CheckoutPage = async () => {
-  const user = await getUser();
+  const { isLoggedIn, token } = await getAuthState();
 
-  if (!user) {
+  if (!isLoggedIn) {
     redirect("/login?redirect=/checkout");
   }
 
@@ -19,7 +19,7 @@ const CheckoutPage = async () => {
         </p>
       </div>
 
-      <CheckoutForm user={user} />
+      <CheckoutForm />
     </div>
   );
 };

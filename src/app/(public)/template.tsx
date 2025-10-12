@@ -1,4 +1,4 @@
-import { getUser } from "@/lib/auth";
+
 import { getAuthState } from "@/lib/auth-state";
 
 export default async function Template({
@@ -11,8 +11,6 @@ export default async function Template({
   console.log("PAYLOAD TOKEN:", token);
   console.log("IS LOGGED IN:", isLoggedIn);
 
-  const user = await getUser();
-  console.log("TEMPLATE USER:", user);
 
   return <div>{children}</div>;
 }
