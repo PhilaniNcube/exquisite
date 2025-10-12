@@ -46,7 +46,7 @@ export function CheckoutForm() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 lg:py-24 gap-8">
       {/* Order Summary */}
       <Card>
         <CardHeader>
