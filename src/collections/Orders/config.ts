@@ -8,7 +8,7 @@ export const Orders: CollectionConfig = {
   access: {
     read: ({ req }) => {
       if (req.user?.collection === "users") {
-        checkRole(["admin"], req.user as User);
+        return checkRole(["admin"], req.user as User);
       }
 
       if (req.user?.collection === "customers") {
@@ -24,7 +24,7 @@ export const Orders: CollectionConfig = {
     create: () => true,
     update: ({ req }) => {
       if (req.user?.collection === "users") {
-        checkRole(["admin"], req.user as User);
+        return checkRole(["admin"], req.user as User);
       }
 
       if (req.user?.collection === "customers") {

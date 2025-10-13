@@ -9,7 +9,6 @@ import { Media, Product, SchoolPhoto } from "@/payload-types";
 import { toast } from "sonner";
 import { useCartStore } from "@/store/cart-store";
 import { formatPrice } from "@/lib/utils";
-import { ImageGenerationModal } from "./image-generation-modal";
 
 interface ProductSelectorProps {
   products: Product[];
