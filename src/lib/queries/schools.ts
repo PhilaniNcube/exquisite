@@ -25,6 +25,7 @@ export const searchSchools = async (searchTerm: string) => {
         contains: searchTerm,
       },
     },
+    limit: 100,
   });
 
   return schools;
