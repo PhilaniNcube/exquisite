@@ -18,5 +18,19 @@ export const Schools: CollectionConfig = {
       type: "text",
       required: true,
     },
+    {
+      name: "type",
+      type: "select",
+      options: [
+        {
+          label: "Creche",
+          value: "creche",
+        },
+        {
+          label: "School",
+          value: "school",
+        },
+      ],
+    }
   ],
 };

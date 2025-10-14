@@ -306,6 +306,7 @@ export interface ClientGallery {
 export interface School {
   id: number;
   name: string;
+  type?: ('creche' | 'school') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -605,6 +606,7 @@ export interface ClientGalleriesSelect<T extends boolean = true> {
  */
 export interface SchoolsSelect<T extends boolean = true> {
   name?: T;
+  type?: T;
   updatedAt?: T;
   createdAt?: T;
 }
