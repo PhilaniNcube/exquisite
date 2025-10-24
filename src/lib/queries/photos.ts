@@ -28,6 +28,7 @@ export const getCategoryPhotosBySlug = async (slug: string) => {
   const photos = await payload.find({
     collection: "photos",
     where: { category: { equals: category.docs[0].id } },
+    limit: 100,
   });
   return photos;
 };
