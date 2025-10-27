@@ -1,5 +1,6 @@
 import { CollectionConfig } from "payload";
 import editor from "../Users/access/editor";
+import { generatePassCode } from "./hooks/generatePassCode";
 
 export const Schools: CollectionConfig = {
   slug: "schools",
@@ -11,6 +12,9 @@ export const Schools: CollectionConfig = {
   },
   admin: {
     useAsTitle: "name",
+  },
+  hooks: {
+    beforeChange: [generatePassCode],
   },
   fields: [
     {
@@ -36,9 +40,8 @@ export const Schools: CollectionConfig = {
       name: "pass_code",
       type: "text",
       label: "Pass Code",
-      // required: true,
       admin: {
-        description: "Unique pass code required to view school photos",
+        description: "Unique pass code required to view school photos. Leave empty to auto-generate.",
       },
     }
   ],

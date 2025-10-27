@@ -308,7 +308,7 @@ export interface School {
   name: string;
   type?: ('creche' | 'school') | null;
   /**
-   * Unique pass code required to view school photos
+   * Unique pass code required to view school photos. Leave empty to auto-generate.
    */
   pass_code?: string | null;
   updatedAt: string;
