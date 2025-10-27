@@ -2,7 +2,7 @@ import PublicNavigation from "@/components/navigation/public-navigation";
 import React from "react";
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
-import { Geist, Geist_Mono, Raleway } from "next/font/google";
+import {  Geist_Mono, Raleway } from "next/font/google";
 import "../globals.css";
 import { getCategories } from "@/lib/queries/categories";
 import AuthLinks from "@/components/navigation/auth-links";
