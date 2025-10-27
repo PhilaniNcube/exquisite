@@ -44,13 +44,13 @@ export function HeroSection() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link href="/contact">
+            <Link href="/schools">
               <Button
                 size="lg"
                 variant="outline"
                 className="text-base px-8 bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
               >
-                Get in Touch
+                Order School Photos
               </Button>
             </Link>
           </div>

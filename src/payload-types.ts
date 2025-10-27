@@ -307,6 +307,10 @@ export interface School {
   id: number;
   name: string;
   type?: ('creche' | 'school') | null;
+  /**
+   * Unique pass code required to view school photos
+   */
+  pass_code?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -607,6 +611,7 @@ export interface ClientGalleriesSelect<T extends boolean = true> {
 export interface SchoolsSelect<T extends boolean = true> {
   name?: T;
   type?: T;
+  pass_code?: T;
   updatedAt?: T;
   createdAt?: T;
 }
