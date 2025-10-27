@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { Cart } from "@/components/cart/cart";
+import Image from "next/image";
 
 type PortfolioItem = {
   href: Route;
@@ -58,10 +59,13 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center">
-            <img
-              src="/logo.webp"
+            <Image
+              src="/logo-wide.webp"
               alt="Logo"
-              className="w-16 h-auto"
+              className="w-40 lg:w-60 h-auto"
+              width={1278}
+              height={30}
+              priority
             />
           </Link>
 
