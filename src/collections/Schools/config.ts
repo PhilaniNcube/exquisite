@@ -35,6 +35,7 @@ export const Schools: CollectionConfig = {
     {
       name: "pass_code",
       type: "text",
+      label: "Pass Code",
       // required: true,
       admin: {
         description: "Unique pass code required to view school photos",
