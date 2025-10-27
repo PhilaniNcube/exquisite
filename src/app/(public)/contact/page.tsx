@@ -120,9 +120,9 @@ export default function ContactPage() {
               <div className="w-14 h-14 rounded-full bg-accent/10 text-accent flex items-center justify-center mx-auto mb-4">
                 <MapPin className="h-6 w-6" />
               </div>
-              <h3 className="font-semibold text-foreground mb-2">Location</h3>
+              <h3 className="font-semibold text-foreground mb-2">Service Area</h3>
               <p className="text-muted-foreground text-sm">
-                Cape Town, South Africa
+                Cape Town & Surrounding Areas
               </p>
             </div>
 
@@ -259,7 +259,7 @@ export default function ContactPage() {
                         <FormLabel>Your Message *</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Tell us about your photography needs, event details, or any questions you have..."
+                            placeholder="Tell us about your photography needs, preferred location, event details, or any questions you have..."
                             rows={6}
                             {...field}
                           />
@@ -286,19 +286,19 @@ export default function ContactPage() {
             <div className="space-y-8">
               <div>
                 <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Visit Our Studio
+                  On-Location Photography
                 </h2>
                 <p className="text-muted-foreground mb-6">
-                  Located in the heart of Cape Town, our studio is equipped with
-                  state-of-the-art equipment and a comfortable environment for
-                  all your photography needs.
+                  We bring our professional equipment and expertise directly to you. 
+                  Whether it&apos;s your home, venue, outdoor location, or any meaningful 
+                  place, we create beautiful photographs in the comfort of your chosen setting.
                 </p>
 
                 <div className="aspect-video rounded-lg overflow-hidden shadow-lg mb-6">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/api/media/file/william-thomas.jpg"
-                    alt="Photography studio interior"
+                    alt="Photographer working on location with professional equipment"
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -308,14 +308,14 @@ export default function ContactPage() {
                     <MapPin className="h-5 w-5 text-accent mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-foreground mb-1">
-                        Address
+                        Service Area
                       </h4>
                       <p className="text-muted-foreground text-sm">
-                        123 Photography Lane
+                        Cape Town & Surrounding Areas
                         <br />
-                        Cape Town, 8001
+                        On-location photography services
                         <br />
-                        South Africa
+                        Travel to your preferred venue
                       </p>
                     </div>
                   </div>
@@ -324,14 +324,14 @@ export default function ContactPage() {
                     <Clock className="h-5 w-5 text-accent mt-1 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-foreground mb-1">
-                        Business Hours
+                        Availability
                       </h4>
                       <p className="text-muted-foreground text-sm">
                         Monday - Friday: 9:00 AM - 6:00 PM
                         <br />
                         Saturday: 10:00 AM - 4:00 PM
                         <br />
-                        Sunday: By Appointment Only
+                        Sunday & Evenings: By Appointment
                       </p>
                     </div>
                   </div>

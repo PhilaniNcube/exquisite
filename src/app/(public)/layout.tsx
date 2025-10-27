@@ -2,7 +2,7 @@ import PublicNavigation from "@/components/navigation/public-navigation";
 import React from "react";
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Raleway } from "next/font/google";
 import "../globals.css";
 import { getCategories } from "@/lib/queries/categories";
 import AuthLinks from "@/components/navigation/auth-links";
@@ -11,10 +11,12 @@ import { CartProvider } from "@/components/providers/cart-provider";
 import Template from "./template";
 
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const raleway = Raleway({
+  variable: "--font-raleway",
   subsets: ["latin"],
+  weight: ["400", "700"],
 });
+
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -33,7 +35,7 @@ const PublicLayout = async ({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${raleway.variable} ${geistMono.variable} antialiased`}
       >
         <Template>
         <CartProvider>

@@ -45,7 +45,8 @@ export default function AboutPage() {
               </p>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 Our journey began with a simple love for capturing moments, and has grown into a full-service
-                photography studio serving families, couples, schools, and businesses throughout the region.
+                photography business serving families, couples, schools, and businesses throughout the region with 
+                on-location photography services.
               </p>
             </div>
 

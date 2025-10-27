@@ -51,7 +51,7 @@ export function AboutSection() {
             <div className="aspect-square rounded-lg overflow-hidden shadow-2xl">
               <img
                 src="/api/media/file/studio.jpg"
-                alt="Professional photographer"
+                alt="Professional photographer working on location"
                 className="h-full w-full object-cover object-left"
               />
             </div>

@@ -130,7 +130,7 @@ export function ContactSection() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/api/media/file/equipment.jpg"
-                alt="Photography studio"
+                alt="Professional photography equipment ready for on-location shoot"
                 className="h-full w-full object-cover"
               />
             </div>
@@ -248,7 +248,7 @@ export function ContactSection() {
                       <FormLabel>Message</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Tell us about your photography needs..."
+                          placeholder="Tell us about your photography needs, preferred location, or any questions you have..."
                           rows={5}
                           {...field}
                         />

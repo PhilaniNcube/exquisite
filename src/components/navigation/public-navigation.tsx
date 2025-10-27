@@ -58,9 +58,11 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center">
-            <span className="font-bold text-xl text-gray-900">
-              Exquisite Photography
-            </span>
+            <img
+              src="/logo.webp"
+              alt="Logo"
+              className="w-16 h-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
