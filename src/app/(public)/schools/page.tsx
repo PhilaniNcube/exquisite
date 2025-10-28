@@ -1,4 +1,4 @@
-import { getSchools, searchSchools } from "@/lib/queries/schools";
+import { searchSchools } from "@/lib/queries/schools";
 import React from "react";
 import SchoolsHero from "./_components/schools-hero";
 import SchoolsGrid from "./_components/schools-grid";
