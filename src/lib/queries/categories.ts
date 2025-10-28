@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 
 export const getCategories = async () => {
+  "use cache"
   const payload = await getPayload({ config })
   const categories = await payload.find({
     collection: 'categories',
@@ -12,6 +13,7 @@ export const getCategories = async () => {
 }
 
 export const getCategoryBySlug = async (slug: string) => {
+  "use cache"
   const payload = await getPayload({ config })
   const category = await payload.find({
     collection: 'categories',

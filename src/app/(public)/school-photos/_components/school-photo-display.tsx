@@ -4,8 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { Class, Media, School, SchoolPhoto } from "@/payload-types";
-import { unstable_ViewTransition as ViewTransition } from "react";
-
 interface SchoolPhotoDisplayProps {
   photo: SchoolPhoto;
 }
@@ -32,7 +30,6 @@ export function SchoolPhotoDisplay({ photo }: SchoolPhotoDisplayProps) {
     <Card className="overflow-hidden border-2">
       <div className="aspect-[4/5] relative bg-muted">
         {photoMedia?.url ? (
-          <ViewTransition enter={"auto"} key="photo-image">
             <Image
               src={photoMedia.url || "/placeholder.svg"}
               alt={photoMedia.alt || photo.name}
@@ -40,7 +37,6 @@ export function SchoolPhotoDisplay({ photo }: SchoolPhotoDisplayProps) {
               className="object-cover"
               priority
             />
-          </ViewTransition>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <span className="text-muted-foreground">No photo available</span>

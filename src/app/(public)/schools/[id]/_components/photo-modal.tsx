@@ -7,7 +7,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {  ExternalLink } from "lucide-react";
-import { unstable_ViewTransition as ViewTransition } from "react";
+
 
 interface PhotoModalProps {
   photo: SchoolPhoto | null;
@@ -19,7 +19,6 @@ const PhotoModal = ({ photo, isOpen, onClose }: PhotoModalProps) => {
   if (!photo) return null;
 
   return (
-    <ViewTransition enter={"auto"} key="photo-image">
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-4xl w-full p-0 overflow-hidden">
           <div className="relative">
@@ -80,7 +79,6 @@ const PhotoModal = ({ photo, isOpen, onClose }: PhotoModalProps) => {
           </div>
         </DialogContent>
       </Dialog>
-    </ViewTransition>
   );
 };
 

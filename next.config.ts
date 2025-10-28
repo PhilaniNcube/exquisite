@@ -2,9 +2,8 @@ import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    viewTransition: true,
-  },
+  turbopack: {}, // Empty turbopack config to silence the warning
+  cacheComponents: true, // Enable Cache Components (moved out of experimental in 16.0.0)
   typedRoutes: true,
   images: {
     qualities: [25, 50, 70, 75, 80, 85, 90, 95, 100],

@@ -1,7 +1,15 @@
 import { Facebook, Instagram, Twitter } from "lucide-react"
+import { cacheLife } from "next/cache"
 import Link from "next/link"
 
-export function Footer() {
+async function getCurrentYear() {
+  "use cache"
+  return new Date().getFullYear()
+}
+
+export async function Footer() {
+  "use cache"
+  cacheLife('weeks')
   return (
     <footer className="bg-primary text-primary-foreground py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -78,7 +86,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-primary-foreground/20 pt-8 text-center text-sm text-primary-foreground/70">
-          <p>&copy; {new Date().getFullYear()} Exquisite Photography. All rights reserved.</p>
+          <p>&copy; {await getCurrentYear()} Exquisite Photography. All rights reserved.</p>
         </div>
       </div>
     </footer>
