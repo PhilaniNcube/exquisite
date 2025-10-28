@@ -29,13 +29,11 @@ const SchoolsHero = () => {
       <div className="relative max-w-7xl mx-auto">
         <div className="text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-            Our School
+             School
             <span className="block text-yellow-400">Photography Portfolio</span>
           </h1>
           <p className="text-xl sm:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
-            Explore the schools we&apos;ve partnered with to capture
-            unforgettable moments and create lasting memories through
-            professional photography.
+          Find the school that your child goes to and order the prints you want.
           </p>
 
           <div className="mb-12">
