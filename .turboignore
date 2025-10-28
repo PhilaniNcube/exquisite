@@ -1,0 +1,8 @@
+# Ignore documentation and license files in node_modules
+**/node_modules/**/*.md
+**/node_modules/**/*.txt
+**/node_modules/**/*.LICENSE
+**/node_modules/**/*.LICENSE.txt
+**/node_modules/**/README
+**/node_modules/**/CHANGELOG
+**/node_modules/**/HISTORY

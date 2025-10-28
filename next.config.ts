@@ -1,10 +1,10 @@
-import { withPayload } from "@payloadcms/next/withPayload";
+import { withPayload } from '@payloadcms/next/withPayload'
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  turbopack: {}, // Empty turbopack config to silence the warning
-  cacheComponents: true, // Enable Cache Components - Temporarily disabled due to Payload CMS admin compatibility
+  cacheComponents: true, // Enable Cache Components 
   typedRoutes: true,
+
   images: {
     qualities: [25, 50, 70, 75, 80, 85, 90, 95, 100],
     remotePatterns: [
@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  // Configure webpack to handle .md and other asset files properly
+
+
 };
 
 export default withPayload(nextConfig);
