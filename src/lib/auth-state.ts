@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 
 export const getAuthState = cache(async () => {
-  "use cache"
+
   const cookieStore = await cookies();
   const payloadToken = cookieStore.get("payload-token");
   const isLoggedIn = !!payloadToken?.value;

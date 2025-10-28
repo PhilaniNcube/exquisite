@@ -1,9 +1,13 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
+import { cacheLife, cacheTag } from "next/cache";
 
 
 
 export const getCategoryPhotos = async (categoryId: number) => {
+  "use cache";
+  cacheTag(`category-photos-${categoryId}`);
+  cacheLife("hours")
   const payload = await getPayload({ config });
   const photos = await payload.find({
     collection: "photos",
@@ -14,6 +18,9 @@ export const getCategoryPhotos = async (categoryId: number) => {
 
 
 export const getCategoryPhotosBySlug = async (slug: string) => {
+  "use cache";
+  cacheTag(`category-photos-${slug}`);
+  cacheLife("hours")
   const payload = await getPayload({ config });
   const category = await payload.find({
     collection: "categories",
@@ -35,6 +42,9 @@ export const getCategoryPhotosBySlug = async (slug: string) => {
 
 
 export const getPhotoById = async (id: number) => {
+  "use cache";
+  cacheTag(`photo-${id}`);
+  cacheLife("hours");
   const payload = await getPayload({ config });
   const photo = await payload.findByID({
     collection: "photos",

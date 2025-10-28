@@ -3,7 +3,7 @@ import { getPayload } from "payload";
 import configPromise from "@payload-config";
 import type { Customer } from "@/payload-types";
 import type { Payload } from "payload";
-import { cache } from "react";
+
 
 const getUser = async (): Promise<Customer | null> => {
   const headers = await getHeaders();

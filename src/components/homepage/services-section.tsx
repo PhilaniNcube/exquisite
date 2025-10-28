@@ -1,9 +1,12 @@
 import React from "react";
 import PortfolioGrid from "../portfolio/protfolio-grid";
 import { getCategories } from "@/lib/queries/categories";
+import { Suspense } from "react";
+import { Card } from "../ui/card";
+import { Skeleton } from "../ui/skeleton";
 
 const ServicesSection = async () => {
-  const { docs: categories } = await getCategories();
+ 
 
   return (
     <section id="services" className="py-16 bg-background">
@@ -17,11 +20,26 @@ const ServicesSection = async () => {
             important moments
           </p>
         </div>
-
-        <PortfolioGrid categories={categories} />
+        <Suspense fallback={<GridFallback />}>
+          <PortfolioGrid />
+        </Suspense>
       </div>
     </section>
   );
 };
 
 export default ServicesSection;
+
+const GridFallback = () => {
+  return (
+    <div className="container mx-auto px-4 lg:px-8 py-8 lg:pb-16">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {Array.from({ length: 8 }).map((_, index) => (
+          <Card key={index} className="overflow-hidden aspect-square border-0">
+            <Skeleton className="w-full h-full" />
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};

@@ -3,17 +3,12 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 
-interface PortfolioGridProps {
-  categories: Category[];
-  isLoading?: boolean;
-}
+import { getCategories } from "@/lib/queries/categories";
 
-const PortfolioGrid = ({
-  categories,
-  isLoading = false,
-}: PortfolioGridProps) => {
+const PortfolioGrid = async () => {
+  const { docs: categories } = await getCategories();
+
   // Function to get the correct portfolio route
   const getPortfolioRoute = (slug: string) => {
     const routes = {
@@ -27,23 +22,7 @@ const PortfolioGrid = ({
     return routes[slug as keyof typeof routes] || ("/portfolio" as const);
   };
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 lg:px-8 py-8 lg:pb-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <Card
-              key={index}
-              className="overflow-hidden aspect-square border-0"
-            >
-              <Skeleton className="w-full h-full" />
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  }
+
 
   // Empty state
   if (!categories || categories.length === 0) {

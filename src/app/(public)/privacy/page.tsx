@@ -1,8 +1,11 @@
-import React from 'react'
+import { cacheLife } from "next/cache";
 
-const PrivacyPolicy = () => {
+
+const PrivacyPolicy = async () => {
+  "use cache";
+  cacheLife("hours");
   return (
-    <div>PrivacyPolicy</div>
+    <div className="min-h-screen flex justify-center items-center">PrivacyPolicy</div>
   )
 }
 

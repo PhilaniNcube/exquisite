@@ -1,16 +1,17 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 interface SearchParams {
   [key: string]: string;
 }
 
-export default async function VerifyPage({
+const VerifyContent = async ({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
-}) {
+}) => {
   const { token } = await searchParams;
 
   const payload = await getPayload({ config });
@@ -31,4 +32,18 @@ export default async function VerifyPage({
       );
     }
   }
+
+  return null;
+};
+
+export default function VerifyPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  return (
+    <Suspense fallback={<div>Verifying email...</div>}>
+      <VerifyContent searchParams={searchParams} />
+    </Suspense>
+  );
 }

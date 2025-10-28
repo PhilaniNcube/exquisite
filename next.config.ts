@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   turbopack: {}, // Empty turbopack config to silence the warning
-  cacheComponents: true, // Enable Cache Components (moved out of experimental in 16.0.0)
+  cacheComponents: true, // Enable Cache Components - Temporarily disabled due to Payload CMS admin compatibility
   typedRoutes: true,
   images: {
     qualities: [25, 50, 70, 75, 80, 85, 90, 95, 100],

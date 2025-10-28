@@ -1,10 +1,13 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
+import { cacheLife } from "next/cache";
 
 export const getProducts = async (options?: {
   page?: number;
   limit?: number;
 }) => {
+  "use cache";
+  cacheLife("hours");
   const payload = await getPayload({ config });
   const products = await payload.find({
     collection: "products",
@@ -15,6 +18,8 @@ export const getProducts = async (options?: {
 };
 
 export const getProductById = async (id: number) => {
+  "use cache";
+  cacheLife("hours");
   const payload = await getPayload({ config });
   const product = await payload.findByID({
     collection: "products",

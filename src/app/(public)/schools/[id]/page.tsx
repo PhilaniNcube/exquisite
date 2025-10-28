@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { notFound } from "next/navigation";
@@ -8,7 +8,7 @@ import SchoolHeader from "./_components/school-header";
 import SchoolPhotosGallery from "./_components/school-photos-gallery";
 import PassCodeForm from "./_components/pass-code-form";
 
-const SchoolPage = async ({
+const SchoolContent = async ({
   params,
   searchParams
 }: {
@@ -53,7 +53,21 @@ const SchoolPage = async ({
         />
       </div>
     </div>
-  )
+  );
+};
+
+const SchoolPage = ({
+  params,
+  searchParams
+}: {
+  params: Promise<{id: string}>;
+  searchParams: Promise<{pass_code?: string}>;
+}) => {
+  return (
+    <Suspense fallback={<div>Loading school...</div>}>
+      <SchoolContent params={params} searchParams={searchParams} />
+    </Suspense>
+  );
 }
 
 export default SchoolPage

@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import React from 'react'
+import React, { Suspense } from 'react'
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/auth";
 import { getPayload } from "payload";
@@ -23,7 +23,7 @@ interface OrdersPageProps {
   }>;
 }
 
-const OrdersPage = async ({ searchParams }: OrdersPageProps) => {
+const OrdersContent = async ({ searchParams }: OrdersPageProps) => {
   const user = await getUser();
 
   if (!user) {
@@ -265,6 +265,14 @@ const OrdersPage = async ({ searchParams }: OrdersPageProps) => {
       </div>
     );
   }
+};
+
+const OrdersPage = ({ searchParams }: OrdersPageProps) => {
+  return (
+    <Suspense fallback={<div>Loading orders...</div>}>
+      <OrdersContent searchParams={searchParams} />
+    </Suspense>
+  );
 };
 
 export default OrdersPage;

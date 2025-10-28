@@ -11,7 +11,7 @@ const SchoolPhotosDisplay = async ({
   searchParams,
   key,
 }: SchoolPhotosDisplayProps) => {
-  const { schoolId, classId } = searchParams;
+  const { schoolId } = searchParams;
 
   let schoolPhotos;
 
