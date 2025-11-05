@@ -49,11 +49,11 @@ export default function AboutPage() {
             </div>
 
             <div className="relative">
-              <div className="aspect-4/5 rounded-lg overflow-hidden shadow-2xl">
+              <div className="aspect-video rounded-lg overflow-hidden shadow-2xl">
                 <Image
                   src="/api/media/file/allec-gomes.jpg"
                   alt="Professional photographer"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-top object-cover"
                   fill
                   priority
                 />
