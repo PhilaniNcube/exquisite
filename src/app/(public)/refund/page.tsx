@@ -11,17 +11,33 @@ const RefundPage = async () => {
       <div className="prose prose-lg max-w-none">
         <p className="text-lg text-gray-600 mb-8 text-center">
           At Exquisite Photography, we strive for your complete satisfaction
-          with every custom print order.
+          with every custom print order. This refund policy complies with the Consumer Protection Act 68 of 2008.
         </p>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Quality Guarantee</h2>
           <p className="mb-4">
             We guarantee the quality of all our custom prints. If you receive a
-            print that has defects in printing, color accuracy issues due to our
-            processing, or damage that occurred during shipping, we will gladly
+            print that has defects in printing, colour accuracy issues due to our
+            processing, or damage that occurred during delivery, we will gladly
             provide a replacement or full refund at no additional cost to you.
+            This guarantee is in addition to your rights under the Consumer Protection Act.
           </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-semibold mb-4">Your Consumer Rights</h2>
+          <div className="bg-blue-50 p-6 rounded-lg mb-4">
+            <p className="mb-4">
+              Under the Consumer Protection Act 68 of 2008, you have the right to:
+            </p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Receive goods that are of good quality, in good working order, and free of defects</li>
+              <li>Return goods within 6 months if they fail to satisfy these requirements</li>
+              <li>A refund, replacement, or repair if goods are defective</li>
+              <li>Clear and accurate information about the goods and services</li>
+            </ul>
+          </div>
         </section>
 
         <section className="mb-8">
@@ -31,35 +47,38 @@ const RefundPage = async () => {
           </h3>
           <ul className="list-disc pl-6 mb-4 space-y-2">
             <li>
-              Printing defects (streaks, spots, incorrect colors due to our
+              Printing defects (streaks, spots, incorrect colours due to our
               error)
             </li>
             <li>
-              Damage during shipping (bent corners, scratches, water damage)
+              Damage during delivery (bent corners, scratches, water damage)
             </li>
             <li>Wrong size or product delivered</li>
             <li>Manufacturing defects in frames or mounting</li>
             <li>
-              Significant color variation from our proof (if proof was provided)
+              Significant colour variation from our proof (if proof was provided)
+            </li>
+            <li>
+              Goods not fit for purpose or not of merchantable quality
             </li>
           </ul>
 
           <h3 className="text-xl font-medium mb-3">Not Eligible for Refund:</h3>
           <ul className="list-disc pl-6 mb-4 space-y-2">
             <li>
-              Normal color variations between different devices and print media
+              Normal colour variations between different devices and print media
             </li>
             <li>
               Customer dissatisfaction with image quality due to low-resolution
-              source files
+              source files provided by the customer
             </li>
-            <li>Changes of mind after order completion</li>
+            <li>Change of mind after order completion (as these are custom goods made to your specifications)</li>
             <li>
               Custom sizing or framing mistakes based on incorrect measurements
               provided by customer
             </li>
             <li>Damage after delivery (unless due to defective packaging)</li>
-            <li>Orders over 30 days from delivery date</li>
+            <li>Orders beyond the 6-month statutory period (unless otherwise agreed)</li>
           </ul>
         </section>
 
@@ -69,10 +88,11 @@ const RefundPage = async () => {
             <h3 className="text-lg font-medium mb-3">Step 1: Contact Us</h3>
             <p className="mb-2">
               Contact us within <strong>30 days</strong> of receiving your order
-              by:
+              (you have up to 6 months for defective goods under the Consumer Protection Act) by:
             </p>
             <ul className="list-disc pl-6 space-y-1">
               <li>Email: {process.env.NEXT_PUBLIC_MAIN_EMAIL_ADDRESS}</li>
+              <li>WhatsApp: [Your WhatsApp number]</li>
               <li>Phone: [Your phone number]</li>
               <li>Through our contact form on this website</li>
             </ul>
@@ -88,6 +108,7 @@ const RefundPage = async () => {
               <li>Description of the issue</li>
               <li>Clear photos showing the problem (for defects or damage)</li>
               <li>Your preferred resolution (replacement or refund)</li>
+              <li>Your banking details for refund (if applicable)</li>
             </ul>
           </div>
 
@@ -97,7 +118,7 @@ const RefundPage = async () => {
               We will review your request within 2 business days and provide
               instructions for return (if needed) or issue your
               refund/replacement. Most issues are resolved within 5-7 business
-              days.
+              days. Returns may take longer depending on your location and courier availability.
             </p>
           </div>
         </section>
@@ -105,19 +126,25 @@ const RefundPage = async () => {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Return Requirements</h2>
           <p className="mb-4">
-            If a return is required, we will provide a prepaid return label.
+            If a return is required, we will arrange courier collection or provide return instructions.
             Please:
           </p>
           <ul className="list-disc pl-6 mb-4 space-y-2">
             <li>Package items carefully in original packaging if available</li>
             <li>Include all accessories (frames, mounting hardware, etc.)</li>
-            <li>Use the provided return label</li>
-            <li>Ship within 14 days of our return authorization</li>
+            <li>Use the provided courier waybill or return label</li>
+            <li>Ship within 14 days of our return authorisation</li>
+            <li>Obtain proof of return (tracking number or collection receipt)</li>
           </ul>
+          <p className="text-sm text-gray-600 mb-2">
+            <em>
+              Note: You are not responsible for return courier costs on
+              defective or damaged items.
+            </em>
+          </p>
           <p className="text-sm text-gray-600">
             <em>
-              Note: You are not responsible for return shipping costs on
-              defective or damaged items.
+              For local returns within South Africa, we use reputable courier services such as The Courier Guy, Dawn Wing, or Aramex.
             </em>
           </p>
         </section>
@@ -128,7 +155,7 @@ const RefundPage = async () => {
             <div className="border-l-4 border-blue-500 pl-4">
               <h3 className="font-medium">Replacement Orders</h3>
               <p className="text-sm text-gray-600">
-                Rush processed within 3-5 business days
+                Rush processed within 5-7 business days (subject to courier availability)
               </p>
             </div>
             <div className="border-l-4 border-green-500 pl-4">
@@ -139,9 +166,9 @@ const RefundPage = async () => {
             </div>
           </div>
           <p className="mt-4 text-sm text-gray-600">
-            Refunds will be issued to the original payment method. Credit card
-            refunds may take 5-10 business days to appear on your statement
-            depending on your bank.
+            Refunds will be issued to the original payment method. EFT refunds typically reflect within 1-3 business days. 
+            Credit card refunds may take 5-10 business days to appear on your statement depending on your bank.
+            For cash deposits or other payment methods, refunds will be processed via EFT to your nominated bank account.
           </p>
         </section>
 
@@ -152,13 +179,14 @@ const RefundPage = async () => {
           <div className="bg-orange-50 border border-orange-200 p-4 rounded-lg">
             <p className="mb-2">
               <strong>Custom sized prints and rush orders:</strong> Due to the
-              personalized nature of these orders, they can only be refunded if
-              there is a printing defect or shipping damage. Please double-check
-              all specifications before placing custom orders.
+              personalised nature of these orders, they can only be refunded if
+              there is a printing defect, the goods are not of merchantable quality, or delivery damage occurred. 
+              Please double-check all specifications before placing custom orders.
             </p>
             <p className="text-sm text-gray-600">
               We recommend ordering a proof for large or expensive custom orders
-              to ensure satisfaction before final printing.
+              to ensure satisfaction before final printing. This is especially important for 
+              custom framing and large format prints.
             </p>
           </div>
         </section>
@@ -171,13 +199,29 @@ const RefundPage = async () => {
               Upload high-resolution images (at least 300 DPI at print size)
             </li>
             <li>Review size specifications carefully before ordering</li>
-            <li>Consider ordering a smaller test print for color accuracy</li>
+            <li>Consider ordering a smaller test print for colour accuracy</li>
             <li>
               Contact us with questions about image quality or sizing before
               ordering
             </li>
-            <li>Provide accurate shipping address and contact information</li>
+            <li>Provide accurate delivery address and contact information</li>
+            <li>Ensure someone is available to receive and inspect the delivery</li>
           </ul>
+        </section>
+
+        <section className="mb-8 bg-purple-50 p-6 rounded-lg">
+          <h2 className="text-2xl font-semibold mb-4">Dispute Resolution</h2>
+          <p className="mb-4">
+            If you are not satisfied with our resolution of your complaint, you have the right to:
+          </p>
+          <ul className="list-disc pl-6 space-y-2">
+            <li>Refer your complaint to the Consumer Goods and Services Ombud</li>
+            <li>Approach the National Consumer Commission</li>
+            <li>Lodge a complaint with the Consumer Protection Authority in your province</li>
+          </ul>
+          <p className="mt-4 text-sm text-gray-600">
+            We are committed to resolving all disputes fairly and in accordance with the Consumer Protection Act 68 of 2008.
+          </p>
         </section>
 
         <section className="mb-8 bg-gray-50 p-6 rounded-lg">
@@ -189,20 +233,25 @@ const RefundPage = async () => {
                 Email: support@exquisitephotography.com
               </p>
               <p className="text-sm text-gray-600 mb-1">
+                WhatsApp: [Your WhatsApp number]
+              </p>
+              <p className="text-sm text-gray-600 mb-1">
                 Phone: [Your phone number]
               </p>
               <p className="text-sm text-gray-600">
-                Hours: Monday-Friday, 9AM-6PM
+                Hours: Monday-Friday, 9:00-17:00 (SAST)
               </p>
             </div>
             <div>
-              <h3 className="font-medium mb-2">Mailing Address</h3>
+              <h3 className="font-medium mb-2">Physical Address</h3>
               <p className="text-sm text-gray-600">
                 Exquisite Photography
                 <br />
                 [Your business address]
                 <br />
-                [City, State, ZIP]
+                [City, Province, Postal Code]
+                <br />
+                South Africa
               </p>
             </div>
           </div>
@@ -215,10 +264,11 @@ const RefundPage = async () => {
           <p className="text-gray-600 mb-4">
             We want you to absolutely love your custom prints. If you have any
             concerns or questions about your order, please don&apos;t hesitate
-            to reach out to us.
+            to reach out to us. We are committed to providing excellent service 
+            in accordance with South African consumer protection laws.
           </p>
           <p className="text-sm text-gray-500">
-            This refund policy was last updated on 28 October 2025.
+            This refund policy was last updated on 5 November 2025 and complies with the Consumer Protection Act 68 of 2008.
           </p>
         </section>
       </div>
