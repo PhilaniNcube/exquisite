@@ -5,22 +5,14 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 
 import { getCategories } from "@/lib/queries/categories";
+import { Route } from "next";
 
 const PortfolioGrid = async () => {
+  "use cache";
   const { docs: categories } = await getCategories();
 
   // Function to get the correct portfolio route
-  const getPortfolioRoute = (slug: string) => {
-    const routes = {
-      creches: "/portfolio/creches" as const,
-      families: "/portfolio/families" as const,
-      matric: "/portfolio/matric" as const,
-      portraits: "/portfolio/portraits" as const,
-      school: "/portfolio/school" as const,
-      weddings: "/portfolio/weddings" as const,
-    } as const;
-    return routes[slug as keyof typeof routes] || ("/portfolio" as const);
-  };
+
 
 
 
@@ -49,7 +41,7 @@ const PortfolioGrid = async () => {
           return (
             <Link
               key={category.id}
-              href={getPortfolioRoute(category.slug)}
+              href={`/portfolio/${category.slug}` as Route}
               className="group block"
             >
               <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-accent/50 aspect-video overflow-hidden p-0">
@@ -65,7 +57,7 @@ const PortfolioGrid = async () => {
                     />
                   ) : (
                     // Fallback background if no image
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-300 to-gray-500" />
+                    <div className="absolute inset-0 bg-linear-to-br from-gray-300 to-gray-500" />
                   )}
 
                   {/* Overlay */}
@@ -80,7 +72,7 @@ const PortfolioGrid = async () => {
 
                   {/* Optional description on hover */}
                   {category.description && (
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-linear-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <p className="text-white text-sm line-clamp-2">
                         {category.description}
                       </p>
