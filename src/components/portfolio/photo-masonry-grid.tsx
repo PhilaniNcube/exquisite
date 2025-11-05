@@ -9,6 +9,27 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
+  // Simple SVG shimmer placeholder for blurDataURL
+  const shimmer = (w: number, h: number) => `
+    <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="g">
+          <stop stop-color="#f6f7f8" offset="20%" />
+          <stop stop-color="#edeef1" offset="50%" />
+          <stop stop-color="#f6f7f8" offset="70%" />
+        </linearGradient>
+      </defs>
+      <rect width="${w}" height="${h}" fill="#f6f7f8" />
+      <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
+      <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite"  />
+    </svg>
+  `
+
+  const toBase64 = (str: string) =>
+    typeof window === 'undefined'
+      ? Buffer.from(str).toString('base64')
+      : window.btoa(str)
+
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -86,6 +107,8 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                     height={(photo.image.height ?? 6000)/15}
                     quality={100}
                     className='w-full h-auto group-hover:scale-105 transition-transform duration-300'
+                    placeholder="blur"
+                    blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(((photo.image.width ?? 4000)/15), ((photo.image.height ?? 6000)/15)))}`}
                   />
                 )}
               </div>
@@ -153,6 +176,8 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                   height={currentPhoto.image.height || 600}
                   className="max-w-full max-h-full object-contain"
                   priority
+                  placeholder="blur"
+                  blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer((currentPhoto.image.width || 800), (currentPhoto.image.height || 600)))}`}
                 />
               </div>
             )}
