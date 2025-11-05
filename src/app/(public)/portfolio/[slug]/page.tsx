@@ -25,6 +25,8 @@ const PhotosLoading = () => (
 
 // Category hero with data fetching
 const CategoryHeroContent = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  "use cache"
+
   const { slug } = await params
   const { docs } = await getCategoryBySlug(slug)
   const category = docs?.[0]
