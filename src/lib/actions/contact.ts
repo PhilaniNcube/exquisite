@@ -125,7 +125,7 @@ export async function submitContactForm(data: ContactFormData) {
     // Send email to admin
     await resend.emails.send({
       from: process.env.FROM_EMAIL || "hello@exquisitephotography.com",
-      to: [process.env.ADMIN_EMAIL || "admin@exquisitephotography.com"],
+      to: [process.env.FROM_EMAIL || "admin@exquisitephotography.com"],
       subject: `New Inquiry: ${serviceName} - ${validatedData.name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

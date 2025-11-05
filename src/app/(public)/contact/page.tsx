@@ -78,7 +78,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 bg-gradient-to-b from-accent/5 to-background">
+      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 bg-linear-to-b from-accent/5 to-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 text-balance">
