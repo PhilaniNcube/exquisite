@@ -2,6 +2,7 @@ import { searchSchools } from "@/lib/queries/schools";
 import React, { Suspense } from "react";
 import SchoolsHero from "./_components/schools-hero";
 import SchoolsGrid from "./_components/schools-grid";
+import SchoolsFallback from "./_components/schools-fallback";
 import { School } from "@/payload-types";
 
 const SchoolsContent = async ({
@@ -24,10 +25,9 @@ const page = ({
 }) => {
   return (
     <div>
-      <Suspense fallback={<div>Loading schools hero...</div>}>
-        <SchoolsHero />
-      </Suspense>
-      <Suspense fallback={<div>Loading schools...</div>}>
+      <SchoolsHero />
+
+      <Suspense fallback={<SchoolsFallback />}>
         <SchoolsContent searchParams={searchParams} />
       </Suspense>
     </div>

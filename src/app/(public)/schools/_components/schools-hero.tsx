@@ -24,7 +24,7 @@ const SchoolsHero = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white py-20 px-4 sm:px-6 lg:px-8">
+    <section className="relative bg-linear-to-br from-blue-900 via-blue-800 to-indigo-900 text-white py-20 px-4 sm:px-6 lg:px-8">
       <div className="absolute inset-0 bg-black/20"></div>
       <div className="relative max-w-7xl mx-auto">
         <div className="text-center">
