@@ -8,7 +8,7 @@ export default function AboutPage() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40 z-10" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/60 to-black/40 z-10" />
         <Image
           src="/api/media/file/valeria-nikitina.jpg"
           alt="Professional photographer at work"
@@ -32,26 +32,24 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div>
               <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6 text-balance">
-                Creating Timeless Memories Through Photography
+                Meet Esté Oberhauser
               </h2>
               <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                With over a decade of experience and a passion for storytelling, we specialize in capturing the
-                authentic moments that matter most. Our approach combines technical excellence with artistic vision to
-                create photographs you&apos;ll treasure forever.
+                Hi, I&apos;m Esté Oberhauser, owner and photographer at Exquisite Photography.
               </p>
               <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                Whether it&apos;s the joy of a wedding day, the excitement of a matric farewell, or the warmth of a family
-                portrait, we&apos;re dedicated to preserving your precious memories with care and creativity.
+                Photography has been my passion since childhood, and I feel incredibly fortunate to have turned that passion into a career.
+              </p>
+              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                I&apos;ve been in the photography industry since 2007 and have loved every moment of the journey. There&apos;s something truly special about capturing memories, whether it&apos;s the quiet emotion of a portrait or the lively energy of a family session.
               </p>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Our journey began with a simple love for capturing moments, and has grown into a full-service
-                photography business serving families, couples, schools, and businesses throughout the region with 
-                on-location photography services.
+                What I treasure most is the connection I get to build with my clients, children and adults alike. That trust, that shared excitement — it&apos;s what makes each session meaningful.
               </p>
             </div>
 
             <div className="relative">
-              <div className="aspect-[4/5] rounded-lg overflow-hidden shadow-2xl">
+              <div className="aspect-4/5 rounded-lg overflow-hidden shadow-2xl">
                 <Image
                   src="/api/media/file/allec-gomes.jpg"
                   alt="Professional photographer"
@@ -154,7 +152,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="order-2 lg:order-1 relative">
-              <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-2xl">
+              <div className="aspect-4/3 rounded-lg overflow-hidden shadow-2xl">
                 <Image
                   src="/api/media/file/camera.jpg"
                   alt="Professional photography equipment"
@@ -176,7 +174,7 @@ export default function AboutPage() {
 
               <div className="space-y-6">
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-16 h-16 rounded-lg bg-accent/10 text-accent flex items-center justify-center font-serif text-2xl font-bold">
+                  <div className="shrink-0 w-16 h-16 rounded-lg bg-accent/10 text-accent flex items-center justify-center font-serif text-2xl font-bold">
                     10+
                   </div>
                   <div>
@@ -188,7 +186,7 @@ export default function AboutPage() {
                 </div>
 
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-16 h-16 rounded-lg bg-accent/10 text-accent flex items-center justify-center font-serif text-2xl font-bold">
+                  <div className="shrink-0 w-16 h-16 rounded-lg bg-accent/10 text-accent flex items-center justify-center font-serif text-2xl font-bold">
                     500+
                   </div>
                   <div>
@@ -200,7 +198,7 @@ export default function AboutPage() {
                 </div>
 
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-16 h-16 rounded-lg bg-accent/10 text-accent flex items-center justify-center font-serif text-2xl font-bold">
+                  <div className="shrink-0 w-16 h-16 rounded-lg bg-accent/10 text-accent flex items-center justify-center font-serif text-2xl font-bold">
                     15k+
                   </div>
                   <div>
