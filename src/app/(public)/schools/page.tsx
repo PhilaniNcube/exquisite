@@ -18,14 +18,16 @@ const SchoolsContent = async ({
   return <SchoolsGrid schools={schoolsData.docs as School[]} />;
 };
 
-const page = ({
+const page = async ({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) => {
   return (
     <div>
-      <SchoolsHero />
+      <Suspense fallback={null}>
+        <SchoolsHero />
+      </Suspense>
 
       <Suspense fallback={<SchoolsFallback />}>
         <SchoolsContent searchParams={searchParams} />
