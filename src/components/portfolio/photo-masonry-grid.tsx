@@ -84,7 +84,7 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                     alt={photo.image.alt || photo.title || 'Photo'}
                     width={(photo.image.width ?? 4000)/15}
                     height={(photo.image.height ?? 6000)/15}
-                    quality={65}
+                    quality={100}
                     className='w-full h-auto group-hover:scale-105 transition-transform duration-300'
                   />
                 )}
