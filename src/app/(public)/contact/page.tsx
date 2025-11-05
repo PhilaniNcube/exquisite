@@ -112,7 +112,7 @@ export default function ContactPage() {
               </div>
               <h3 className="font-semibold text-foreground mb-2">Email</h3>
               <p className="text-muted-foreground text-sm">
-                hello@exquisitephotography.com
+                hello@exquisitephoto.co.za
               </p>
             </div>
 
@@ -305,7 +305,7 @@ export default function ContactPage() {
 
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-accent mt-1 flex-shrink-0" />
+                    <MapPin className="h-5 w-5 text-accent mt-1 shrink-0" />
                     <div>
                       <h4 className="font-semibold text-foreground mb-1">
                         Service Area
@@ -321,7 +321,7 @@ export default function ContactPage() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <Clock className="h-5 w-5 text-accent mt-1 flex-shrink-0" />
+                    <Clock className="h-5 w-5 text-accent mt-1 shrink-0" />
                     <div>
                       <h4 className="font-semibold text-foreground mb-1">
                         Availability
