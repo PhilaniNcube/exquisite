@@ -230,13 +230,13 @@ const RefundPage = async () => {
             <div>
               <h3 className="font-medium mb-2">Customer Service</h3>
               <p className="text-sm text-gray-600 mb-1">
-                Email: support@exquisitephotography.com
+                Email: hello@exquisitephoto.co.za
               </p>
               <p className="text-sm text-gray-600 mb-1">
-                WhatsApp: [Your WhatsApp number]
+                WhatsApp: 084 675 6959
               </p>
               <p className="text-sm text-gray-600 mb-1">
-                Phone: [Your phone number]
+                Phone: 084 675 6959
               </p>
               <p className="text-sm text-gray-600">
                 Hours: Monday-Friday, 9:00-17:00 (SAST)
@@ -247,9 +247,9 @@ const RefundPage = async () => {
               <p className="text-sm text-gray-600">
                 Exquisite Photography
                 <br />
-                [Your business address]
+                Montgomery Rd, Lorraine
                 <br />
-                [City, Province, Postal Code]
+                Port Elizabeth, 6070
                 <br />
                 South Africa
               </p>

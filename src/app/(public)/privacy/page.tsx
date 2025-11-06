@@ -372,8 +372,8 @@ const PrivacyPolicy = async () => {
             <li><strong>Information Officer:</strong> [Name of Information Officer]</li>
             <li><strong>Email:</strong> <a href="mailto:privacy@exquisitephotography.com" className="text-primary hover:underline">privacy@exquisitephotography.com</a></li>
             <li><strong>Contact Page:</strong> <a href="/contact" className="text-primary hover:underline">Visit our contact page</a></li>
-            <li><strong>Physical Address:</strong> [Your South African Business Address]</li>
-            <li><strong>Phone:</strong> [Your South African Contact Number]</li>
+            <li><strong>Physical Address:</strong> Montmedy rd, Lorraine, Port Elizabeth</li>
+            <li><strong>Phone:</strong> 084 675 6959</li>
           </ul>
           <p className="mb-4">
             We will respond to your inquiry within 30 days as required by POPIA. For access requests, 
