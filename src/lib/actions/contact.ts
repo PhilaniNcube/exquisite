@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { Resend } from "resend";
+import admin from "@/collections/Users/access/admin";
 
 
 // Schema for homepage contact form (without date field)
@@ -123,7 +124,7 @@ export async function submitContactForm(data: ContactFormData) {
     const serviceName = serviceMap[validatedData.service] || validatedData.service;
 
     // Send email to admin
-    await resend.emails.send({
+    const adminEmail = await resend.emails.send({
       from: process.env.FROM_EMAIL || "hello@exquisitephotography.com",
       to: [process.env.FROM_EMAIL || "admin@exquisitephotography.com"],
       subject: `New Inquiry: ${serviceName} - ${validatedData.name}`,
@@ -158,7 +159,7 @@ export async function submitContactForm(data: ContactFormData) {
     });
 
     // Send confirmation email to customer
-    await resend.emails.send({
+    const confirmationEmail = await resend.emails.send({
       from: process.env.FROM_EMAIL || "noreply@athenamedia.co.za",
       to: [validatedData.email],
       subject: "Thank you for your inquiry - Exquisite Photography",
@@ -194,6 +195,8 @@ export async function submitContactForm(data: ContactFormData) {
         </div>
       `,
     });
+
+    console.log({adminEmail, confirmationEmail});
 
     return { success: true };
   } catch (error) {
