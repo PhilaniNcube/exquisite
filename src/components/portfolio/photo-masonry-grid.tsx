@@ -170,7 +170,7 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
               <div className="relative w-full h-full flex items-center justify-center p-12">
                 {isImageLoading && (
                   <div className="absolute inset-0 flex items-center justify-center z-50">
-                    <Loader2 className="h-10 w-10 animate-spin text-white" />
+                    <Loader2 className="h-10 w-10 animate-spin text-slate-500" />
                   </div>
                 )}
                 <Image
