@@ -92,7 +92,7 @@ export function ContactSection() {
             </h3>
             <div className="space-y-6 mb-8">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center shrink-0">
                   <Phone className="h-5 w-5" />
                 </div>
                 <div>
@@ -101,7 +101,7 @@ export function ContactSection() {
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center shrink-0">
                   <Mail className="h-5 w-5" />
                 </div>
                 <div>

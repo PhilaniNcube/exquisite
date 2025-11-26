@@ -26,7 +26,7 @@ export function AboutSection() {
                   <Award className="h-6 w-6" />
                 </div>
                 <h3 className="font-semibold text-foreground mb-1">Professional</h3>
-                <p className="text-sm text-muted-foreground">Award-winning quality</p>
+                <p className="text-sm text-muted-foreground">Quality work</p>
               </div>
               <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
                 <div className="w-12 h-12 rounded-full bg-accent/10 text-accent flex items-center justify-center mb-3">
@@ -44,7 +44,6 @@ export function AboutSection() {
               </div>
             </div>
 
-            <Button size="lg">Learn More About Us</Button>
           </div>
 
           <div className="relative">

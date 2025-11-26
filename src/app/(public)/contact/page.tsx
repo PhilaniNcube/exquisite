@@ -65,7 +65,9 @@ export default function ContactPage() {
         );
         form.reset();
       } else {
-        toast.error(result.error || "Failed to send message. Please try again.");
+        toast.error(
+          result.error || "Failed to send message. Please try again."
+        );
       }
     } catch (error) {
       console.error("Error submitting contact form:", error);
@@ -95,10 +97,10 @@ export default function ContactPage() {
       {/* Contact Information Cards */}
       <section className="py-12 md:py-16 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             <div className="bg-card border border-border rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
               <div className="w-14 h-14 rounded-full bg-accent/10 text-accent flex items-center justify-center mx-auto mb-4">
-                <Phone className="h-6 w-6" />
+                <Phone className="h-6 w-6 text-slate-600" />
               </div>
               <h3 className="font-semibold text-foreground mb-2">Phone</h3>
               <p className="text-muted-foreground text-sm">
@@ -108,7 +110,7 @@ export default function ContactPage() {
 
             <div className="bg-card border border-border rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
               <div className="w-14 h-14 rounded-full bg-accent/10 text-accent flex items-center justify-center mx-auto mb-4">
-                <Mail className="h-6 w-6" />
+                <Mail className="h-6 w-6 text-slate-600" />
               </div>
               <h3 className="font-semibold text-foreground mb-2">Email</h3>
               <p className="text-muted-foreground text-sm">
@@ -118,21 +120,17 @@ export default function ContactPage() {
 
             <div className="bg-card border border-border rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
               <div className="w-14 h-14 rounded-full bg-accent/10 text-accent flex items-center justify-center mx-auto mb-4">
-                <MapPin className="h-6 w-6" />
+                <MapPin className="h-6 w-6 text-slate-600" />
               </div>
-              <h3 className="font-semibold text-foreground mb-2">Service Area</h3>
+              <h3 className="font-semibold text-foreground mb-2">
+                Service Area
+              </h3>
               <p className="text-muted-foreground text-sm">
-                Cape Town & Surrounding Areas
+                Port Elizabeth & Surrounding Areas
               </p>
             </div>
 
-            <div className="bg-card border border-border rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="w-14 h-14 rounded-full bg-accent/10 text-accent flex items-center justify-center mx-auto mb-4">
-                <Clock className="h-6 w-6" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-2">Hours</h3>
-              <p className="text-muted-foreground text-sm">Mon-Sat: 9AM-6PM</p>
-            </div>
+      
           </div>
         </div>
       </section>
@@ -178,7 +176,10 @@ export default function ContactPage() {
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input placeholder="+27 (0) 123 456 789" {...field} />
+                            <Input
+                              placeholder="+27 (0) 123 456 789"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -193,7 +194,10 @@ export default function ContactPage() {
                       <FormItem>
                         <FormLabel>Email Address *</FormLabel>
                         <FormControl>
-                          <Input placeholder="your.email@example.com" {...field} />
+                          <Input
+                            placeholder="your.email@example.com"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -228,7 +232,9 @@ export default function ContactPage() {
                               <SelectItem value="families">
                                 Families & Couples
                               </SelectItem>
-                              <SelectItem value="portraits">Portraits</SelectItem>
+                              <SelectItem value="portraits">
+                                Portraits
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -289,9 +295,8 @@ export default function ContactPage() {
                   On-Location Photography
                 </h2>
                 <p className="text-muted-foreground mb-6">
-                  We bring our professional equipment and expertise directly to you. 
-                  Whether it&apos;s your home, venue, outdoor location, or any meaningful 
-                  place, we create beautiful photographs in the comfort of your chosen setting.
+                  We bring our professional equipment and expertise directly to
+                  you.
                 </p>
 
                 <div className="aspect-video rounded-lg overflow-hidden shadow-lg mb-6">
@@ -311,7 +316,7 @@ export default function ContactPage() {
                         Service Area
                       </h4>
                       <p className="text-muted-foreground text-sm">
-                        Cape Town & Surrounding Areas
+                        Port Elizabeth & Surrounding Areas
                         <br />
                         On-location photography services
                         <br />
@@ -327,11 +332,7 @@ export default function ContactPage() {
                         Availability
                       </h4>
                       <p className="text-muted-foreground text-sm">
-                        Monday - Friday: 9:00 AM - 6:00 PM
-                        <br />
-                        Saturday: 10:00 AM - 4:00 PM
-                        <br />
-                        Sunday & Evenings: By Appointment
+                        Please contact us to discuss your preferred dates and times.
                       </p>
                     </div>
                   </div>
@@ -346,10 +347,7 @@ export default function ContactPage() {
                   We typically respond to all inquiries within 24 hours. For
                   urgent bookings or questions, please call us directly.
                 </p>
-                <Button variant="outline" className="w-full bg-transparent">
-                  <Phone className="h-4 w-4 mr-2" />
-                  Call Now
-                </Button>
+               
               </div>
             </div>
           </div>
