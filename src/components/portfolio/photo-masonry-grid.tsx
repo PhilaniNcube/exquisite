@@ -103,12 +103,12 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                   <Image
                     src={photo.image.url}
                     alt={photo.image.alt || photo.title || 'Photo'}
-                    width={(photo.image.width ?? 4000)/15}
-                    height={(photo.image.height ?? 6000)/15}
+                    width={(photo.image.width ? photo.image.width/15 : 4000)/20}
+                    height={(photo.image.height ? photo.image.height/15 : 6000)/20}
                     quality={100}
                     className='w-full h-auto group-hover:scale-105 transition-transform duration-300'
                     placeholder="blur"
-                    blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(((photo.image.width ?? 4000)/15), ((photo.image.height ?? 6000)/15)))}`}
+                    blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(((photo.image.width ?? 4000)/20), ((photo.image.height ?? 6000)/20)))}`}
                   />
                 )}
               </div>
@@ -119,7 +119,7 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
 
       {/* Lightbox Modal */}
       <Dialog open={isModalOpen} onOpenChange={closeModal}>
-        <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full p-0 border-none bg-black/95">
+        <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full p-0 border-none ">
           <DialogTitle className="sr-only">
             {/* {currentPhoto?.title || 'Photo Gallery'} */}
           </DialogTitle>
@@ -172,8 +172,8 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                 <Image
                   src={currentPhoto.image.url}
                   alt={currentPhoto.image.alt || currentPhoto.title || 'Photo'}
-                  width={currentPhoto.image.width || 800}
-                  height={currentPhoto.image.height || 600}
+                  width={currentPhoto.image.width ? currentPhoto.image.width/8 : 800}
+                  height={currentPhoto.image.height ? currentPhoto.image.height/8 : 600}
                   className="max-w-full max-h-full object-contain"
                   priority
                   placeholder="blur"
