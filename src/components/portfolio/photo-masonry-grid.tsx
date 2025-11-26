@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { Photo } from '@/payload-types'
-import React, { useState, useEffect, useCallback } from 'react'
-import Image from 'next/image'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight, X, Loader2 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Photo } from "@/payload-types";
+import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
+const PhotoMasonryGrid = ({ photos }: { photos: Photo[] }) => {
   // Simple SVG shimmer placeholder for blurDataURL
   const shimmer = (w: number, h: number) => `
     <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -23,99 +23,111 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
       <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
       <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite"  />
     </svg>
-  `
+  `;
 
   const toBase64 = (str: string) =>
-    typeof window === 'undefined'
-      ? Buffer.from(str).toString('base64')
-      : window.btoa(str)
+    typeof window === "undefined"
+      ? Buffer.from(str).toString("base64")
+      : window.btoa(str);
 
-  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isImageLoading, setIsImageLoading] = useState(true)
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
+    null
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(true);
 
   useEffect(() => {
-    setIsImageLoading(true)
-  }, [selectedPhotoIndex])
+    setIsImageLoading(true);
+  }, [selectedPhotoIndex]);
 
   const openModal = (index: number) => {
-    setSelectedPhotoIndex(index)
-    setIsModalOpen(true)
-  }
+    setSelectedPhotoIndex(index);
+    setIsModalOpen(true);
+  };
 
   const closeModal = useCallback(() => {
-    setIsModalOpen(false)
-    setSelectedPhotoIndex(null)
-  }, [])
+    setIsModalOpen(false);
+    setSelectedPhotoIndex(null);
+  }, []);
 
   const goToNext = useCallback(() => {
     if (selectedPhotoIndex !== null && selectedPhotoIndex < photos.length - 1) {
-      setSelectedPhotoIndex(selectedPhotoIndex + 1)
+      setSelectedPhotoIndex(selectedPhotoIndex + 1);
     }
-  }, [selectedPhotoIndex, photos.length])
+  }, [selectedPhotoIndex, photos.length]);
 
   const goToPrevious = useCallback(() => {
     if (selectedPhotoIndex !== null && selectedPhotoIndex > 0) {
-      setSelectedPhotoIndex(selectedPhotoIndex - 1)
+      setSelectedPhotoIndex(selectedPhotoIndex - 1);
     }
-  }, [selectedPhotoIndex])
+  }, [selectedPhotoIndex]);
 
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isModalOpen || selectedPhotoIndex === null) return
+      if (!isModalOpen || selectedPhotoIndex === null) return;
 
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault()
-        goToPrevious()
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault()
-        goToNext()
-      } else if (e.key === 'Escape') {
-        e.preventDefault()
-        closeModal()
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        goToPrevious();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        goToNext();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        closeModal();
       }
-    }
+    };
 
     if (isModalOpen) {
-      document.addEventListener('keydown', handleKeyDown)
+      document.addEventListener("keydown", handleKeyDown);
       // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = 'unset'
-    }
-  }, [isModalOpen, selectedPhotoIndex, goToNext, goToPrevious, closeModal])
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "unset";
+    };
+  }, [isModalOpen, selectedPhotoIndex, goToNext, goToPrevious, closeModal]);
 
-  const canGoNext = selectedPhotoIndex !== null && selectedPhotoIndex < photos.length - 1
-  const canGoPrevious = selectedPhotoIndex !== null && selectedPhotoIndex > 0
-  const currentPhoto = selectedPhotoIndex !== null ? photos[selectedPhotoIndex] : null
+  const canGoNext =
+    selectedPhotoIndex !== null && selectedPhotoIndex < photos.length - 1;
+  const canGoPrevious = selectedPhotoIndex !== null && selectedPhotoIndex > 0;
+  const currentPhoto =
+    selectedPhotoIndex !== null ? photos[selectedPhotoIndex] : null;
 
   return (
     <>
-      <div className='container mx-auto py-12 px-4'>
-        <div className='columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4'>
+      <div className="container mx-auto py-12 px-4">
+        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
           {photos.map((photo, index) => (
             <div
               key={photo.id}
               onClick={() => openModal(index)}
-              className='break-inside-avoid cursor-pointer group mb-4 block'
+              className="break-inside-avoid cursor-pointer group mb-4 block"
             >
-              <div className='relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300'>
-                {typeof photo.image === 'object' && photo.image?.url && (
+              <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                {typeof photo.image === "object" && photo.image?.url && (
                   <Image
-                    src={(photo.image as any).sizes?.card?.url || photo.image.sizes?.card?.url}
-                    alt={photo.image.alt || photo.title || 'Photo'}
+                    src={
+                      (photo.image as any).sizes?.card?.url ||
+                      photo.image.sizes?.card?.url
+                    }
+                    alt={photo.image.alt || photo.title || "Photo"}
                     width={500}
                     height={500}
                     quality={80}
                     sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     priority={index < 8}
-                    className='w-full h-auto group-hover:scale-105 transition-transform duration-300'
+                    className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
                     placeholder="blur"
-                    blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(((photo.image.width ?? 4000)/20), ((photo.image.height ?? 6000)/20)))}`}
+                    blurDataURL={`data:image/svg+xml;base64,${toBase64(
+                      shimmer(
+                        (photo.image.width ?? 4000) / 20,
+                        (photo.image.height ?? 6000) / 20
+                      )
+                    )}`}
                   />
                 )}
               </div>
@@ -130,14 +142,12 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
           <DialogTitle className="sr-only">
             {/* {currentPhoto?.title || 'Photo Gallery'} */}
           </DialogTitle>
-          
+
           <div className="relative w-full h-full flex items-center justify-center">
             {/* Close button */}
-       
 
             {/* Previous button */}
             <Button
-              variant="ghost"
               size="icon"
               onClick={goToPrevious}
               disabled={!canGoPrevious}
@@ -152,7 +162,6 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
 
             {/* Next button */}
             <Button
-              variant="ghost"
               size="icon"
               onClick={goToNext}
               disabled={!canGoNext}
@@ -166,26 +175,46 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
             </Button>
 
             {/* Main image */}
-            {currentPhoto && typeof currentPhoto.image === 'object' && currentPhoto.image?.url && (
-              <div className="relative w-full h-full flex items-center justify-center p-12">
-                {isImageLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center z-50">
-                    <Loader2 className="h-10 w-10 animate-spin text-slate-500" />
-                  </div>
-                )}
-                <Image
-                  src={currentPhoto.image.sizes?.card?.url || currentPhoto.image.url}
-                  alt={currentPhoto.image.alt || currentPhoto.title || 'Photo'}
-                  width={currentPhoto.image.width ? currentPhoto.image.width/2 : 800}
-                  height={currentPhoto.image.height ? currentPhoto.image.height/2 : 600}
-                  className="max-w-full max-h-full object-contain"
-                  priority
-                  onLoad={() => setIsImageLoading(false)}
-                  placeholder="blur"
-                  blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer((currentPhoto.image.width || 800), (currentPhoto.image.height || 600)))}`}
-                />
-              </div>
-            )}
+            {currentPhoto &&
+              typeof currentPhoto.image === "object" &&
+              currentPhoto.image?.url && (
+                <div className="relative w-full h-full flex items-center justify-center">
+                  {isImageLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center z-50">
+                      <Loader2 className="h-10 w-10 animate-spin text-slate-500" />
+                    </div>
+                  )}
+                  <Image
+                    src={
+                      currentPhoto.image.sizes?.card?.url ||
+                      currentPhoto.image.url
+                    }
+                    alt={
+                      currentPhoto.image.alt || currentPhoto.title || "Photo"
+                    }
+                    width={
+                      currentPhoto.image.width
+                        ? currentPhoto.image.width / 2
+                        : 800
+                    }
+                    height={
+                      currentPhoto.image.height
+                        ? currentPhoto.image.height / 2
+                        : 600
+                    }
+                    className="max-w-full max-h-full object-contain"
+                    priority
+                    onLoad={() => setIsImageLoading(false)}
+                    placeholder="blur"
+                    blurDataURL={`data:image/svg+xml;base64,${toBase64(
+                      shimmer(
+                        currentPhoto.image.width || 800,
+                        currentPhoto.image.height || 600
+                      )
+                    )}`}
+                  />
+                </div>
+              )}
 
             {/* Photo counter */}
             {selectedPhotoIndex !== null && (
@@ -193,13 +222,11 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                 {selectedPhotoIndex + 1} of {photos.length}
               </div>
             )}
-
-           
           </div>
         </DialogContent>
       </Dialog>
     </>
-  )
-}
+  );
+};
 
-export default PhotoMasonryGrid
+export default PhotoMasonryGrid;
