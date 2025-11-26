@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   });
 
 
-  const model = "gemini-2.5-flash-image";
+  const model = "gemini-3-pro-image-preview";
 
   const contents = [
     {
