@@ -33,16 +33,20 @@ const PhotoContent = async ({ id }: { id: string }) => {
   }
 }
 
-export default async function PhotoModal({
+const PhotoContentWrapper = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
+  return <PhotoContent id={id} />;
+}
+
+export default function PhotoModal({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
   return (
     <Modal>
       <Suspense fallback={<div className="flex justify-center items-center h-full">Loading photo...</div>}>
-        <PhotoContent id={id} />
+        <PhotoContentWrapper params={params} />
       </Suspense>
     </Modal>
   )
