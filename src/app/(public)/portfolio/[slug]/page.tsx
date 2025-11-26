@@ -6,8 +6,8 @@ import React, { Suspense } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 
 // Component to handle both params resolution and data fetching
-const PhotosContent = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  const { slug } = await params;
+const PhotosContent = async ({ slug }: { slug: string }) => {
+  "use cache"
   const { docs: photos } = await getCategoryPhotosBySlug(slug);
   return <PhotoMasonryGrid photos={photos} />;
 }
@@ -24,11 +24,10 @@ const PhotosLoading = () => (
 )
 
 // Category hero with data fetching
-const CategoryHeroContent = async ({ params }: { params: Promise<{ slug: string }> }) => {
+const CategoryHeroContent = async ({ slug }: { slug: string }) => {
   "use cache"
 
 
-  const { slug } = await params
   const { docs } = await getCategoryBySlug(slug)
   const category = docs?.[0]
   if (!category) return null
@@ -41,14 +40,25 @@ const HeroLoading = () => (
   </div>
 )
 
+const PhotosContainer = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params
+  return <PhotosContent slug={slug} />
+}
+
+const CategoryHeroContainer = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params
+  return <CategoryHeroContent slug={slug} />
+}
+
 const CategoryPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  "use cache"
   return (
     <div className="">
-        <CategoryHeroContent params={params} />
+      <Suspense fallback={<HeroLoading />}>
+        <CategoryHeroContainer params={params} />
+      </Suspense>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
         <Suspense fallback={<PhotosLoading />}>
-          <PhotosContent params={params} />
+          <PhotosContainer params={params} />
         </Suspense>
       </div>
     </div>
