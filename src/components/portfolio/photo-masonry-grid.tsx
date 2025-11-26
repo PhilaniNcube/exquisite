@@ -5,7 +5,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
@@ -32,6 +32,11 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
 
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isImageLoading, setIsImageLoading] = useState(true)
+
+  useEffect(() => {
+    setIsImageLoading(true)
+  }, [selectedPhotoIndex])
 
   const openModal = (index: number) => {
     setSelectedPhotoIndex(index)
@@ -103,9 +108,11 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                   <Image
                     src={photo.image.url}
                     alt={photo.image.alt || photo.title || 'Photo'}
-                    width={(photo.image.width ? photo.image.width/2 : 4000)/20}
-                    height={(photo.image.height ? photo.image.height/2 : 6000)/20}
-                    quality={100}
+                    width={500}
+                    height={500}
+                    quality={75}
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    priority={index < 8}
                     className='w-full h-auto group-hover:scale-105 transition-transform duration-300'
                     placeholder="blur"
                     blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(((photo.image.width ?? 4000)/20), ((photo.image.height ?? 6000)/20)))}`}
@@ -126,15 +133,7 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
           
           <div className="relative w-full h-full flex items-center justify-center">
             {/* Close button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={closeModal}
-              className="absolute top-4 right-4 z-10 text-white hover:bg-white/20 h-10 w-10"
-            >
-              <X className="h-6 w-6" />
-              <span className="sr-only">Close</span>
-            </Button>
+       
 
             {/* Previous button */}
             <Button
@@ -169,6 +168,11 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
             {/* Main image */}
             {currentPhoto && typeof currentPhoto.image === 'object' && currentPhoto.image?.url && (
               <div className="relative w-full h-full flex items-center justify-center p-12">
+                {isImageLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center z-50">
+                    <Loader2 className="h-10 w-10 animate-spin text-white" />
+                  </div>
+                )}
                 <Image
                   src={currentPhoto.image.url}
                   alt={currentPhoto.image.alt || currentPhoto.title || 'Photo'}
@@ -176,6 +180,7 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                   height={currentPhoto.image.height ? currentPhoto.image.height/2 : 600}
                   className="max-w-full max-h-full object-contain"
                   priority
+                  onLoad={() => setIsImageLoading(false)}
                   placeholder="blur"
                   blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer((currentPhoto.image.width || 800), (currentPhoto.image.height || 600)))}`}
                 />
@@ -189,14 +194,7 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
               </div>
             )}
 
-            {/* Photo title (if available) */}
-            {currentPhoto?.title && (
-              <div className="absolute top-16 left-4 right-4 text-center">
-                <h2 className="text-white text-lg font-medium truncate">
-                  {currentPhoto.title}
-                </h2>
-              </div>
-            )}
+           
           </div>
         </DialogContent>
       </Dialog>
