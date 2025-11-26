@@ -10,6 +10,7 @@
 
     "start": "next start",
     "lint": "eslint",
+    "regenerate-media": "node --env-file=.env.local --import tsx/esm src/scripts/regenerate-media.ts",
     "payload": "node --import tsx/esm ./node_modules/payload/bin.js",
     "generate:types": "node --import tsx/esm ./node_modules/payload/bin.js generate:types"
   },

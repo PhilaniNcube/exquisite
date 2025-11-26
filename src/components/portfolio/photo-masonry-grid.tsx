@@ -106,7 +106,7 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
               <div className='relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300'>
                 {typeof photo.image === 'object' && photo.image?.url && (
                   <Image
-                    src={photo.image.url}
+                    src={(photo.image as any).sizes?.card?.url || photo.image.url}
                     alt={photo.image.alt || photo.title || 'Photo'}
                     width={500}
                     height={500}
