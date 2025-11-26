@@ -53,7 +53,7 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "bg-background/95 backdrop-blur-sm shadow-sm"
-          : "bg-transparent"
+          : "bg-slate-50 shadow-lg"
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -81,7 +81,7 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
                     <Link href="/" passHref>
                       <span
                         className={cn(
-                          isScrolled ? "text-black" : "text-white",
+                          isScrolled ? "text-black" : "text-gray-900",
                           "font-medium"
                         )}
                       >
@@ -94,13 +94,13 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
                 <NavigationMenuItem>
                   <NavigationMenuTrigger
                     className={cn(
-                      isScrolled ? "text-black" : "text-white",
+                      isScrolled ? "text-black" : "text-gray-900",
                       "font-medium bg-transparent"
                     )}
                   >
                     <span
                       className={cn(
-                        isScrolled ? "text-black" : "text-white",
+                        isScrolled ? "text-black" : "text-gray-900",
                         "font-medium"
                       )}
                     >
@@ -133,7 +133,7 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
                     <Link href="/about" passHref>
                       <span
                         className={cn(
-                          isScrolled ? "text-black" : "text-white",
+                          isScrolled ? "text-black" : "text-gray-900",
                           "font-medium"
                         )}
                       >
@@ -150,7 +150,7 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
                   >
                     <Link href="/schools" passHref>
                       <span className={cn(
-                        isScrolled ? "text-black" : "text-white",
+                        isScrolled ? "text-black" : "text-gray-900",
                         "font-medium"
                       )}>
                       Schools
@@ -166,7 +166,7 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
                   >
                     <Link href="/contact" passHref>
                       <span className={cn(
-                        isScrolled ? "text-black" : "text-white",
+                        isScrolled ? "text-black" : "text-gray-900",
                         "font-medium "
                       )}>
                       Contact Us

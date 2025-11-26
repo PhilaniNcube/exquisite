@@ -29,13 +29,12 @@ export function HeroSection() {
             </span>
           </div>
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 text-balance">
-            Capturing Life&apos;s
+            Capturing Precious
             <br />
-            Precious Moments
+            School & Creche Moments
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto text-balance">
-            Professional on-location photography services for weddings, events, families,
-            and portraits - we come to you
+            Specialized photography for schools and creches. We capture the joy, growth, and milestones of every child with professional care.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link href="/portfolio">
