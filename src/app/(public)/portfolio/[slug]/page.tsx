@@ -41,7 +41,8 @@ const HeroLoading = () => (
   </div>
 )
 
-const CategoryPage = ({ params }: { params: Promise<{ slug: string }> }) => {
+const CategoryPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  "use cache"
   return (
     <div className="">
         <CategoryHeroContent params={params} />

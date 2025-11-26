@@ -103,8 +103,8 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                   <Image
                     src={photo.image.url}
                     alt={photo.image.alt || photo.title || 'Photo'}
-                    width={(photo.image.width ? photo.image.width/3 : 4000)/20}
-                    height={(photo.image.height ? photo.image.height/3 : 6000)/20}
+                    width={(photo.image.width ? photo.image.width/2 : 4000)/20}
+                    height={(photo.image.height ? photo.image.height/2 : 6000)/20}
                     quality={100}
                     className='w-full h-auto group-hover:scale-105 transition-transform duration-300'
                     placeholder="blur"
