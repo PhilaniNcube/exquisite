@@ -103,8 +103,8 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                   <Image
                     src={photo.image.url}
                     alt={photo.image.alt || photo.title || 'Photo'}
-                    width={(photo.image.width ? photo.image.width/15 : 4000)/20}
-                    height={(photo.image.height ? photo.image.height/15 : 6000)/20}
+                    width={(photo.image.width ? photo.image.width/3 : 4000)/20}
+                    height={(photo.image.height ? photo.image.height/3 : 6000)/20}
                     quality={100}
                     className='w-full h-auto group-hover:scale-105 transition-transform duration-300'
                     placeholder="blur"
@@ -172,8 +172,8 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                 <Image
                   src={currentPhoto.image.url}
                   alt={currentPhoto.image.alt || currentPhoto.title || 'Photo'}
-                  width={currentPhoto.image.width ? currentPhoto.image.width/8 : 800}
-                  height={currentPhoto.image.height ? currentPhoto.image.height/8 : 600}
+                  width={currentPhoto.image.width ? currentPhoto.image.width/2 : 800}
+                  height={currentPhoto.image.height ? currentPhoto.image.height/2 : 600}
                   className="max-w-full max-h-full object-contain"
                   priority
                   placeholder="blur"
