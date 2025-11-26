@@ -64,7 +64,7 @@ const SchoolPage = ({
   searchParams: Promise<{pass_code?: string}>;
 }) => {
   return (
-    <Suspense fallback={<div>Loading school...</div>}>
+    <Suspense fallback={<div className='min-h-screen flex items-center justify-center'>Loading school...</div>}>
       <SchoolContent params={params} searchParams={searchParams} />
     </Suspense>
   );
