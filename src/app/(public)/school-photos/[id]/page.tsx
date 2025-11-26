@@ -23,12 +23,9 @@ const SchoolPhotoContent = async ({ params }: { params: Promise<{ id: string }> 
     <>
       <header className="mb-8 md:mb-12">
         <h1 className="text-4xl md:text-5xl font-bold text-balance mb-3">
-          Your School Photo
+          {schoolPhoto?.name || "School Photo"}
         </h1>
-        <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
-          View your school photo and order beautiful prints to share with
-          family and friends
-        </p>
+        
       </header>
       <div className="grid lg:grid-cols-[400px_1fr] gap-8 lg:gap-12 mb-12">
         <div className="lg:sticky lg:top-8 lg:self-start">
@@ -48,7 +45,7 @@ const SchoolPhotoContent = async ({ params }: { params: Promise<{ id: string }> 
 const SchoolPhoto = ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <main className="min-h-screen">
-      <div className="container mx-auto px-4 lg:px-8 py-24 lg:py-32">
+      <div className="container max-w-7xl mx-auto px-4 lg:px-8 py-24 lg:py-32">
         <Suspense fallback={<div>Loading school photo...</div>}>
           <SchoolPhotoContent params={params} />
         </Suspense>

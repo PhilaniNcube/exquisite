@@ -2,12 +2,13 @@
 
 import { SchoolPhoto, Class } from "@/payload-types";
 import Image from "next/image";
-import { Card } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {  Camera } from "lucide-react";
+import { Camera } from "lucide-react";
 import { useState, useMemo } from "react";
 import PhotoModal from "./photo-modal";
 import PhotoFilters from "./photo-filters";
+import Link from "next/link";
 
 interface SchoolPhotosGalleryProps {
   photos: SchoolPhoto[];
@@ -116,9 +117,14 @@ const SchoolPhotosGallery = ({
             <Card
               key={photo.id}
               className="group overflow-hidden hover:shadow-lg transition-all duration-300 relative p-0 cursor-pointer"
-              onClick={() => handlePhotoClick(photo)}
             >
-              <div className="aspect-square relative overflow-hidden">
+              <Link
+                href={`/school-photos/${photo.id}`}
+                className="aspect-square relative overflow-hidden"
+              >
+                <CardTitle className="sr-only">
+                  {photo.name|| "School Photo"}
+                </CardTitle>
                 {photo.photo && typeof photo.photo === "object" && (
                   <Image
                     src={photo.photo.url || ""}
@@ -129,18 +135,10 @@ const SchoolPhotosGallery = ({
                 )}
 
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
 
                 {/* Photo details overlay */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  {photo.photo &&
-                    typeof photo.photo === "object" &&
-                    photo.photo.alt && (
-                      <h4 className="font-medium mb-2 line-clamp-2 text-sm">
-                        {photo.photo.alt}
-                      </h4>
-                    )}
-
                   <div className="flex flex-wrap gap-2">
                     {photo.schoolDetails &&
                       typeof photo.schoolDetails.class === "object" &&
@@ -154,17 +152,11 @@ const SchoolPhotosGallery = ({
                       )}
                   </div>
                 </div>
-              </div>
+              </Link>
             </Card>
           ))}
         </div>
       )}
-
-      <PhotoModal
-        photo={selectedPhoto}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
     </div>
   );
 };
