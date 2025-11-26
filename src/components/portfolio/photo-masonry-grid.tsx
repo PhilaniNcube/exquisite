@@ -138,7 +138,7 @@ const PhotoMasonryGrid = ({ photos }: { photos: Photo[] }) => {
 
       {/* Lightbox Modal */}
       <Dialog open={isModalOpen} onOpenChange={closeModal}>
-        <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full p-0 border-none ">
+        <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full p-0 border-none overflow-hidden">
           <DialogTitle className="sr-only">
             {/* {currentPhoto?.title || 'Photo Gallery'} */}
           </DialogTitle>
