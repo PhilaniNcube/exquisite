@@ -25,6 +25,7 @@ const PhotosLoading = () => (
 
 // Category hero with data fetching
 const CategoryHeroContent = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  "use cache"
 
 
   const { slug } = await params
@@ -43,9 +44,7 @@ const HeroLoading = () => (
 const CategoryPage = ({ params }: { params: Promise<{ slug: string }> }) => {
   return (
     <div className="">
-      <Suspense fallback={<HeroLoading />}>
         <CategoryHeroContent params={params} />
-      </Suspense>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
         <Suspense fallback={<PhotosLoading />}>
           <PhotosContent params={params} />
