@@ -106,11 +106,11 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
               <div className='relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300'>
                 {typeof photo.image === 'object' && photo.image?.url && (
                   <Image
-                    src={(photo.image as any).sizes?.card?.url || photo.image.url}
+                    src={(photo.image as any).sizes?.card?.url || photo.image.sizes?.card?.url}
                     alt={photo.image.alt || photo.title || 'Photo'}
                     width={500}
                     height={500}
-                    quality={75}
+                    quality={80}
                     sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     priority={index < 8}
                     className='w-full h-auto group-hover:scale-105 transition-transform duration-300'
@@ -174,7 +174,7 @@ const PhotoMasonryGrid = ({photos}:{photos:Photo[]}) => {
                   </div>
                 )}
                 <Image
-                  src={currentPhoto.image.url}
+                  src={currentPhoto.image.sizes?.card?.url || currentPhoto.image.url}
                   alt={currentPhoto.image.alt || currentPhoto.title || 'Photo'}
                   width={currentPhoto.image.width ? currentPhoto.image.width/2 : 800}
                   height={currentPhoto.image.height ? currentPhoto.image.height/2 : 600}
