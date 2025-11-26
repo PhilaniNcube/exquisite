@@ -4,7 +4,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   cacheComponents: true, // Enable Cache Components 
   typedRoutes: true,
-
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
   images: {
     qualities: [25, 50, 70, 75, 80, 85, 90, 95, 100],
     remotePatterns: [
