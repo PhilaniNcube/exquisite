@@ -33,6 +33,13 @@ export const metadata: Metadata = {
       "Capturing moments with elegance and precision. Explore our portfolio and services.",
     url: "https://exquisitephoto.co.za",
     siteName: "Exquisite Photography",
+    type: "website",
+    locale: "en_ZA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Exquisite Photography",
+    description: "Capturing moments with elegance and precision. Explore our portfolio and services.",
   },
 };
 
