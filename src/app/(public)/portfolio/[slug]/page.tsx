@@ -1,8 +1,6 @@
 import PhotoMasonryGrid from "@/components/portfolio/photo-masonry-grid";
-import CategoryHero from "@/components/portfolio/category-hero";
 import { getCategoryPhotosBySlug } from "@/lib/queries/photos";
-import { getCategoryBySlug } from "@/lib/queries/categories";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import CategoryHeroContent from "../_components/category-hero-content";
 
