@@ -1,16 +1,17 @@
-import PhotoMasonryGrid from '@/components/portfolio/photo-masonry-grid';
-import CategoryHero from '@/components/portfolio/category-hero';
-import { getCategoryPhotosBySlug } from '@/lib/queries/photos';
-import { getCategoryBySlug } from '@/lib/queries/categories';
-import React, { Suspense } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
+import PhotoMasonryGrid from "@/components/portfolio/photo-masonry-grid";
+import CategoryHero from "@/components/portfolio/category-hero";
+import { getCategoryPhotosBySlug } from "@/lib/queries/photos";
+import { getCategoryBySlug } from "@/lib/queries/categories";
+import React, { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import CategoryHeroContent from "../_components/category-hero-content";
 
 // Component to handle both params resolution and data fetching
 const PhotosContent = async ({ slug }: { slug: string }) => {
-  "use cache"
+  "use cache";
   const { docs: photos } = await getCategoryPhotosBySlug(slug);
   return <PhotoMasonryGrid photos={photos} />;
-}
+};
 
 // Loading component for suspense fallback
 const PhotosLoading = () => (
@@ -21,48 +22,43 @@ const PhotosLoading = () => (
       ))}
     </div>
   </div>
-)
+);
 
 // Category hero with data fetching
-const CategoryHeroContent = async ({ slug }: { slug: string }) => {
-  "use cache"
-
-
-  const { docs } = await getCategoryBySlug(slug)
-  const category = docs?.[0]
-  if (!category) return null
-  return <CategoryHero category={category} />
-}
 
 const HeroLoading = () => (
   <div className="relative w-full h-[55vh] max-h-[70vh] overflow-hidden">
     <div className="absolute inset-0 bg-muted" />
   </div>
-)
+);
 
-const PhotosContainer = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  const { slug } = await params
-  return <PhotosContent slug={slug} />
-}
+const PhotosContainer = async ({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) => {
+  const { slug } = await params;
+  return <PhotosContent slug={slug} />;
+};
 
-const CategoryHeroContainer = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  const { slug } = await params
-  return <CategoryHeroContent slug={slug} />
-}
-
-const CategoryPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+const CategoryPage = async ({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) => {
   return (
     <div className="">
       <Suspense fallback={<HeroLoading />}>
-        <CategoryHeroContainer params={params} />
+        <CategoryHeroContent params={params} />
       </Suspense>
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
         <Suspense fallback={<PhotosLoading />}>
           <PhotosContainer params={params} />
         </Suspense>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CategoryPage
+export default CategoryPage;
