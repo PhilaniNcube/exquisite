@@ -10,6 +10,31 @@ import { Footer } from "@/components/navigation/footer";
 import { CartProvider } from "@/components/providers/cart-provider";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
+
+
+export const metadata: Metadata = {
+  title: "Exquisite Photography",
+  description:
+    "Capturing moments with elegance and precision. Explore our portfolio and services.",
+  keywords: [
+    "Photography",
+    "Portfolio",
+    "Services",
+    "Exquisite Photography",
+    "Professional Photographer",  
+  ],
+  authors: [{ name: "Exquisite Photography", url: "https://exquisitephoto.co.za" }],
+  creator: "Exquisite Photography",
+  publisher: "Exquisite Photography",
+  openGraph: {
+    title: "Exquisite Photography",
+    description:
+      "Capturing moments with elegance and precision. Explore our portfolio and services.",
+    url: "https://exquisitephoto.co.za",
+    siteName: "Exquisite Photography",
+  },
+};
 
 const raleway = Raleway({
   variable: "--font-raleway",

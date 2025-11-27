@@ -1,6 +1,5 @@
-import { getCategories } from "@/lib/queries/categories";
+
 import { Metadata } from "next";
-import React from "react";
 import PortfolioGrid from "@/components/portfolio/protfolio-grid";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
