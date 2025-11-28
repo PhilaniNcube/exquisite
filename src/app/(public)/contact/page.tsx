@@ -80,7 +80,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 bg-linear-to-b from-accent/5 to-background">
+      <section className="relative pt-32 pb-10 md:pb-16 bg-linear-to-b from-accent/5 to-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 text-balance">
@@ -95,7 +95,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Information Cards */}
-      <section className="py-12 md:py-16 bg-background">
+      <section className="py-12 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             <div className="bg-card border border-border rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
@@ -136,7 +136,7 @@ export default function ContactPage() {
       </section>
 
       {/* Main Contact Section */}
-      <section className="py-20 md:py-32 bg-background">
+      <section className="py-16 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 max-w-6xl mx-auto">
             {/* Contact Form */}
@@ -299,14 +299,7 @@ export default function ContactPage() {
                   you.
                 </p>
 
-                <div className="aspect-video rounded-lg overflow-hidden shadow-lg mb-6">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/api/media/file/william-thomas.jpg"
-                    alt="Photographer working on location with professional equipment"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
+            
 
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
@@ -319,8 +312,7 @@ export default function ContactPage() {
                         Port Elizabeth & Surrounding Areas
                         <br />
                         On-location photography services
-                        <br />
-                        Travel to your preferred venue
+                     
                       </p>
                     </div>
                   </div>

@@ -129,7 +129,7 @@ export function ContactSection() {
             <div className="aspect-video rounded-lg overflow-hidden shadow-lg">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/api/media/file/equipment.jpg"
+                src="/images/help.jpg"
                 alt="Professional photography equipment ready for on-location shoot"
                 className="h-full w-full object-cover"
               />

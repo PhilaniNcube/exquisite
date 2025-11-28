@@ -107,7 +107,7 @@ export async function Footer() {
             <h4 className="font-semibold mb-4">Connect</h4>
             <div className="flex space-x-4">
               <a
-                href="https://www.facebook.com"
+                href="https://www.facebook.com/Photos2008"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
