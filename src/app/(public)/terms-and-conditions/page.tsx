@@ -404,8 +404,7 @@ const Terms = async () => {
           <h3 className="text-xl font-medium mb-3">8.2 Returns Process</h3>
           <ul className="list-disc pl-6 mb-4 space-y-2">
             <li>
-              Returns must be authorised within 30 days (6 months for defective
-              items)
+              Returns must be authorised within 7 days of delivery for eligible items
             </li>
             <li>
               Return Authorisation Number (RAN) required before returning items
@@ -511,7 +510,7 @@ const Terms = async () => {
             <li>Fair and honest dealings</li>
             <li>Fair and responsible marketing</li>
             <li>Protection from unfair contract terms</li>
-            <li>Return defective goods within 6 months</li>
+            <li>Return defective goods within 7 days</li>
             <li>Clear and accurate information about products and services</li>
           </ul>
           <p className="mb-4">

@@ -28,7 +28,7 @@ const Returns = async () => {
             <li>Were delivered damaged or in incorrect specifications</li>
           </ul>
           <p className="mt-4 text-sm text-gray-600">
-            You have up to 6 months from the date of delivery to return
+            You have up to 7 day from the date of delivery to return
             defective goods.
           </p>
         </section>
@@ -113,8 +113,8 @@ const Returns = async () => {
               <h3 className="text-lg font-medium mb-3">Step 1: Contact Us</h3>
               <p className="mb-3">
                 Contact our customer service team within{" "}
-                <strong>30 days</strong> of receiving your order (or up to 6
-                months for defective goods):
+                <strong>7 days</strong> of receiving your order (or up to 7
+                days for defective goods):
               </p>
               <ul className="list-disc pl-6 space-y-1">
                 <li>Email: {process.env.NEXT_PUBLIC_MAIN_EMAIL_ADDRESS}</li>
@@ -288,7 +288,7 @@ const Returns = async () => {
               <li>With all accessories and documentation included</li>
               <li>Unused and unaltered (unless returning due to defect)</li>
               <li>
-                Within 30 days of delivery (or 6 months for defective items)
+                Within 7 days of delivery (or 7 days for defective items)
               </li>
               <li>With Return Authorisation Number (RAN)</li>
             </ul>

@@ -33,7 +33,7 @@ const RefundPage = async () => {
             </p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Receive goods that are of good quality, in good working order, and free of defects</li>
-              <li>Return goods within 6 months if they fail to satisfy these requirements</li>
+              <li>Return goods within 7 days if they fail to satisfy these requirements</li>
               <li>A refund, replacement, or repair if goods are defective</li>
               <li>Clear and accurate information about the goods and services</li>
             </ul>
@@ -87,8 +87,8 @@ const RefundPage = async () => {
           <div className="bg-blue-50 p-6 rounded-lg mb-4">
             <h3 className="text-lg font-medium mb-3">Step 1: Contact Us</h3>
             <p className="mb-2">
-              Contact us within <strong>30 days</strong> of receiving your order
-              (you have up to 6 months for defective goods under the Consumer Protection Act) by:
+              Contact us within <strong>7 days</strong> of receiving your order
+              (you have up to 7 days for defective goods under the Consumer Protection Act) by:
             </p>
             <ul className="list-disc pl-6 space-y-1">
               <li>Email: {process.env.NEXT_PUBLIC_MAIN_EMAIL_ADDRESS}</li>
