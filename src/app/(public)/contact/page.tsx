@@ -104,7 +104,7 @@ export default function ContactPage() {
               </div>
               <h3 className="font-semibold text-foreground mb-2">Phone</h3>
               <p className="text-muted-foreground text-sm">
-                +27 (0) 123 456 789
+                +27 (084) 675 6959
               </p>
             </div>
 
@@ -114,7 +114,7 @@ export default function ContactPage() {
               </div>
               <h3 className="font-semibold text-foreground mb-2">Email</h3>
               <p className="text-muted-foreground text-sm">
-                hello@exquisitephoto.co.za
+                este@exquisitephoto.co.za
               </p>
             </div>
 

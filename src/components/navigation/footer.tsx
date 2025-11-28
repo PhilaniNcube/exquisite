@@ -104,7 +104,18 @@ export async function Footer() {
           </div>
 
           <div>
-          
+            <h4 className="font-semibold mb-4">Connect</h4>
+            <div className="flex space-x-4">
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook className="h-6 w-6" />
+              </a>
+            </div>
           </div>
         </div>
 

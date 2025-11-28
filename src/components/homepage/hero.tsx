@@ -12,7 +12,7 @@ export function Hero() {
             <div className="inline-flex items-center gap-2 bg-secondary px-4 py-2 rounded-full">
               <Heart className="h-4 w-4 text-accent" />
               <span className="text-sm font-medium text-secondary-foreground">
-                Capturing Childhood Magic
+                Capturing Magical Moments
               </span>
             </div>
 
@@ -24,7 +24,7 @@ export function Hero() {
             <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
               Professional school and crèche photography that captures the joy,
               innocence, and wonder of childhood. Every smile tells a story
-              worth preserving.
+              worth preserving. 
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">

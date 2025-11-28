@@ -97,7 +97,7 @@ export function ContactSection() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-foreground mb-1">Phone</h4>
-                  <p className="text-muted-foreground">+27 (0) 123 456 789</p>
+                  <p className="text-muted-foreground">+27 (084) 675 6959</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -120,7 +120,7 @@ export function ContactSection() {
                     Location
                   </h4>
                   <p className="text-muted-foreground">
-                    Cape Town, South Africa
+                    Port Elizabeth, South Africa
                   </p>
                 </div>
               </div>
