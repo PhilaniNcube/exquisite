@@ -585,7 +585,7 @@ const Terms = async () => {
             <li>
               Schools must obtain necessary parental consents for photography
             </li>
-            <li>Make-up days are provided for absent students</li>
+           
             <li>Weather-related cancellations will be rescheduled</li>
           </ul>
 
