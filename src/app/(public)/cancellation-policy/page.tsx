@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const Cancellation = () => {
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <div className="container mx-auto px-4 py-44 max-w-4xl">
       <h1 className="text-4xl font-bold mb-8">Cancellation Policy</h1>
 
       <div className="prose prose-slate max-w-none">
@@ -103,10 +103,7 @@ const Cancellation = () => {
               cancellation is requested before order enters production
               (typically within 24-48 hours of order placement)
             </li>
-            <li>
-              <strong>During production:</strong> 50% refund if production has
-              begun but order has not shipped
-            </li>
+           
             <li>
               <strong>After shipment:</strong> No cancellation available. Please
               refer to our{" "}

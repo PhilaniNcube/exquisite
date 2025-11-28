@@ -13,7 +13,7 @@ const Terms = async () => {
   "use cache";
   cacheLife("weeks");
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-36 max-w-4xl">
       <h1 className="text-4xl font-bold mb-8 text-center">
         Terms and Conditions
       </h1>
@@ -563,7 +563,7 @@ const Terms = async () => {
               Online galleries are password-protected and available for limited
               time periods
             </li>
-            <li>Gallery access typically expires after 30-90 days</li>
+            <li>Gallery access typically expires after 30 days</li>
             <li>
               Extended gallery hosting may be available for an additional fee
             </li>

@@ -5,7 +5,7 @@ const Returns = async () => {
   "use cache";
   cacheLife("hours");
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-36 max-w-4xl">
       <h1 className="text-4xl font-bold mb-8 text-center">Returns Policy</h1>
 
       <div className="prose prose-lg max-w-none">
