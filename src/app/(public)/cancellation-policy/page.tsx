@@ -75,10 +75,7 @@ const Cancellation = () => {
               rescheduled to the designated rain date or mutually agreed upon
               alternative date
             </li>
-            <li>
-              <strong>Individual student absences:</strong> Make-up day sessions
-              are typically provided at no extra charge
-            </li>
+      
           </ul>
         </section>
 
