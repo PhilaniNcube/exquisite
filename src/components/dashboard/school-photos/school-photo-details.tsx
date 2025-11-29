@@ -88,7 +88,7 @@ const SchoolPhotoDetails = async ({
                   {photo.photoType && (
                     <div className="flex justify-between py-1 border-b">
                       <span className="text-sm">Type</span>
-                      <Badge >{photo.photoType}</Badge>
+                      <p className="text-sm font-medium">{photo.photoType}</p>
                     </div>
                   )}
                   {photo.studentName && (
