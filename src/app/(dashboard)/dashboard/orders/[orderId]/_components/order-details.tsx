@@ -87,7 +87,7 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
               <div className="text-sm font-medium text-muted-foreground">
                 Total Amount
               </div>
-              <div className="text-sm font-bold text-lg">
+              <div className="font-bold text-lg">
                 {new Intl.NumberFormat("en-ZA", {
                   style: "currency",
                   currency: "ZAR",
@@ -117,7 +117,7 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
                 >
                   <div className="flex gap-4">
                     {productImage?.url && (
-                      <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border">
+                      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md border">
                         <Image
                           src={productImage.url}
                           alt={productImage.alt || product.title}
