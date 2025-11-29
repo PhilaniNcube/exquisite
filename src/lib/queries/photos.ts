@@ -12,6 +12,7 @@ export const getCategoryPhotos = async (categoryId: number) => {
   const photos = await payload.find({
     collection: "photos",
     where: { category: { equals: categoryId } },
+    limit: 100,
   });
   return photos;
 };
@@ -51,4 +52,18 @@ export const getPhotoById = async (id: number) => {
     id,
   });
   return photo;
+};
+
+export const getPhotos = async (page: number = 1, limit: number = 12) => {
+  "use cache";
+  cacheTag(`photos-page-${page}`);
+  cacheLife("hours");
+  const payload = await getPayload({ config });
+  const photos = await payload.find({
+    collection: "photos",
+    limit,
+    page,
+    depth: 1,
+  });
+  return photos;
 };

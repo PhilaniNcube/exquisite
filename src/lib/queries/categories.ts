@@ -21,3 +21,12 @@ export const getCategoryBySlug = async (slug: string) => {
   })
   return category
 }
+
+export const getCategoryById = async (id: number) => {
+  const payload = await getPayload({ config })
+  const category = await payload.findByID({
+    collection: 'categories',
+    id,
+  })
+  return category
+}

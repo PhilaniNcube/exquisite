@@ -63,6 +63,7 @@ export async function getSchoolPhotoById(id: string) {
   const photo = await payload.findByID({
     collection: "schoolPhotos",
     id: id,
+    depth: 2,
   });
   return photo;
 }

@@ -5,7 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { notFound } from "next/navigation";
 import { UploadButtons } from "@/components/dashboard/classes/upload-buttons";
 
 const ClassPage = async ({
