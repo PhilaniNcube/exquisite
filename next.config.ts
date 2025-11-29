@@ -2,6 +2,11 @@ import { withPayload } from '@payloadcms/next/withPayload'
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental:{
+    serverActions: {
+      bodySizeLimit: '20mb',
+    }
+  },
   cacheComponents: true, // Enable Cache Components 
   typedRoutes: true,
   logging: {

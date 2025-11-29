@@ -34,11 +34,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { createSchoolPhoto } from "@/lib/actions/photos"
+import { uploadMedia } from "@/lib/actions/media"
 import { Progress } from "@/components/ui/progress"
 
 const formSchema = z.object({
   photoType: z.enum(["Individual", "Class", "Sports", "Group"]),
-  files: z.instanceof(FileList).refine((files) => files.length > 0, "Files are required"),
+  files: z.any().refine((files) => files?.length > 0, "Files are required"),
 })
 
 export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoolId: number }) {
@@ -59,7 +60,7 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsUploading(true)
     setProgress(0)
-    const files = Array.from(values.files)
+    const files = Array.from(values.files as FileList)
     const totalFiles = files.length
     let successCount = 0
     let errorCount = 0
@@ -70,21 +71,18 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
       
       try {
         const formData = new FormData()
+        const altText = file.name.replace(/\.[^/.]+$/, "") || "Untitled"
+        formData.append("alt", altText)
         formData.append("file", file)
-        formData.append("alt", file.name)
 
         // 1. Upload to Media collection
-        const uploadRes = await fetch("/api/media", {
-          method: "POST",
-          body: formData,
-        })
+        const uploadRes = await uploadMedia(formData)
 
-        if (!uploadRes.ok) {
+        if (!uploadRes.success || !uploadRes.doc) {
           throw new Error(`Failed to upload image: ${file.name}`)
         }
 
-        const mediaData = await uploadRes.json()
-        const mediaId = mediaData.doc.id
+        const mediaId = uploadRes.doc.id
 
         // 2. Create School Photo entry
         const result = await createSchoolPhoto({

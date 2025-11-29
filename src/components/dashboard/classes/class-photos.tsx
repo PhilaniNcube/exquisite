@@ -2,6 +2,7 @@ import { getPayload } from "payload"
 import config from "@payload-config"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
+import { DeletePhotoButton } from "./delete-photo-button"
 
 export default async function ClassPhotos({
   params,
@@ -42,13 +43,14 @@ export default async function ClassPhotos({
               if (typeof media !== "object" || !media?.url) return null
               
               return (
-                <div key={photo.id} className="relative aspect-square rounded-md overflow-hidden border">
+                <div key={photo.id} className="relative aspect-square rounded-md overflow-hidden border group">
                   <Image
                     src={media.sizes?.thumbnail?.url || media.url}
                     alt={media.alt || photo.name}
                     fill
                     className="object-cover"
                   />
+                  <DeletePhotoButton photoId={photo.id} classId={id} />
                   <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 truncate">
                     {photo.name}
                   </div>

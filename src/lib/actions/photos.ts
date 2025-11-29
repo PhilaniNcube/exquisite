@@ -71,3 +71,18 @@ export async function createSchoolPhoto(
     }
   }
 }
+
+export async function deleteSchoolPhoto(id: number, classId: number) {
+  try {
+    const payload = await getPayload({ config })
+    await payload.delete({
+      collection: "schoolPhotos",
+      id,
+    })
+    revalidatePath(`/dashboard/classes/${classId}`)
+    return { success: true, message: "Photo deleted successfully" }
+  } catch (error) {
+    console.error("Failed to delete photo:", error)
+    return { success: false, message: "Failed to delete photo" }
+  }
+}
