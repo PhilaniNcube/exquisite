@@ -89,7 +89,7 @@ export function SchoolPhotosFilter({ schools, classes }: SchoolPhotosFilterProps
       </div>
 
       {(schoolId || classId) && (
-        <Button variant="ghost" onClick={clearFilters} className="mb-[2px]">
+        <Button variant="ghost" onClick={clearFilters} className="mb-0.5">
           <X className="h-4 w-4 mr-2" />
           Clear Filters
         </Button>

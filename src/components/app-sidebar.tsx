@@ -80,21 +80,21 @@ const data = {
     },
   ],
   gallery: [
-    {
-      title: "Client Galleries",
-      url: "/dashboard/client-galleries",
-      icon: Images,
-    },
+    // {
+    //   title: "Client Galleries",
+    //   url: "/dashboard/client-galleries",
+    //   icon: Images,
+    // },
     {
       title: "Photos",
       url: "/dashboard/photos",
       icon: Image,
     },
-    {
-      title: "Media",
-      url: "/dashboard/media",
-      icon: FileImage,
-    },
+    // {
+    //   title: "Media",
+    //   url: "/dashboard/media",
+    //   icon: FileImage,
+    // },
   ],
   system: [
     {
