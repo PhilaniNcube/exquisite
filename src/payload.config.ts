@@ -30,7 +30,7 @@ export default buildConfig({
     },
   },
   email: resendAdapter({
-    defaultFromAddress: "dev@athenamedia.co.za",
+    defaultFromAddress: "info@exquisitephoto.co.za",
     defaultFromName: "Exquisite Photography",
     apiKey: process.env.RESEND_API_KEY || "",
   }),

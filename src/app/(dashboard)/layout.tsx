@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/sidebar"
 import "../globals.css"
 import { Geist_Mono, Raleway } from "next/font/google"
+import { Suspense } from "react"
+import { AdminAuthButtons } from "@/components/dashboard/admin-auth-buttons"
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -56,6 +58,11 @@ export default function DashboardLayout({
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>
+                <div className="ml-auto flex items-center gap-2">
+                  <Suspense fallback={<div className="h-9 w-20 bg-muted animate-pulse rounded-md" />}>
+                    <AdminAuthButtons />
+                  </Suspense>
+                </div>
               </header>
               <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                 {children}

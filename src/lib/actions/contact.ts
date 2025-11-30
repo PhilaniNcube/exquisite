@@ -53,8 +53,8 @@ export async function sendContactEmail(prevState: unknown, formData: FormData) {
 
     // Send email to admin
     await resend.emails.send({
-      from: process.env.FROM_EMAIL || "hello@exquisitephotography.com",
-      to: [process.env.ADMIN_EMAIL || "admin@exquisitephotography.com"],
+      from: process.env.FROM_EMAIL || "hello@exquisitephoto.co.za",
+      to: [process.env.ADMIN_EMAIL || "admin@exquisitephoto.co.za"],
       subject: `Homepage Inquiry: ${serviceName} - ${validatedData.name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -125,8 +125,8 @@ export async function submitContactForm(data: ContactFormData) {
 
     // Send email to admin
     const adminEmail = await resend.emails.send({
-      from: process.env.FROM_EMAIL || "hello@exquisitephotography.com",
-      to: [process.env.FROM_EMAIL || "admin@exquisitephotography.com"],
+      from: process.env.FROM_EMAIL || "hello@exquisitephoto.co.za",
+      to: [process.env.FROM_EMAIL || "admin@exquisitephoto.co.za"],
       subject: `New Inquiry: ${serviceName} - ${validatedData.name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -160,7 +160,7 @@ export async function submitContactForm(data: ContactFormData) {
 
     // Send confirmation email to customer
     const confirmationEmail = await resend.emails.send({
-      from: process.env.FROM_EMAIL || "noreply@athenamedia.co.za",
+      from: process.env.FROM_EMAIL || "noreply@exquisitephoto.co.za",
       to: [validatedData.email],
       subject: "Thank you for your inquiry - Exquisite Photography",
       html: `
