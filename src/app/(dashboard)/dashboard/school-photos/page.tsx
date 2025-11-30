@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react'
 import { SchoolPhotosFilterWrapper } from '@/components/dashboard/school-photos/school-photos-filter-wrapper'
 import { SchoolPhotosList } from '@/components/dashboard/school-photos/photo-list'
+import { SchoolPhotosFilterSkeleton, SchoolPhotosListSkeleton } from '@/components/dashboard/school-photos/skeletons'
 
 export default function SchoolPhotosPage({
   searchParams,
@@ -13,11 +14,11 @@ export default function SchoolPhotosPage({
         <h1 className="text-3xl font-bold">School Photos</h1>
       </div>
 
-      <Suspense fallback={<div>Loading filters...</div>}>
+      <Suspense fallback={<SchoolPhotosFilterSkeleton />}>
         <SchoolPhotosFilterWrapper />
       </Suspense>
 
-      <Suspense fallback={<div>Loading photos...</div>}>
+      <Suspense fallback={<SchoolPhotosListSkeleton />}>
         <SchoolPhotosList searchParams={searchParams} />
       </Suspense>
     </div>
