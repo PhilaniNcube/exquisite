@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, Suspense } from "react"
 import { useFormStatus } from "react-dom"
 import { resetPassword } from "@/lib/actions/users"
 import { Button } from "@/components/ui/button"
@@ -27,7 +27,7 @@ function SubmitButton() {
   )
 }
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const [state, formAction] = useActionState(resetPassword, null)
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
@@ -86,5 +86,13 @@ export default function ResetPasswordPage() {
         </div>
       </CardFooter>
     </Card>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="w-full max-w-sm mx-auto p-4 text-center">Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   )
 }

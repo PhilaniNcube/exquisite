@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, Suspense } from "react"
 import { useFormStatus } from "react-dom"
 import { loginAdmin } from "@/lib/actions/users"
 import { Button } from "@/components/ui/button"
@@ -26,7 +26,7 @@ function SubmitButton() {
   )
 }
 
-export default function LoginPage() {
+function LoginForm() {
   const [state, formAction] = useActionState(loginAdmin, null)
 
   return (
@@ -73,5 +73,13 @@ export default function LoginPage() {
         </div>
       </CardFooter>
     </Card>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="w-full max-w-sm mx-auto p-4 text-center">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   )
 }

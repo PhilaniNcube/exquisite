@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, Suspense } from "react"
 import { useFormStatus } from "react-dom"
 import { forgotPassword } from "@/lib/actions/users"
 import { Button } from "@/components/ui/button"
@@ -26,7 +26,7 @@ function SubmitButton() {
   )
 }
 
-export default function ForgotPasswordPage() {
+function ForgotPasswordForm() {
   const [state, formAction] = useActionState(forgotPassword, null)
 
   return (
@@ -67,5 +67,13 @@ export default function ForgotPasswordPage() {
         </div>
       </CardFooter>
     </Card>
+  )
+}
+
+export default function ForgotPasswordPage() {
+  return (
+    <Suspense fallback={<div className="w-full max-w-sm mx-auto p-4 text-center">Loading...</div>}>
+      <ForgotPasswordForm />
+    </Suspense>
   )
 }

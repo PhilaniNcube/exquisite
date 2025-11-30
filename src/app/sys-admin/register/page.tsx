@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, Suspense } from "react"
 import { useFormStatus } from "react-dom"
 import { registerUser } from "@/lib/actions/users"
 import { Button } from "@/components/ui/button"
@@ -26,7 +26,7 @@ function SubmitButton() {
   )
 }
 
-export default function RegisterPage() {
+function RegisterForm() {
   const [state, formAction] = useActionState(registerUser, null)
 
   return (
@@ -89,5 +89,13 @@ export default function RegisterPage() {
         </div>
       </CardFooter>
     </Card>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="w-full max-w-sm mx-auto p-4 text-center">Loading...</div>}>
+      <RegisterForm />
+    </Suspense>
   )
 }
