@@ -17,7 +17,27 @@ export const Users: CollectionConfig = {
   admin: {
     useAsTitle: 'email',
   },
-  auth: true,
+  auth: {
+    forgotPassword: {
+      generateEmailHTML: (args) => {
+        const { token, user } = args || {}
+        const resetLink = `${process.env.NEXT_PUBLIC_SERVER_URL}/sys-admin/reset-password?token=${token}`
+        return `
+          <!doctype html>
+          <html>
+            <body>
+              <h1>Reset Password</h1>
+              <p>Hello ${(user as any).firstName},</p>
+              <p>Click below to reset your password:</p>
+              <p>
+                <a href="${resetLink}">${resetLink}</a>
+              </p>
+            </body>
+          </html>
+        `
+      },
+    },
+  },
   fields: [
     // Email added by default
     // Add more fields as needed

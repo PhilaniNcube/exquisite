@@ -23,6 +23,7 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 export default buildConfig({
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',
   admin: {
     user: Users.slug,
     importMap: {
@@ -33,6 +34,7 @@ export default buildConfig({
     defaultFromAddress: "info@exquisitephoto.co.za",
     defaultFromName: "Exquisite Photography",
     apiKey: process.env.RESEND_API_KEY || "",
+    
   }),
   collections: [
     Users,
