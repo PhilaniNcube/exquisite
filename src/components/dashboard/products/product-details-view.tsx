@@ -1,8 +1,10 @@
 import { getProductById } from "@/lib/queries/products";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import { notFound } from "next/navigation";
-import { formatPrice } from "@/lib/utils";
+import { UpdateProductTitle } from "./update-product-title";
+import { UpdateProductPrice } from "./update-product-price";
+import { UpdateProductImage } from "./update-product-image";
+import { UpdateProductDetails } from "./update-product-details";
+import type { Media } from "@/payload-types";
 
 export default async function ProductDetailsView({ productId }: { productId: string }) {
   const product = await getProductById(parseInt(productId));
@@ -12,27 +14,23 @@ export default async function ProductDetailsView({ productId }: { productId: str
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
-      <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
-        {typeof product.image !== "number" && product.image.url ? (
-          <Image
-            src={product.image.url}
-            alt={product.image.alt || product.title}
-            fill
-            className="object-cover"
-            priority
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground">
-            No image
-          </div>
-        )}
+    <div className="space-y-6">
+      <div className="grid gap-6 md:grid-cols-2">
+        <UpdateProductTitle
+          productId={product.id}
+          currentTitle={product.title}
+        />
+        <UpdateProductPrice
+          productId={product.id}
+          currentPrice={product.price}
+        />
       </div>
-      <div className="flex flex-col gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">{product.title}</h1>
-          <p className="text-2xl font-semibold mt-2">{formatPrice(product.price)}</p>
-        </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <UpdateProductImage
+          productId={product.id}
+          currentImage={product.image as Media}
+        />
        
       </div>
     </div>

@@ -40,7 +40,7 @@ export default async function ProductsTable({
                 {typeof product.image !== "number" && product.image.url && (
                   <div className="relative h-10 w-10 overflow-hidden rounded-md">
                     <Image
-                      src={product.image.url}
+                      src={product.image.url.replace(/^https?:\/\/[^\/]+/, '')}
                       alt={product.image.alt || product.title}
                       fill
                       className="object-cover"
