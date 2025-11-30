@@ -127,3 +127,62 @@ export async function uploadProductImage(formData: FormData) {
     return { success: false, error: "Failed to upload image" };
   }
 }
+
+export async function createProduct(data: {
+  title: string;
+  price: number;
+  imageId: number;
+  productDetails: string;
+}) {
+  try {
+    const payload = await getPayload({ config });
+
+    // Construct Lexical JSON from simple text
+    const productDetailsJSON = {
+      root: {
+        type: "root",
+        format: "" as const,
+        indent: 0,
+        version: 1,
+        children: [
+          {
+            type: "paragraph",
+            format: "" as const,
+            indent: 0,
+            version: 1,
+            children: [
+              {
+                type: "text",
+                detail: 0,
+                format: 0,
+                mode: "normal",
+                style: "",
+                text: data.productDetails,
+                version: 1,
+              },
+            ],
+            direction: "ltr" as const,
+          },
+        ],
+        direction: "ltr" as const,
+      },
+    };
+
+    const newProduct = await payload.create({
+      collection: "products",
+      data: {
+        title: data.title,
+        price: data.price,
+        image: data.imageId,
+        productDetails: productDetailsJSON,
+      },
+    });
+
+    revalidatePath("/dashboard/products");
+    return { success: true, product: newProduct };
+  } catch (error) {
+    console.error("Error creating product:", error);
+    return { success: false, error: "Failed to create product" };
+  }
+}
+
