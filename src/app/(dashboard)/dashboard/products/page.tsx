@@ -3,6 +3,7 @@ import ProductsTable from "@/components/dashboard/products/products-table";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { ProductsTableSkeleton } from "@/components/dashboard/products/products-table-skeleton";
 
 export default async function ProductsPage({
   searchParams,
@@ -20,7 +21,7 @@ export default async function ProductsPage({
           </Button>
         </Link>
       </div>
-      <Suspense fallback={<div>Loading products...</div>}>
+      <Suspense fallback={<ProductsTableSkeleton />}>
         <ProductsTable searchParams={searchParams} />
       </Suspense>
     </div>

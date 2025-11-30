@@ -1,5 +1,5 @@
 import { getCategories } from "@/lib/queries/categories";
-import React from "react";
+
 import {
   Table,
   TableBody,
@@ -9,15 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PlusCircle, MoreHorizontal, Pencil, Trash, Link2 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Category } from "@/payload-types";
 import Link from "next/link";
 
