@@ -54,7 +54,7 @@ export function Hero() {
                 </div>
                 <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg">
                   <Image
-                    src="/images/two.webp"
+                    src="/images/three.webp"
                     alt="Toddler smiling"
                     fill
                     className="object-cover"
@@ -64,7 +64,7 @@ export function Hero() {
               <div className="space-y-4 pt-8">
                 <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg">
                   <Image
-                    src="/images/three.webp"
+                    src="/images/two.webp"
                     alt="Baby"
                     fill
                     className="object-cover"
