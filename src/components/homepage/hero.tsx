@@ -44,9 +44,9 @@ export function Hero() {
           <div className="relative">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-4">
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg">
+                <div className="relative aspect-3/4 rounded-2xl overflow-hidden shadow-lg">
                   <Image
-                    src="/images/boy_2.webp"
+                    src="/images/one.webp"
                     alt="School Boy Portrait"
                     fill
                     className="object-cover"
@@ -54,7 +54,7 @@ export function Hero() {
                 </div>
                 <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg">
                   <Image
-                    src="/images/creche_.webp"
+                    src="/images/two.webp"
                     alt="Toddler smiling"
                     fill
                     className="object-cover"
@@ -64,13 +64,13 @@ export function Hero() {
               <div className="space-y-4 pt-8">
                 <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg">
                   <Image
-                    src="/images/baby.webp"
+                    src="/images/three.webp"
                     alt="Baby"
                     fill
                     className="object-cover"
                   />
                 </div>
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg">
+                <div className="relative aspect-3/4 rounded-2xl overflow-hidden shadow-lg">
                   <Image
                     src="/images/school_boy.webp"
                     alt="Young child portrait"
