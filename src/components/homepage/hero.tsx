@@ -23,8 +23,12 @@ export function Hero() {
 
             <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
               Professional school and crèche photography that captures the joy,
-              innocence, and wonder of childhood. Every smile tells a story
-              worth preserving. 
+              innocence, and wonder of childhood, offering individual portraits
+              that highlight personality, group photos that celebrate
+              friendship, event coverage that preserves milestones, creative
+              storytelling that sparks imagination, secure digital delivery for
+              parents, high‑quality print packages for keepsakes, and archival
+              preservation to safeguard memories for years to come.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
