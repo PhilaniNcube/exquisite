@@ -11,6 +11,8 @@ const CategoryHero = ({ category }: Props) => {
       ? (category.image as Media)
       : null;
 
+  const isLocal = media?.url?.includes("localhost") || media?.url?.includes("127.0.0.1");
+
   const shimmer = (w: number, h: number) => `
     <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
       <defs>
@@ -44,6 +46,7 @@ const CategoryHero = ({ category }: Props) => {
           fill
           priority
           quality={80}
+          unoptimized={isLocal}
           className="object-cover object-center"
           placeholder="blur"
           blurDataURL={blur}

@@ -97,42 +97,51 @@ const PhotoMasonryGrid = ({ photos }: { photos: Photo[] }) => {
   const currentPhoto =
     selectedPhotoIndex !== null ? photos[selectedPhotoIndex] : null;
 
+  const currentPhotoUrl = (currentPhoto?.image as any)?.url;
+  const isCurrentPhotoLocal = currentPhotoUrl?.includes("localhost") || currentPhotoUrl?.includes("127.0.0.1");
+
   return (
     <>
       <div className="container mx-auto py-12 px-4">
         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-          {photos.map((photo, index) => (
-            <div
-              key={photo.id}
-              onClick={() => openModal(index)}
-              className="break-inside-avoid cursor-pointer group mb-4 block"
-            >
-              <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                {typeof photo.image === "object" && photo.image?.url && (
-                  <Image
-                    src={
-                      (photo.image as any).sizes?.card?.url ||
-                      photo.image.sizes?.card?.url
-                    }
-                    alt={photo.image.alt || photo.title || "Photo"}
-                    width={500}
-                    height={500}
-                    quality={80}
-                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    priority={index < 8}
-                    className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
-                    placeholder="blur"
-                    blurDataURL={`data:image/svg+xml;base64,${toBase64(
-                      shimmer(
-                        (photo.image.width ?? 4000) / 20,
-                        (photo.image.height ?? 6000) / 20
-                      )
-                    )}`}
-                  />
-                )}
+          {photos.map((photo, index) => {
+            const imageUrl = (photo.image as any)?.url;
+            const isLocal = imageUrl?.includes("localhost") || imageUrl?.includes("127.0.0.1");
+
+            return (
+              <div
+                key={photo.id}
+                onClick={() => openModal(index)}
+                className="break-inside-avoid cursor-pointer group mb-4 block"
+              >
+                <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                  {typeof photo.image === "object" && photo.image?.url && (
+                    <Image
+                      src={
+                        (photo.image as any).sizes?.card?.url ||
+                        photo.image.sizes?.card?.url
+                      }
+                      alt={photo.image.alt || photo.title || "Photo"}
+                      width={500}
+                      height={500}
+                      quality={80}
+                      unoptimized={isLocal}
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      priority={index < 8}
+                      className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
+                      placeholder="blur"
+                      blurDataURL={`data:image/svg+xml;base64,${toBase64(
+                        shimmer(
+                          (photo.image.width ?? 4000) / 20,
+                          (photo.image.height ?? 6000) / 20
+                        )
+                      )}`}
+                    />
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -204,6 +213,7 @@ const PhotoMasonryGrid = ({ photos }: { photos: Photo[] }) => {
                     }
                     className="max-w-full max-h-full object-contain"
                     priority
+                    unoptimized={isCurrentPhotoLocal}
                     onLoad={() => setIsImageLoading(false)}
                     placeholder="blur"
                     blurDataURL={`data:image/svg+xml;base64,${toBase64(

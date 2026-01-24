@@ -61,7 +61,7 @@ export function Hero() {
                     src="/images/three.webp"
                     alt="Toddler smiling"
                     fill
-                    className="object-cover"
+                    className="object-cover object-top"
                   />
                 </div>
               </div>
