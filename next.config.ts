@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     qualities: [25, 50, 70, 75, 80, 85, 90, 95, 100],
+    dangerouslyAllowSVG: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -37,9 +38,7 @@ const nextConfig: NextConfig = {
         port: "3000",
       },
     ],
-    // dangerouslyAllowSVG: true,
-    // unoptimized: process.env.NODE_ENV === "development",
-    // loaderFile: undefined,
+    unoptimized: process.env.NODE_ENV === "development",
   },
   // turbopack: {
   //   rules: {

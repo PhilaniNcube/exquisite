@@ -79,7 +79,7 @@ export function CreateClassDialog({ schoolId }: { schoolId: number }) {
           Add Class
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle>Create Class</DialogTitle>
           <DialogDescription>

@@ -7,7 +7,7 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center">
+      <section className="relative h-[60vh] min-h-125 flex items-center justify-center">
         <div className="absolute inset-0 bg-linear-to-b from-black/60 to-black/40 z-10" />
         <Image
           src="/api/media/file/valeria-nikitina.jpg"

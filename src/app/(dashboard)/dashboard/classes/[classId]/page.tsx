@@ -25,7 +25,7 @@ const ClassPage = async ({
           </Button>
           <h1 className="text-3xl font-bold">Class Details</h1>
         </div>
-        <Suspense fallback={<div className="h-10 w-[200px] animate-pulse bg-muted rounded-md" />}>
+        <Suspense fallback={<div className="h-10 w-50 animate-pulse bg-muted rounded-md" />}>
           <UploadButtons params={params} />
         </Suspense>
       </div>
