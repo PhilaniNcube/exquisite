@@ -31,22 +31,22 @@ const nextConfig: NextConfig = {
         hostname: "127.0.0.1",
       },
     ],
-    dangerouslyAllowSVG: true,
-    unoptimized: process.env.NODE_ENV === "development",
-    loaderFile: undefined,
+    // dangerouslyAllowSVG: true,
+    // unoptimized: process.env.NODE_ENV === "development",
+    // loaderFile: undefined,
   },
-  turbopack: {
-    rules: {
-      "**/node_modules/**/*.exe": {
-        loaders: [path.resolve(process.cwd(), "loaders/ignore-loader.cjs")],
-        as: "*.js",
-      },
-      "**/node_modules/**/*.md": {
-        loaders: [path.resolve(process.cwd(), "loaders/ignore-loader.cjs")],
-        as: "*.js",
-      },
-    },
-  },
+  // turbopack: {
+  //   rules: {
+  //     "**/node_modules/**/*.exe": {
+  //       loaders: [path.resolve(process.cwd(), "loaders/ignore-loader.cjs")],
+  //       as: "*.js",
+  //     },
+  //     "**/node_modules/**/*.md": {
+  //       loaders: [path.resolve(process.cwd(), "loaders/ignore-loader.cjs")],
+  //       as: "*.js",
+  //     },
+  //   },
+  // },
 
   // Configure webpack to handle .md and other asset files properly
 };
