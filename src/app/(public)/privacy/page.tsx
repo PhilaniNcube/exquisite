@@ -370,7 +370,7 @@ const PrivacyPolicy = async () => {
           </p>
           <ul className="space-y-2 mb-4">
             <li><strong>Information Officer:</strong> [Name of Information Officer]</li>
-            <li><strong>Email:</strong> <a href="mailto:privacy@exquisitephotography.com" className="text-primary hover:underline">privacy@exquisitephotography.com</a></li>
+            <li><strong>Email:</strong> <a href="mailto:privacy@exquisitephoto.co.za" className="text-primary hover:underline">privacy@exquisitephoto.co.za</a></li>
             <li><strong>Contact Page:</strong> <a href="/contact" className="text-primary hover:underline">Visit our contact page</a></li>
             <li><strong>Physical Address:</strong> Montmedy rd, Lorraine, Port Elizabeth</li>
             <li><strong>Phone:</strong> 084 675 6959</li>

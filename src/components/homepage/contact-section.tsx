@@ -107,7 +107,7 @@ export function ContactSection() {
                 <div>
                   <h4 className="font-semibold text-foreground mb-1">Email</h4>
                   <p className="text-muted-foreground">
-                    este@exquisitephotography.com
+                    este@exquisitephoto.co.za
                   </p>
                 </div>
               </div>
