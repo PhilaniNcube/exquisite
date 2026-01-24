@@ -118,7 +118,7 @@ const RefundPage = async () => {
               We will review your request within 2 business days and provide
               instructions for return (if needed) or issue your
               refund/replacement. Most issues are resolved within 5-7 business
-              days. Returns may take longer depending on your location and courier availability.
+              days.
             </p>
           </div>
         </section>
@@ -126,25 +126,20 @@ const RefundPage = async () => {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">Return Requirements</h2>
           <p className="mb-4">
-            If a return is required, we will arrange courier collection or provide return instructions.
+            If a return is required, we will arrange collection or provide return instructions.
             Please:
           </p>
           <ul className="list-disc pl-6 mb-4 space-y-2">
             <li>Package items carefully in original packaging if available</li>
             <li>Include all accessories (frames, mounting hardware, etc.)</li>
-            <li>Use the provided courier waybill or return label</li>
+            <li>Use the provided return label</li>
             <li>Ship within 14 days of our return authorisation</li>
             <li>Obtain proof of return (tracking number or collection receipt)</li>
           </ul>
           <p className="text-sm text-gray-600 mb-2">
             <em>
-              Note: You are not responsible for return courier costs on
+              Note: You are not responsible for return shipping costs on
               defective or damaged items.
-            </em>
-          </p>
-          <p className="text-sm text-gray-600">
-            <em>
-              For local returns within South Africa, we use reputable courier services such as The Courier Guy, Dawn Wing, or Aramex.
             </em>
           </p>
         </section>
@@ -155,7 +150,7 @@ const RefundPage = async () => {
             <div className="border-l-4 border-blue-500 pl-4">
               <h3 className="font-medium">Replacement Orders</h3>
               <p className="text-sm text-gray-600">
-                Rush processed within 5-7 business days (subject to courier availability)
+                Rush processed within 5-7 business days
               </p>
             </div>
             <div className="border-l-4 border-green-500 pl-4">

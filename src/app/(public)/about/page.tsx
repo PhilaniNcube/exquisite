@@ -88,21 +88,20 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-background rounded-lg p-8 shadow-sm">
               <div className="w-16 h-16 rounded-full bg-accent/10 text-accent flex items-center justify-center mb-6">
-                <Award className="h-8 w-8" />
+                <Award className="h-8 w-8 text-slate-700" />
               </div>
               <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
                 Professional Excellence
               </h3>
               <p className="text-muted-foreground leading-relaxed">
                 We maintain the highest standards in every aspect of our work,
-                from initial consultation to final delivery. Our award-winning
-                quality speaks for itself.
+                from initial consultation to final delivery.
               </p>
             </div>
 
             <div className="bg-background rounded-lg p-8 shadow-sm">
               <div className="w-16 h-16 rounded-full bg-accent/10 text-accent flex items-center justify-center mb-6">
-                <Eye className="h-8 w-8" />
+                <Eye className="h-8 w-8 text-slate-700" />
               </div>
               <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
                 Creative Vision
@@ -116,7 +115,7 @@ export default function AboutPage() {
 
             <div className="bg-background rounded-lg p-8 shadow-sm">
               <div className="w-16 h-16 rounded-full bg-accent/10 text-accent flex items-center justify-center mb-6">
-                <Heart className="h-8 w-8" />
+                <Heart className="h-8 w-8 text-slate-700" />
               </div>
               <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
                 Passionate Service
@@ -130,7 +129,7 @@ export default function AboutPage() {
 
             <div className="bg-background rounded-lg p-8 shadow-sm">
               <div className="w-16 h-16 rounded-full bg-accent/10 text-accent flex items-center justify-center mb-6">
-                <Camera className="h-8 w-8" />
+                <Camera className="h-8 w-8 text-slate-700" />
               </div>
               <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
                 Technical Mastery
@@ -144,7 +143,7 @@ export default function AboutPage() {
 
             <div className="bg-background rounded-lg p-8 shadow-sm">
               <div className="w-16 h-16 rounded-full bg-accent/10 text-accent flex items-center justify-center mb-6">
-                <Users className="h-8 w-8" />
+                <Users className="h-8 w-8 text-slate-700" />
               </div>
               <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
                 Client-Centered
@@ -158,7 +157,7 @@ export default function AboutPage() {
 
             <div className="bg-background rounded-lg p-8 shadow-sm">
               <div className="w-16 h-16 rounded-full bg-accent/10 text-accent flex items-center justify-center mb-6">
-                <Star className="h-8 w-8" />
+                <Star className="h-8 w-8 text-slate-700" />
               </div>
               <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
                 Authentic Moments

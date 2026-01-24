@@ -159,7 +159,7 @@ const Returns = async () => {
                 </li>
                 <li>Write your RAN clearly on the outside of the package</li>
                 <li>
-                  We will arrange courier collection or provide return
+                  We will arrange collection or provide return
                   instructions
                 </li>
                 <li>Keep your tracking number for reference</li>
@@ -190,8 +190,8 @@ const Returns = async () => {
             <div className="border-l-4 border-green-500 pl-4 bg-green-50 p-4 rounded">
               <h3 className="font-medium mb-2">Defective or Incorrect Items</h3>
               <p className="text-sm text-gray-700">
-                We cover all courier costs for returns of defective, damaged, or
-                incorrect items. We will arrange courier collection at no cost
+                We cover all return shipping costs for returns of defective, damaged, or
+                incorrect items. We will arrange collection at no cost
                 to you.
               </p>
             </div>
@@ -199,18 +199,14 @@ const Returns = async () => {
             <div className="border-l-4 border-orange-500 pl-4 bg-orange-50 p-4 rounded">
               <h3 className="font-medium mb-2">Change of Mind (If Accepted)</h3>
               <p className="text-sm text-gray-700">
-                Customer is responsible for return courier costs. Items must be
+                Customer is responsible for return shipping costs. Items must be
                 returned in original, unused condition with all packaging
                 intact.
               </p>
             </div>
           </div>
 
-          <p className="text-sm text-gray-600">
-            <strong>Courier Partners:</strong> We work with The Courier Guy,
-            Dawn Wing, Aramex, and PostNet for reliable delivery and returns
-            throughout South Africa.
-          </p>
+
         </section>
 
         <section className="mb-8">
@@ -318,7 +314,7 @@ const Returns = async () => {
               <h3 className="font-medium mb-2">Damaged in Transit</h3>
               <p className="text-sm text-gray-700">
                 If your item arrives damaged, please refuse delivery or note the
-                damage with the courier. Contact us immediately with photos. We
+                damage upon receipt. Contact us immediately with photos. We
                 will arrange a replacement or refund promptly.
               </p>
             </div>
@@ -327,7 +323,7 @@ const Returns = async () => {
               <h3 className="font-medium mb-2">Non-Delivery</h3>
               <p className="text-sm text-gray-700">
                 If your order does not arrive within the expected timeframe,
-                contact us immediately. We will investigate with the courier and
+                contact us immediately. We will investigate and
                 arrange a replacement or refund if the item is lost.
               </p>
             </div>
