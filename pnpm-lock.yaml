@@ -14,6 +14,12 @@ importers:
       '@ai-sdk/google-vertex':
         specifier: ^3.0.40
         version: 3.0.97(zod@4.3.6)
+      '@aws-sdk/client-s3':
+        specifier: ^3.975.0
+        version: 3.975.0
+      '@aws-sdk/s3-request-presigner':
+        specifier: ^3.975.0
+        version: 3.975.0
       '@google/genai':
         specifier: ^1.24.0
         version: 1.38.0

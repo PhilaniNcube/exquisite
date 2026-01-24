@@ -48,7 +48,7 @@ export default async function SchoolClasses({
                 <TableHead>Name</TableHead>
                 <TableHead>ID</TableHead>
                 <TableHead className="text-right">Created At</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
+                <TableHead className="w-12.5"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
