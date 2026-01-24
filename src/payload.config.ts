@@ -31,7 +31,7 @@ export default buildConfig({
     },
   },
   email: resendAdapter({
-    defaultFromAddress: "info@exquisitephoto.co.za",
+    defaultFromAddress: "este@exquisitephoto.co.za",
     defaultFromName: "Exquisite Photography",
     apiKey: process.env.RESEND_API_KEY || "",
     

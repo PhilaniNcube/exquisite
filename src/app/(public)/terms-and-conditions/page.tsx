@@ -703,7 +703,7 @@ const Terms = async () => {
             <div>
               <h3 className="font-medium mb-3">Customer Service</h3>
               <p className="text-sm text-gray-600 mb-1">
-                <strong>Email:</strong> hello@exquisitephoto.co.za
+                <strong>Email:</strong> este@exquisitephoto.co.za
               </p>
               <p className="text-sm text-gray-600 mb-1">
                 <strong>WhatsApp:</strong> 084 675 6959

@@ -203,10 +203,10 @@ const Cancellation = () => {
             <li>
               Email:{" "}
               <a
-                href="mailto:info@exquisitephotography.com"
+                href="mailto:este@exquisitephoto.co.za"
                 className="text-primary hover:underline"
               >
-                info@exquisitephotography.com
+                este@exquisitephoto.co.za
               </a>
             </li>
             <li>

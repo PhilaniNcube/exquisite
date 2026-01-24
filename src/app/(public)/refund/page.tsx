@@ -230,7 +230,7 @@ const RefundPage = async () => {
             <div>
               <h3 className="font-medium mb-2">Customer Service</h3>
               <p className="text-sm text-gray-600 mb-1">
-                Email: hello@exquisitephoto.co.za
+                Email: este@exquisitephoto.co.za
               </p>
               <p className="text-sm text-gray-600 mb-1">
                 WhatsApp: 084 675 6959

@@ -53,7 +53,7 @@ export async function sendContactEmail(prevState: unknown, formData: FormData) {
 
     // Send email to admin
     await resend.emails.send({
-      from: process.env.FROM_EMAIL || "hello@exquisitephoto.co.za",
+      from: process.env.FROM_EMAIL || "este@exquisitephoto.co.za",
       to: [process.env.ADMIN_EMAIL || "admin@exquisitephoto.co.za"],
       subject: `Homepage Inquiry: ${serviceName} - ${validatedData.name}`,
       html: `
@@ -125,7 +125,7 @@ export async function submitContactForm(data: ContactFormData) {
 
     // Send email to admin
     const adminEmail = await resend.emails.send({
-      from: process.env.FROM_EMAIL || "hello@exquisitephoto.co.za",
+      from: process.env.FROM_EMAIL || "este@exquisitephoto.co.za",
       to: [process.env.FROM_EMAIL || "admin@exquisitephoto.co.za"],
       subject: `New Inquiry: ${serviceName} - ${validatedData.name}`,
       html: `
