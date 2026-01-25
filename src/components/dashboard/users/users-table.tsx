@@ -14,7 +14,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,9 +34,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Customer } from "@/payload-types";
+import { User } from "@/payload-types";
+import { Badge } from "@/components/ui/badge";
 
-export const columns: ColumnDef<Customer>[] = [
+export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "firstName",
     header: ({ column }) => {
@@ -51,7 +51,9 @@ export const columns: ColumnDef<Customer>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="capitalize">{row.getValue("firstName")}</div>,
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("firstName")}</div>
+    ),
   },
   {
     accessorKey: "lastName",
@@ -66,7 +68,9 @@ export const columns: ColumnDef<Customer>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="capitalize">{row.getValue("lastName")}</div>,
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("lastName")}</div>
+    ),
   },
   {
     accessorKey: "email",
@@ -84,17 +88,48 @@ export const columns: ColumnDef<Customer>[] = [
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
-    accessorKey: "userType",
-    header: "User Type",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("userType")}</div>
-    ),
+    accessorKey: "roles",
+    header: "Roles",
+    cell: ({ row }) => {
+      const roles = row.getValue("roles") as string[] | null | undefined;
+      return (
+        <div className="flex gap-1 flex-wrap">
+          {roles && roles.length > 0 ? (
+            roles.map((role) => (
+              <Badge key={role} variant="secondary" className="capitalize">
+                {role}
+              </Badge>
+            ))
+          ) : (
+            <span className="text-muted-foreground">No roles</span>
+          )}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Created At
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("createdAt"));
+      return <div>{date.toLocaleDateString()}</div>;
+    },
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const customer = row.original;
+      const user = row.original;
 
       return (
         <DropdownMenu>
@@ -107,15 +142,12 @@ export const columns: ColumnDef<Customer>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(customer.id.toString())}
+              onClick={() => navigator.clipboard.writeText(user.email)}
             >
-              Copy customer ID
+              Copy email
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href={`/dashboard/customers/${customer.id}`}>View customer</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>View orders</DropdownMenuItem>
+            <DropdownMenuItem>View details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -123,11 +155,7 @@ export const columns: ColumnDef<Customer>[] = [
   },
 ];
 
-interface CustomersTableProps {
-  data: Customer[];
-}
-
-export function CustomersTable({ data }: CustomersTableProps) {
+export function UsersTable({ data }: { data: User[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -135,7 +163,6 @@ export function CustomersTable({ data }: CustomersTableProps) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
     data,
@@ -148,36 +175,30 @@ export function CustomersTable({ data }: CustomersTableProps) {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-      globalFilter,
     },
-    globalFilterFn: (row, columnId, filterValue) => {
-        const firstName = row.getValue("firstName") as string;
-        const lastName = row.getValue("lastName") as string;
-        const email = row.getValue("email") as string;
-        const search = filterValue.toLowerCase();
-        
-        return (
-            (firstName?.toLowerCase().includes(search) ?? false) ||
-            (lastName?.toLowerCase().includes(search) ?? false) ||
-            (email?.toLowerCase().includes(search) ?? false)
-        );
-    }
   });
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-4">
         <Input
-          placeholder="Filter customers..."
-          value={globalFilter ?? ""}
+          placeholder="Filter by email..."
+          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            setGlobalFilter(event.target.value)
+            table.getColumn("email")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        <Input
+          placeholder="Filter by first name..."
+          value={(table.getColumn("firstName")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("firstName")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -236,7 +257,7 @@ export function CustomersTable({ data }: CustomersTableProps) {
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="capitalize">
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -260,8 +281,7 @@ export function CustomersTable({ data }: CustomersTableProps) {
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} user(s) total.
         </div>
         <div className="space-x-2">
           <Button
