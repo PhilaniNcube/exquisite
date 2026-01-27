@@ -92,8 +92,8 @@ const RefundPage = async () => {
             </p>
             <ul className="list-disc pl-6 space-y-1">
               <li>Email: {process.env.NEXT_PUBLIC_MAIN_EMAIL_ADDRESS}</li>
-              <li>WhatsApp: [Your WhatsApp number]</li>
-              <li>Phone: [Your phone number]</li>
+              <li>WhatsApp: 27 (084) 675 6959</li>
+              <li>Phone: 27 (084) 675 6959</li>
               <li>Through our contact form on this website</li>
             </ul>
           </div>
