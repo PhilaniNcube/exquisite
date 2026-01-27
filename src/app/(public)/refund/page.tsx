@@ -78,7 +78,7 @@ const RefundPage = async () => {
               provided by customer
             </li>
             <li>Damage after delivery (unless due to defective packaging)</li>
-            <li>Orders beyond the 6-month statutory period (unless otherwise agreed)</li>
+        
           </ul>
         </section>
 
@@ -133,15 +133,9 @@ const RefundPage = async () => {
             <li>Package items carefully in original packaging if available</li>
             <li>Include all accessories (frames, mounting hardware, etc.)</li>
             <li>Use the provided return label</li>
-            <li>Ship within 14 days of our return authorisation</li>
-            <li>Obtain proof of return (tracking number or collection receipt)</li>
+         
           </ul>
-          <p className="text-sm text-gray-600 mb-2">
-            <em>
-              Note: You are not responsible for return shipping costs on
-              defective or damaged items.
-            </em>
-          </p>
+        
         </section>
 
         <section className="mb-8">

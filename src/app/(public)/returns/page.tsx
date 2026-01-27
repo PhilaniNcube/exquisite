@@ -187,14 +187,7 @@ const Returns = async () => {
           <h2 className="text-2xl font-semibold mb-4">Return Shipping</h2>
 
           <div className="grid md:grid-cols-2 gap-4 mb-4">
-            <div className="border-l-4 border-green-500 pl-4 bg-green-50 p-4 rounded">
-              <h3 className="font-medium mb-2">Defective or Incorrect Items</h3>
-              <p className="text-sm text-gray-700">
-                We cover all return shipping costs for returns of defective, damaged, or
-                incorrect items. We will arrange collection at no cost
-                to you.
-              </p>
-            </div>
+           
 
             <div className="border-l-4 border-orange-500 pl-4 bg-orange-50 p-4 rounded">
               <h3 className="font-medium mb-2">Change of Mind (If Accepted)</h3>
@@ -357,44 +350,7 @@ const Returns = async () => {
           </div>
         </section>
 
-        <section className="mb-8 bg-red-50 border border-red-200 p-6 rounded-lg">
-          <h2 className="text-2xl font-semibold mb-4">Important Notes</h2>
-          <ul className="space-y-2">
-            <li className="flex items-start">
-              <span className="text-red-500 mr-2">•</span>
-              <span className="text-sm">
-                All returns must be authorised before sending items back
-              </span>
-            </li>
-            <li className="flex items-start">
-              <span className="text-red-500 mr-2">•</span>
-              <span className="text-sm">
-                Unauthorised returns may be rejected or returned to sender
-              </span>
-            </li>
-            <li className="flex items-start">
-              <span className="text-red-500 mr-2">•</span>
-              <span className="text-sm">
-                We are not responsible for items lost or damaged during return
-                shipping (keep tracking number)
-              </span>
-            </li>
-            <li className="flex items-start">
-              <span className="text-red-500 mr-2">•</span>
-              <span className="text-sm">
-                Refunds do not include original shipping costs unless the return
-                is due to our error
-              </span>
-            </li>
-            <li className="flex items-start">
-              <span className="text-red-500 mr-2">•</span>
-              <span className="text-sm">
-                Promotional items or gifts must be returned with the main
-                product
-              </span>
-            </li>
-          </ul>
-        </section>
+
 
         <section className="mb-8 bg-gray-50 p-6 rounded-lg">
           <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>

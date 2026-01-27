@@ -466,7 +466,7 @@ const Terms = async () => {
             <li>Government restrictions or regulations</li>
             <li>Public health emergencies</li>
             <li>Equipment failure or theft</li>
-            <li>Courier delays or loss</li>
+
             <li>Power outages or internet failures</li>
           </ul>
 
