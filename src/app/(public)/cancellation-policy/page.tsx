@@ -104,14 +104,7 @@ const Cancellation = () => {
               (typically within 24-48 hours of order placement)
             </li>
            
-            <li>
-              <strong>After shipment:</strong> No cancellation available. Please
-              refer to our{" "}
-              <a href="/returns" className="text-primary hover:underline">
-                Returns Policy
-              </a>{" "}
-              for information about returns
-            </li>
+    
             <li>
               <strong>Custom or personalized items:</strong> Cannot be cancelled
               once production begins due to the custom nature of these products

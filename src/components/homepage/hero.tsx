@@ -22,13 +22,15 @@ export function Hero() {
             </h1>
 
             <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
-              Professional school and crèche photography that captures the joy,
-              innocence, and wonder of childhood, offering individual portraits
-              that highlight personality, group photos that celebrate
-              friendship, event coverage that preserves milestones, creative
-              storytelling that sparks imagination, secure digital delivery for
-              parents, high‑quality print packages for keepsakes, and archival
-              preservation to safeguard memories for years to come.
+              Professional photography that celebrates life&apos;s various
+              milestones, from the playful vigor of crèche and school portraits
+              to the elegance of weddings, the excitement of matric farewells,
+              and the vibrancy of private functions and experiential events.
+              Each moment is captured with creative storytelling, expressive
+              portraiture, beautifully composed group images, thoughtful event
+              coverage, secure digital delivery, premium print options, and
+              long-term archival preservation to ensure memories are treasured
+              for years to come.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">

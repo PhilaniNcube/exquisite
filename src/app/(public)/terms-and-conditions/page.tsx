@@ -352,8 +352,7 @@ const Terms = async () => {
           <h3 className="text-xl font-medium mb-3">7.2 Delivery</h3>
           <ul className="list-disc pl-6 mb-4 space-y-2">
             <li>Estimated delivery times are provided but not guaranteed</li>
-            <li>Delivery within South Africa via reputable courier services</li>
-            <li>Risk of loss transfers to customer upon delivery</li>
+            
             <li>
               Customers must inspect items upon delivery and report damage
               immediately
@@ -410,9 +409,7 @@ const Terms = async () => {
               Return Authorisation Number (RAN) required before returning items
             </li>
             <li>Items must be returned in original condition with packaging</li>
-            <li>
-              We cover return courier costs for defective or incorrect items
-            </li>
+           
           </ul>
 
           <h3 className="text-xl font-medium mb-3">8.3 Non-Returnable Items</h3>
@@ -487,10 +484,7 @@ const Terms = async () => {
 
           <h3 className="text-xl font-medium mb-3">9.4 Third-Party Services</h3>
           <ul className="list-disc pl-6 space-y-2">
-            <li>
-              We are not responsible for third-party printing labs, couriers, or
-              service providers
-            </li>
+           
             <li>
               We will assist in resolving issues with third parties but are not
               liable for their actions
