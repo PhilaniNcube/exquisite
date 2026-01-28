@@ -358,7 +358,7 @@ const Terms = async () => {
               immediately
             </li>
             <li>
-              Delivery delays due to courier or force majeure are beyond our
+              Delivery delays due to force majeure are beyond our
               control
             </li>
           </ul>
