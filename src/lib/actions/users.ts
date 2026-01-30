@@ -4,6 +4,7 @@ import { getPayload } from "payload"
 import config from "@payload-config"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
+import { revalidatePath } from "next/cache"
 
 export async function loginAdmin(prevState: any, formData: FormData) {
   const email = formData.get("email") as string
@@ -47,7 +48,8 @@ export async function loginAdmin(prevState: any, formData: FormData) {
     return { error: "Invalid email or password" }
   }
 
-  redirect("/dashboard")
+  revalidatePath("/", "layout")
+  return { success: true }
 }
 
 export async function registerUser(prevState: any, formData: FormData) {

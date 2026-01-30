@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState, Suspense } from "react"
+import { useActionState, Suspense, useEffect, useTransition } from "react"
 import { useFormStatus } from "react-dom"
 import { loginAdmin } from "@/lib/actions/users"
 import { Button } from "@/components/ui/button"
@@ -15,19 +15,34 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
-function SubmitButton() {
-  const { pending } = useFormStatus()
-
+function SubmitButton({ isPending }: { isPending: boolean }) {
   return (
-    <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? "Signing in..." : "Sign in"}
+    <Button type="submit" className="w-full" disabled={isPending}>
+      {isPending ? "Signing in..." : "Sign in"}
     </Button>
   )
 }
 
 function LoginForm() {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const [state, formAction] = useActionState(loginAdmin, null)
+
+  useEffect(() => {
+    if (state?.success) {
+      startTransition(() => {
+        router.push("/dashboard")
+      })
+    }
+  }, [state, router])
+
+  const handleSubmit = (formData: FormData) => {
+    startTransition(() => {
+      formAction(formData)
+    })
+  }
 
   return (
     <Card className="w-full max-w-sm mx-auto">
@@ -38,7 +53,7 @@ function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <form action={formAction} className="grid gap-4">
+        <form action={handleSubmit} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -56,7 +71,7 @@ function LoginForm() {
           {state?.error && (
             <p className="text-sm text-red-500">{state.error}</p>
           )}
-          <SubmitButton />
+          <SubmitButton isPending={isPending} />
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-2">
