@@ -3,6 +3,7 @@
 import { logout } from '@payloadcms/next/auth'
 import config from '@payload-config'
 import { revalidatePath } from 'next/cache'
+import { cookies } from 'next/headers'
 
 export async function logoutAction() {
   console.log('[LogoutAction] Starting logout process...')
@@ -15,6 +16,14 @@ export async function logoutAction() {
     console.log('[LogoutAction] Calling logout with allSessions: true')
     const result = await logout({ allSessions: true, config })
     console.log('[LogoutAction] Logout completed successfully:', result)
+
+    try {
+      const cookieStore = await cookies()
+      cookieStore.delete('payload-token')
+      console.log('[LogoutAction] Explicitly deleted payload-token cookie')
+    } catch (e) {
+      console.error('[LogoutAction] Failed to delete cookie explicitly:', e)
+    }
     
     console.log('[LogoutAction] Revalidating path: /')
     revalidatePath('/', 'layout')
