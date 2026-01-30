@@ -1,33 +1,29 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useTransition } from "react";
 import { UserX2 } from "lucide-react";
+import { logoutAction } from "./logoutAction";
 
 const Logout = () => {
-  const [isPending, setIsPending] = useState(false);
-  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  const handleLogout = async () => {
-    setIsPending(true);
-    try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-      
-      if (response.ok) {
-        router.push('/');
-        router.refresh();
-      } else {
-        console.error('Logout failed');
+  const handleLogout = () => {
+    console.log('[Logout Component] Button clicked, starting logout...');
+    startTransition(async () => {
+      console.log('[Logout Component] Transition started');
+      try {
+        console.log('[Logout Component] Calling logoutAction...');
+        await logoutAction();
+        console.log('[Logout Component] logoutAction completed successfully');
+      } catch (error) {
+        console.error('[Logout Component] Error caught:', error);
+        console.error('[Logout Component] Error details:', {
+          message: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : undefined
+        });
       }
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      setIsPending(false);
-    }
+    });
   };
 
   return (
