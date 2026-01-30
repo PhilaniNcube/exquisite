@@ -39,8 +39,7 @@ const PortfolioGrid = async () => {
           const image = category.image as Media;
           const isLocal = image?.url?.includes("localhost") || image?.url?.includes("127.0.0.1");
 
-          console.log("Category Image:", image);
-
+     
           return (
             <Link
               key={category.id}

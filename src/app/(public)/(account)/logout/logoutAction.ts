@@ -1,15 +1,14 @@
-"use server";
+'use server'
 
-import { getPayload } from "payload";
-import config from "@payload-config";
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
+import { logout } from '@payloadcms/next/auth'
+import config from '@payload-config'
 
 export async function logoutAction() {
-  // delete the cookie
-  const cookieStore = await cookies();
-  cookieStore.delete("payload-token");
-  revalidatePath("/", "layout");
-  redirect("/");
+  try {
+    return await logout({ allSessions: true, config })
+  } catch (error) {
+    throw new Error(
+      `Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    )
+  }
 }
