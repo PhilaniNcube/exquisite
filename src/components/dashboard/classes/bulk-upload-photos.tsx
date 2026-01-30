@@ -200,7 +200,7 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
       setUploadStats({ completed: 0, total: 0, failed: 0 })
       
       // Refresh the page to show new photos
-      window.location.reload()
+      // window.location.reload()
     } catch (error) {
       console.error('Upload error:', error)
       toast.error('Upload failed. Please try again.')
