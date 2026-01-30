@@ -1,16 +1,32 @@
 "use client"
 
-import { useTransition } from "react"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { logoutAction } from "@/app/(public)/(account)/logout/logoutAction"
 
 export function AdminLogoutButton() {
-  const [isPending, startTransition] = useTransition()
+  const [isPending, setIsPending] = useState(false)
+  const router = useRouter()
 
-  const handleLogout = () => {
-    startTransition(async () => {
-      await logoutAction()
-    })
+  const handleLogout = async () => {
+    setIsPending(true)
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      })
+      
+      if (response.ok) {
+        router.push('/sys-admin/login')
+        router.refresh()
+      } else {
+        console.error('Logout failed')
+      }
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (

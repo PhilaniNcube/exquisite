@@ -1,17 +1,33 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import React, { useTransition } from "react";
-import { logoutAction } from "./logoutAction";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { UserX2 } from "lucide-react";
 
 const Logout = () => {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
 
-  const handleLogout = () => {
-    startTransition(async () => {
-      await logoutAction();
-    });
+  const handleLogout = async () => {
+    setIsPending(true);
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      
+      if (response.ok) {
+        router.push('/');
+        router.refresh();
+      } else {
+        console.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
