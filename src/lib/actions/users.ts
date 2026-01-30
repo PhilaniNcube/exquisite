@@ -4,40 +4,33 @@ import { getPayload } from "payload"
 import config from "@payload-config"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
-import { logout as payloadLogout } from '@payloadcms/next/auth'
+import { logout as payloadLogout, login } from '@payloadcms/next/auth'
 
 
-export async function loginAdmin(prevState: any, formData: FormData) {
-  const email = formData.get("email") as string
-  const password = formData.get("password") as string
-
+export async function loginAdmin(email: string, password: string) {
   if (!email || !password) {
     return { error: "Missing email or password" }
   }
 
-  const payload = await getPayload({ config })
-
   try {
-    const { user } = await payload.login({
+    const result = await login({
       collection: "users",
-      data: {
-        email,
-        password,
-      },
+      config,
+      email,
+      password,
     })
 
     // Check for admin role
-    const roles = user.roles as string[] | undefined
+    const roles = result.user.roles as string[] | undefined
     if (!roles || !roles.includes("admin")) {
       return { error: "Unauthorized: Admin access required" }
     }
 
+    revalidatePath("/", "layout")
+    return { success: true }
   } catch (error) {
     return { error: "Invalid email or password" }
   }
-
-  revalidatePath("/", "layout")
-  return { success: true }
 }
 
 export async function registerUser(prevState: any, formData: FormData) {

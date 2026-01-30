@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState, Suspense, useEffect, useTransition } from "react"
+import { Suspense, useState, useTransition } from "react"
 import { loginAdmin } from "@/lib/actions/users"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,30 +16,31 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
-function SubmitButton({ isPending }: { isPending: boolean }) {
-  return (
-    <Button type="submit" className="w-full" disabled={isPending}>
-      {isPending ? "Signing in..." : "Sign in"}
-    </Button>
-  )
-}
-
 function LoginForm() {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [state, formAction] = useActionState(loginAdmin, null)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (state?.success) {
-      startTransition(() => {
-        router.push("/dashboard")
-      })
-    }
-  }, [state, router])
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setError(null)
+    
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
 
-  const handleSubmit = (formData: FormData) => {
-    startTransition(() => {
-      formAction(formData)
+    startTransition(async () => {
+      try {
+        const result = await loginAdmin(email, password)
+        if (result.success) {
+          router.push("/dashboard")
+          router.refresh()
+        } else if (result.error) {
+          setError(result.error)
+        }
+      } catch (err) {
+        setError("An error occurred during login. Please try again.")
+      }
     })
   }
 
@@ -52,7 +53,7 @@ function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <form action={handleSubmit} className="grid gap-4">
+        <form onSubmit={handleSubmit} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -67,10 +68,12 @@ function LoginForm() {
             <Label htmlFor="password">Password</Label>
             <Input id="password" name="password" type="password" required />
           </div>
-          {state?.error && (
-            <p className="text-sm text-red-500">{state.error}</p>
+          {error && (
+            <p className="text-sm text-red-500">{error}</p>
           )}
-          <SubmitButton isPending={isPending} />
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? "Signing in..." : "Sign in"}
+          </Button>
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-2">

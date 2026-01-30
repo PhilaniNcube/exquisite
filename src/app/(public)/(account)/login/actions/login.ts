@@ -1,6 +1,6 @@
 "use server";
 
-import { getPayload } from "payload";
+import { login } from '@payloadcms/next/auth'
 import config from "@payload-config";
 import { revalidatePath } from "next/cache";
 
@@ -18,20 +18,12 @@ export async function loginUser({
   email,
   password,
 }: LoginParams): Promise<Response> {
-  const payload = await getPayload({ config });
-
   try {
-    await payload.login({
+    await login({
       collection: "customers",
-      data: {
-        email,
-        password,
-      },
-      // req: req, // optional, pass a Request object to be provided to all hooks
-      depth: 2,
-      locale: "en",
-      overrideAccess: false,
-      showHiddenFields: true,
+      config,
+      email,
+      password,
     });
 
     revalidatePath("/", "layout");
