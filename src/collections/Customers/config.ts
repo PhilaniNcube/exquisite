@@ -18,9 +18,9 @@ export const Customers:CollectionConfig = {
         // verify: true,
         
         cookies: {
-            secure: true,
-            sameSite: 'None',
-            domain: process.env.COOKIE_DOMAIN || 'localhost',
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+            domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined,
         },
         
     },
