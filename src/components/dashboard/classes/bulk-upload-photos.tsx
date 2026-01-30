@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Upload, Loader2, Files } from "lucide-react"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -43,6 +44,7 @@ const formSchema = z.object({
 const BATCH_SIZE = 10 // Upload 10 files concurrently
 
 export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoolId: number }) {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -168,6 +170,7 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
       if (successfulUploads.length > 0) {
         setCurrentFile("Registering uploads in database...")
         const REGISTER_BATCH_SIZE = 20
+        let registeredCount = 0
         
         for (let i = 0; i < successfulUploads.length; i += REGISTER_BATCH_SIZE) {
           const batch = successfulUploads.slice(i, i + REGISTER_BATCH_SIZE)
@@ -185,7 +188,15 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
 
           if (!registerResponse.ok) {
             console.error('Failed to register batch:', await registerResponse.text())
+            toast.error(`Failed to register batch ${Math.floor(i / REGISTER_BATCH_SIZE) + 1}`)
+          } else {
+            registeredCount += batch.length
+            setCurrentFile(`Registered ${registeredCount} of ${successfulUploads.length} photos...`)
           }
+        }
+        
+        if (registeredCount > 0) {
+          toast.success(`Successfully registered ${registeredCount} photos in database`)
         }
       }
 
@@ -199,8 +210,8 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
       setCurrentFile("")
       setUploadStats({ completed: 0, total: 0, failed: 0 })
       
-      // Refresh the page to show new photos
-      // window.location.reload()
+      // Refresh the page data to show new photos
+      router.refresh()
     } catch (error) {
       console.error('Upload error:', error)
       toast.error('Upload failed. Please try again.')
