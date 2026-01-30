@@ -15,13 +15,7 @@ export const Customers:CollectionConfig = {
               
             }
         },
-        // verify: true,
-        
-        cookies: {
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-            domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined,
-        },
+      
         
     },
     admin: {
