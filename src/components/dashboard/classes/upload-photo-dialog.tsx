@@ -39,7 +39,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   photoType: z.enum(["Individual", "Class", "Sports", "Group"]),
   studentName: z.string().optional(),
-  file: z.instanceof(FileList).refine((files) => files.length > 0, "File is required"),
+  file: z.any().refine((files) => files && files.length > 0, "File is required"),
 })
 
 export function UploadPhotoDialog({ classId, schoolId }: { classId: number, schoolId: number }) {
@@ -111,7 +111,7 @@ export function UploadPhotoDialog({ classId, schoolId }: { classId: number, scho
           Upload Photo
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle>Upload Photo</DialogTitle>
           <DialogDescription>
