@@ -80,6 +80,7 @@ export async function deleteSchoolPhoto(id: number, classId: number) {
       id,
     })
     revalidatePath(`/dashboard/classes/${classId}`)
+
     return { success: true, message: "Photo deleted successfully" }
   } catch (error) {
     console.error("Failed to delete photo:", error)
