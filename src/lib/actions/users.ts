@@ -2,7 +2,6 @@
 
 import { getPayload } from "payload"
 import config from "@payload-config"
-import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { logout as payloadLogout } from '@payloadcms/next/auth'
@@ -19,7 +18,7 @@ export async function loginAdmin(prevState: any, formData: FormData) {
   const payload = await getPayload({ config })
 
   try {
-    const { token, user, exp } = await payload.login({
+    const { user } = await payload.login({
       collection: "users",
       data: {
         email,
@@ -27,24 +26,11 @@ export async function loginAdmin(prevState: any, formData: FormData) {
       },
     })
 
-    if (!token) {
-      return { error: "Authentication failed" }
-    }
-
     // Check for admin role
     const roles = user.roles as string[] | undefined
     if (!roles || !roles.includes("admin")) {
       return { error: "Unauthorized: Admin access required" }
     }
-
-    const cookieStore = await cookies()
-    cookieStore.set("payload-token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-      sameSite: "lax",
-      expires: exp ? new Date(exp * 1000) : undefined,
-    })
 
   } catch (error) {
     return { error: "Invalid email or password" }

@@ -2,7 +2,6 @@
 
 import { getPayload } from "payload";
 import config from "@payload-config";
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 interface LoginParams {
@@ -22,7 +21,7 @@ export async function loginUser({
   const payload = await getPayload({ config });
 
   try {
-    const result = await payload.login({
+    await payload.login({
       collection: "customers",
       data: {
         email,
@@ -35,19 +34,8 @@ export async function loginUser({
       showHiddenFields: true,
     });
 
-    if (result.token) {
-      const cookieStore = await cookies();
-      cookieStore.set("payload-token", result.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-      });
-      revalidatePath("/", "layout");
-      return { success: true };
-    } else {
-      revalidatePath("/", "layout");
-      return { success: false, error: "Invalid email or password." };
-    }
+    revalidatePath("/", "layout");
+    return { success: true };
   } catch (error) {
     console.log("Login error:", error);
     console.error(error);

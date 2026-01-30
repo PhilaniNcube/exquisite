@@ -2,7 +2,6 @@
 
 import { logout } from '@payloadcms/next/auth'
 import config from '@payload-config'
-import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
 export async function logoutAction() {
@@ -16,11 +15,6 @@ export async function logoutAction() {
     console.log('[LogoutAction] Calling logout with allSessions: true')
     const result = await logout({ allSessions: true, config })
     console.log('[LogoutAction] Logout completed successfully:', result)
-    
-    // Manually delete the payload-token cookie that was set during login
-    console.log('[LogoutAction] Deleting payload-token cookie')
-    const cookieStore = await cookies()
-    cookieStore.delete('payload-token')
     
     console.log('[LogoutAction] Revalidating path: /')
     revalidatePath('/', 'layout')
