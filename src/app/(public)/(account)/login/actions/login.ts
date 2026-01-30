@@ -49,8 +49,10 @@ export async function loginUser({
       return { success: false, error: "Invalid email or password." };
     }
   } catch (error) {
+    console.log("Login error:", error);
     console.error(error);
     revalidatePath("/", "layout");
+
     return {
       success: false,
       error: "An error occurred during login. Please try again.",
