@@ -147,9 +147,10 @@ export async function registerUser(prevState: any, formData: FormData) {
 }
 
 export async function logout() {
+  "use server"
   const cookieStore = await cookies()
   cookieStore.delete("payload-token")
-  redirect("/")
+  redirect("/sys-admin/login")
 }
 
 export async function forgotPassword(prevState: any, formData: FormData) {
