@@ -2,7 +2,6 @@
 
 import { useTransition } from "react"
 import { Button } from "@/components/ui/button"
-import { adminLogout } from "@/lib/actions/users"
 import { logoutAction } from "@/app/(public)/(account)/logout/logoutAction"
 
 export function AdminLogoutButton() {

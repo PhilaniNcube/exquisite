@@ -5,6 +5,8 @@ import config from "@payload-config"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
+import { logout as payloadLogout } from '@payloadcms/next/auth'
+
 
 export async function loginAdmin(prevState: any, formData: FormData) {
   const email = formData.get("email") as string
@@ -149,19 +151,16 @@ export async function registerUser(prevState: any, formData: FormData) {
 }
 
 export async function logout() {
-  "use server"
-  const cookieStore = await cookies()
-  cookieStore.delete("payload-token")
-  redirect("/sys-admin/login")
+    try {
+    return await payloadLogout({ allSessions: true, config })
+  } catch (error) {
+    throw new Error(
+      `Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    )
+  }
 }
 
-export async function adminLogout() {
-  "use server"
-  const cookieStore = await cookies()
-  cookieStore.delete("payload-token")
-  revalidatePath("/", "layout")
-  redirect("/sys-admin/login")
-}
+
 
 export async function forgotPassword(prevState: any, formData: FormData) {
   const email = formData.get("email") as string
