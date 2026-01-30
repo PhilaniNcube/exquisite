@@ -28,6 +28,10 @@ const nextConfig: NextConfig = {
         hostname: "exquisitephoto.co.za",
       },
       {
+        protocol: "https",
+        hostname: "www.exquisitephoto.co.za",
+      },
+      {
         protocol: "http",
         hostname: "127.0.0.1",
         port: "3000",
