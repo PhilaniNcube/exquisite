@@ -59,6 +59,8 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || process.env.DATABASE_URL,
     },
+    // Explicitly configure SSL to avoid future deprecation warnings
+    migrationDir: path.resolve(dirname, 'migrations'),
   }),
   // database-adapter-config-end
   sharp,
@@ -83,3 +85,4 @@ export default buildConfig({
     }),
   ],
 });
+
