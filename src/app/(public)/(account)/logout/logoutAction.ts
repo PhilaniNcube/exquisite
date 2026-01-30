@@ -2,7 +2,6 @@
 
 import { logout } from '@payloadcms/next/auth'
 import config from '@payload-config'
-import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
 export async function logoutAction() {
@@ -20,6 +19,9 @@ export async function logoutAction() {
     console.log('[LogoutAction] Revalidating path: /')
     revalidatePath('/', 'layout')
     console.log('[LogoutAction] Path revalidated')
+    
+    console.log('[LogoutAction] Returning success response')
+    return { success: true }
   } catch (error) {
     console.error('[LogoutAction] Error during logout:', error)
     console.error('[LogoutAction] Error details:', {
@@ -27,11 +29,9 @@ export async function logoutAction() {
       stack: error instanceof Error ? error.stack : undefined,
       type: typeof error
     })
-    throw new Error(
-      `Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-    )
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    }
   }
-  
-  console.log('[LogoutAction] Redirecting to /')
-  redirect('/')
 }

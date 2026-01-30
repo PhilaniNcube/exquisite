@@ -1,12 +1,14 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import React, { useState, useTransition } from "react";
+import React, { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { UserX2 } from "lucide-react";
 import { logoutAction } from "./logoutAction";
 
 const Logout = () => {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleLogout = () => {
     console.log('[Logout Component] Button clicked, starting logout...');
@@ -14,8 +16,16 @@ const Logout = () => {
       console.log('[Logout Component] Transition started');
       try {
         console.log('[Logout Component] Calling logoutAction...');
-        await logoutAction();
-        console.log('[Logout Component] logoutAction completed successfully');
+        const result = await logoutAction();
+        console.log('[Logout Component] logoutAction result:', result);
+        
+        if (result.success) {
+          console.log('[Logout Component] Logout successful, redirecting to home...');
+          router.push('/');
+          router.refresh();
+        } else {
+          console.error('[Logout Component] Logout failed:', result.error);
+        }
       } catch (error) {
         console.error('[Logout Component] Error caught:', error);
         console.error('[Logout Component] Error details:', {

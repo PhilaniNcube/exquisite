@@ -15,11 +15,16 @@ export function AdminLogoutButton() {
       console.log('[AdminLogoutButton] Transition started');
       try {
         console.log('[AdminLogoutButton] Calling logoutAction...');
-        await logoutAction()
-        console.log('[AdminLogoutButton] logoutAction completed, redirecting to login...');
-        // The logoutAction already handles redirect, but we'll push just in case
-        router.push('/sys-admin/login')
-        console.log('[AdminLogoutButton] Router push executed');
+        const result = await logoutAction()
+        console.log('[AdminLogoutButton] logoutAction result:', result);
+        
+        if (result.success) {
+          console.log('[AdminLogoutButton] Logout successful, redirecting to login...');
+          router.push('/sys-admin/login')
+          router.refresh();
+        } else {
+          console.error('[AdminLogoutButton] Logout failed:', result.error);
+        }
       } catch (error) {
         console.error('[AdminLogoutButton] Error caught:', error)
         console.error('[AdminLogoutButton] Error details:', {
