@@ -18,6 +18,11 @@ export const Users: CollectionConfig = {
     useAsTitle: 'email',
   },
   auth: {
+    cookies: {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined,
+    },
     forgotPassword: {
       generateEmailHTML: (args) => {
         const { token, user } = args || {}
