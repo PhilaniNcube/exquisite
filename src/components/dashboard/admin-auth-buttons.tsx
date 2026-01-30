@@ -3,7 +3,7 @@ import { getPayload } from "payload"
 import configPromise from "@payload-config"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { logout } from "@/lib/actions/users"
+import { AdminLogoutButton } from "./admin-logout-button"
 
 export async function AdminAuthButtons() {
   const headers = await getHeaders()
@@ -16,11 +16,7 @@ export async function AdminAuthButtons() {
         <span className="text-sm text-muted-foreground hidden md:inline-block">
           {user.email}
         </span>
-        <form action={logout}>
-          <Button variant="outline" size="sm">
-            Logout
-          </Button>
-        </form>
+        <AdminLogoutButton />
       </div>
     )
   }

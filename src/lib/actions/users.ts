@@ -155,6 +155,14 @@ export async function logout() {
   redirect("/sys-admin/login")
 }
 
+export async function adminLogout() {
+  "use server"
+  const cookieStore = await cookies()
+  cookieStore.delete("payload-token")
+  revalidatePath("/", "layout")
+  redirect("/sys-admin/login")
+}
+
 export async function forgotPassword(prevState: any, formData: FormData) {
   const email = formData.get("email") as string
 
