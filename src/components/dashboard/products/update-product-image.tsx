@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition, useRef } from "react";
-import { updateProductImage } from "@/lib/actions/products";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,37 +49,77 @@ export function UpdateProductImage({
 
     startTransition(async () => {
       try {
-        const formData = new FormData();
-        formData.append("file", selectedFile);
-        formData.append("alt", selectedFile.name);
-
-        const response = await fetch("/api/media", {
+        const presignResponse = await fetch("/api/products/generate-presigned-url", {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            file: {
+              name: selectedFile.name,
+              type: selectedFile.type,
+              size: selectedFile.size,
+            },
+          }),
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to upload image");
+        if (!presignResponse.ok) {
+          throw new Error("Failed to prepare upload");
         }
 
-        const data = await response.json();
-        const mediaId = data.doc?.id || data.id;
+        const { uploadUrl, key } = (await presignResponse.json()) as {
+          uploadUrl?: string;
+          key?: string;
+        };
 
-        if (!mediaId) {
-          throw new Error("Failed to get media ID");
+        if (!uploadUrl || !key) {
+          throw new Error("Invalid upload URL response");
         }
 
-        // Then update the product with the new image ID
-        const updateResult = await updateProductImage(productId, mediaId);
+        const uploadResponse = await fetch(uploadUrl, {
+          method: "PUT",
+          body: selectedFile,
+          headers: {
+            "Content-Type": selectedFile.type,
+          },
+        });
 
-        if (updateResult.success) {
-          toast.success("Product image updated successfully");
-          setIsEditing(false);
-          setSelectedFile(null);
-          setPreviewUrl(null);
-        } else {
-          toast.error(updateResult.error || "Failed to update image");
+        if (!uploadResponse.ok) {
+          throw new Error("Failed to upload image to storage");
         }
+
+        const registerResponse = await fetch("/api/products/register-uploaded-image", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            productId,
+            key,
+            originalName: selectedFile.name,
+            type: selectedFile.type,
+            size: selectedFile.size,
+            alt: selectedFile.name,
+          }),
+        });
+
+        if (!registerResponse.ok) {
+          throw new Error("Failed to register uploaded image");
+        }
+
+        const registerResult = (await registerResponse.json()) as {
+          success?: boolean;
+          error?: string;
+        };
+
+        if (!registerResult.success) {
+          throw new Error(registerResult.error || "Failed to register image");
+        }
+
+        toast.success("Product image updated successfully");
+        setIsEditing(false);
+        setSelectedFile(null);
+        setPreviewUrl(null);
       } catch (error) {
         console.error("Error uploading image:", error);
         toast.error("Failed to upload image");
