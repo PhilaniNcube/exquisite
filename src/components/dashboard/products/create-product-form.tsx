@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { createProduct, uploadProductImage } from "@/lib/actions/products";
+import { createProduct } from "@/lib/actions/products";
 import { Button } from "@/components/ui/button";
 import { Form, FormItem, FormLabel } from "@/components/ui/form";
 import { Field } from "@/components/ui/field";
@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Loader2, Upload, X } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -24,6 +25,7 @@ const formSchema = z.object({
 });
 
 export function CreateProductForm() {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -63,29 +65,90 @@ export function CreateProductForm() {
 
     startTransition(async () => {
       try {
-        // 1. Upload Image
-        const formData = new FormData();
-        formData.append("file", selectedFile);
-        
-        const uploadResult = await uploadProductImage(formData);
-        
-        if (!uploadResult.success || !uploadResult.media) {
-          toast.error(uploadResult.error || "Failed to upload image");
-          return;
+        const presignResponse = await fetch("/api/products/generate-presigned-url", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            file: {
+              name: selectedFile.name,
+              type: selectedFile.type,
+              size: selectedFile.size,
+            },
+          }),
+        });
+
+        if (!presignResponse.ok) {
+          throw new Error("Failed to prepare upload");
+        }
+
+        const { uploadUrl, key } = (await presignResponse.json()) as {
+          uploadUrl?: string;
+          key?: string;
+        };
+
+        if (!uploadUrl || !key) {
+          throw new Error("Invalid upload URL response");
+        }
+
+        const uploadResponse = await fetch(uploadUrl, {
+          method: "PUT",
+          body: selectedFile,
+          headers: {
+            "Content-Type": selectedFile.type,
+          },
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error("Failed to upload image to storage");
+        }
+
+        const registerResponse = await fetch("/api/products/register-uploaded-media", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            key,
+            originalName: selectedFile.name,
+            type: selectedFile.type,
+            size: selectedFile.size,
+            alt: selectedFile.name,
+          }),
+        });
+
+        if (!registerResponse.ok) {
+          const registerError = (await registerResponse.json().catch(() => null)) as
+            | { error?: string }
+            | null;
+          throw new Error(registerError?.error || "Failed to register uploaded image");
+        }
+
+        const registerResult = (await registerResponse.json()) as {
+          success?: boolean;
+          mediaId?: number;
+          error?: string;
+        };
+
+        if (!registerResult.success || !registerResult.mediaId) {
+          throw new Error(registerResult.error || "Failed to register uploaded image");
         }
 
         // 2. Create Product
         const result = await createProduct({
           title: values.title,
           price: values.price,
-          imageId: uploadResult.media.id,
+          imageId: registerResult.mediaId,
           productDetails: values.productDetails,
         });
 
-        if (result.success) {
+        if (result.success && result.product?.id) {
           toast.success("Product created successfully");
           form.reset();
           removeImage();
+          router.push(`/dashboard/products/${result.product.id}`);
+          router.refresh();
         } else {
           toast.error(result.error || "Failed to create product");
         }
@@ -169,7 +232,7 @@ export function CreateProductForm() {
         >
           <Textarea
             placeholder="Enter product details..."
-            className="min-h-[150px]"
+            className="min-h-37.5"
           />
         </Field>
 

@@ -179,6 +179,7 @@ export async function createProduct(data: {
     });
 
     revalidatePath("/dashboard/products");
+    revalidatePath(`/dashboard/products/${newProduct.id}`);
     return { success: true, product: newProduct };
   } catch (error) {
     console.error("Error creating product:", error);

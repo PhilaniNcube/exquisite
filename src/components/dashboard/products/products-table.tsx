@@ -27,7 +27,7 @@ export default async function ProductsTable({
       <Table className="">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Image</TableHead>
+            <TableHead className="w-25">Image</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Price</TableHead>
             <TableHead className="text-right">Actions</TableHead>

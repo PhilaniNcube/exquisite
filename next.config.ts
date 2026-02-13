@@ -3,11 +3,6 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    serverActions: {
-      bodySizeLimit: "20mb",
-    },
-  },
   cacheComponents: true, // Enable Cache Components
   typedRoutes: true,
   logging: {

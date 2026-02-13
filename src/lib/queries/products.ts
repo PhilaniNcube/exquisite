@@ -11,7 +11,7 @@ export const getProducts = async (options?: {
   const payload = await getPayload({ config });
   const products = await payload.find({
     collection: "products",
-    limit: options?.limit || 10,
+    limit: options?.limit || 100,
     page: options?.page || 1,
   });
   return products;
