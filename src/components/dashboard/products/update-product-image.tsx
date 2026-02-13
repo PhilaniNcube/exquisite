@@ -9,6 +9,7 @@ import { Pencil, X, Check, Upload, Loader2 } from "lucide-react";
 import Image from "next/image";
 import type { Media } from "@/payload-types";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 interface UpdateProductImageProps {
   productId: number;
@@ -19,6 +20,7 @@ export function UpdateProductImage({
   productId,
   currentImage,
 }: UpdateProductImageProps) {
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -104,7 +106,10 @@ export function UpdateProductImage({
         });
 
         if (!registerResponse.ok) {
-          throw new Error("Failed to register uploaded image");
+          const registerError = (await registerResponse.json().catch(() => null)) as
+            | { error?: string }
+            | null;
+          throw new Error(registerError?.error || "Failed to register uploaded image");
         }
 
         const registerResult = (await registerResponse.json()) as {
@@ -120,6 +125,7 @@ export function UpdateProductImage({
         setIsEditing(false);
         setSelectedFile(null);
         setPreviewUrl(null);
+        router.refresh();
       } catch (error) {
         console.error("Error uploading image:", error);
         toast.error("Failed to upload image");
