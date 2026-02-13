@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useRef } from "react";
-import { updateProductImage, uploadProductImage } from "@/lib/actions/products";
+import { updateProductImage } from "@/lib/actions/products";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,34 +42,48 @@ export function UpdateProductImage({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedFile) {
       toast.error("Please select an image");
       return;
     }
 
     startTransition(async () => {
-      // First upload the image
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-      
-      const uploadResult = await uploadProductImage(formData);
-      
-      if (!uploadResult.success || !uploadResult.media) {
-        toast.error(uploadResult.error || "Failed to upload image");
-        return;
-      }
+      try {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        formData.append("alt", selectedFile.name);
 
-      // Then update the product with the new image ID
-      const updateResult = await updateProductImage(productId, uploadResult.media.id);
-      
-      if (updateResult.success) {
-        toast.success("Product image updated successfully");
-        setIsEditing(false);
-        setSelectedFile(null);
-        setPreviewUrl(null);
-      } else {
-        toast.error(updateResult.error || "Failed to update image");
+        const response = await fetch("/api/media", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to upload image");
+        }
+
+        const data = await response.json();
+        const mediaId = data.doc?.id || data.id;
+
+        if (!mediaId) {
+          throw new Error("Failed to get media ID");
+        }
+
+        // Then update the product with the new image ID
+        const updateResult = await updateProductImage(productId, mediaId);
+
+        if (updateResult.success) {
+          toast.success("Product image updated successfully");
+          setIsEditing(false);
+          setSelectedFile(null);
+          setPreviewUrl(null);
+        } else {
+          toast.error(updateResult.error || "Failed to update image");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        toast.error("Failed to upload image");
       }
     });
   };
