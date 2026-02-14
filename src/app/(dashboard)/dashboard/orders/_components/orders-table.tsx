@@ -20,6 +20,7 @@ import { Order } from "@/payload-types"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import { Route } from "next"
+import { formatPrice } from "@/lib/utils"
 
 interface OrdersTableProps {
   orders: Order[]
@@ -56,8 +57,10 @@ export function OrdersTable({ orders, totalPages }: OrdersTableProps) {
                     ? `${order.customerDetails.customer.firstName} ${order.customerDetails.customer.lastName}`
                     : order.customerDetails.customer}
                 </TableCell>
-                <TableCell>{order.orderStatus}</TableCell>
-                <TableCell>{order.orderTotal}</TableCell>
+                <TableCell>
+                  <span className="capitalize">{order.orderStatus}</span>
+                </TableCell>
+                <TableCell>{order.orderTotal ? formatPrice(order.orderTotal) : "-"}</TableCell>
                 <TableCell>{format(new Date(order.createdAt), "PP")}</TableCell>
               </TableRow>
             ))}
