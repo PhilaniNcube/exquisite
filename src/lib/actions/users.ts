@@ -21,7 +21,7 @@ export async function loginAdmin(email: string, password: string) {
     })
 
     // Check for admin role
-    const roles = result.user.roles as string[] | undefined
+    const roles = result.user?.roles as string[] | undefined
     if (!roles || !roles.includes("admin")) {
       return { error: "Unauthorized: Admin access required" }
     }

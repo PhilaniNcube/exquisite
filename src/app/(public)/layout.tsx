@@ -27,6 +27,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Exquisite Photography", url: "https://exquisitephoto.co.za" }],
   creator: "Exquisite Photography",
   publisher: "Exquisite Photography",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://exquisitephoto.co.za"),
   openGraph: {
     title: "Exquisite Photography",
     description:
