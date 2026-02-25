@@ -323,13 +323,18 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
       toast.success(
         `Upload complete! ${successfulUploads.length} successful, ${failedCount} failed.`,
       )
+
+      // Refresh the page data first so new photos are visible, then close dialog
+      router.refresh()
+
+      // Small delay to let the refresh start before closing the dialog
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
       setOpen(false)
       form.reset()
       setProgress(0)
       setCurrentFile("")
       setUploadStats({ completed: 0, total: 0, failed: 0 })
-
-      router.refresh()
     } catch (error) {
       console.error('Upload error:', error)
       toast.error('Upload failed. Please try again.')

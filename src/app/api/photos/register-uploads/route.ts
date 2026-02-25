@@ -35,13 +35,16 @@ export async function POST(request: NextRequest) {
     }
 
     const payload = await getPayload({ config })
+    const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || ''
     const results = []
 
     for (const upload of uploads) {
       try {
         // Build sizes metadata from client-generated thumbnails
+        // Include url so Payload's static handler can serve them
         const sizesData: Record<string, {
           filename: string
+          url: string
           width: number
           height: number
           mimeType: string
@@ -51,6 +54,7 @@ export async function POST(request: NextRequest) {
         for (const [sizeName, sizeInfo] of Object.entries(upload.sizes)) {
           sizesData[sizeName] = {
             filename: sizeInfo.key,
+            url: `${serverURL}/api/media/file/${encodeURIComponent(sizeInfo.key)}`,
             width: sizeInfo.width,
             height: sizeInfo.height,
             mimeType: 'image/webp',
@@ -60,10 +64,12 @@ export async function POST(request: NextRequest) {
 
         // Create media entry with metadata only — files already in R2.
         // No file download, no sharp processing, no re-upload.
+        // We explicitly set url + filename so Payload's static handler can serve them.
         const media = await payload.create({
           collection: 'media',
           data: {
             alt: upload.alt,
+            url: `${serverURL}/api/media/file/${encodeURIComponent(upload.key)}`,
             filename: upload.key,
             mimeType: upload.type,
             filesize: upload.size,
@@ -72,6 +78,24 @@ export async function POST(request: NextRequest) {
             sizes: sizesData,
           } as any, // upload fields are managed by PayloadCMS internally
         })
+
+        // If payload.create didn't persist the url/filename fields (they're upload-managed),
+        // update the record to explicitly set them.
+        if (!media.url || !media.filename) {
+          await payload.update({
+            collection: 'media',
+            id: media.id,
+            data: {
+              url: `${serverURL}/api/media/file/${encodeURIComponent(upload.key)}`,
+              filename: upload.key,
+              mimeType: upload.type,
+              filesize: upload.size,
+              width: upload.width,
+              height: upload.height,
+              sizes: sizesData,
+            } as any,
+          })
+        }
 
         // Create SchoolPhoto entry
         const schoolPhoto = await payload.create({
