@@ -41,7 +41,105 @@ const formSchema = z.object({
   files: z.any().refine((files) => files?.length > 0, "Files are required"),
 })
 
-const BATCH_SIZE = 10 // Upload 10 files concurrently
+const BATCH_SIZE = 5 // Upload 5 files concurrently (each file = original + up to 3 thumbnails)
+
+// Image sizes to generate client-side (must match PayloadCMS Media collection imageSizes)
+const IMAGE_SIZES = [
+  { name: 'thumbnail', width: 400 },
+  { name: 'card', width: 768 },
+  { name: 'tablet', width: 1024 },
+] as const
+
+interface ProcessedImage {
+  file: File
+  width: number
+  height: number
+  thumbnails: Array<{
+    name: string
+    width: number
+    height: number
+    blob: Blob
+  }>
+}
+
+interface PresignedUrlData {
+  originalName: string
+  key: string
+  presignedUrl: string
+  sizes: Record<string, { key: string; presignedUrl: string }>
+}
+
+/**
+ * Process an image in the browser: extract dimensions and generate
+ * resized WebP thumbnails using the Canvas API.
+ */
+async function processImage(file: File): Promise<ProcessedImage> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = async () => {
+      try {
+        const origWidth = img.width
+        const origHeight = img.height
+        const thumbnails: ProcessedImage['thumbnails'] = []
+
+        for (const size of IMAGE_SIZES) {
+          if (size.width >= origWidth) continue // Don't upscale
+
+          const scale = size.width / origWidth
+          const targetHeight = Math.round(origHeight * scale)
+
+          const canvas = document.createElement('canvas')
+          canvas.width = size.width
+          canvas.height = targetHeight
+
+          const ctx = canvas.getContext('2d')
+          if (!ctx) continue
+
+          ctx.drawImage(img, 0, 0, size.width, targetHeight)
+
+          const blob = await new Promise<Blob>((res, rej) => {
+            canvas.toBlob(
+              (b) => (b ? res(b) : rej(new Error(`Failed to generate ${size.name}`))),
+              'image/webp',
+              0.8,
+            )
+          })
+
+          thumbnails.push({ name: size.name, width: size.width, height: targetHeight, blob })
+        }
+
+        URL.revokeObjectURL(img.src)
+        resolve({ file, width: origWidth, height: origHeight, thumbnails })
+      } catch (error) {
+        URL.revokeObjectURL(img.src)
+        reject(error)
+      }
+    }
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src)
+      reject(new Error(`Failed to load image: ${file.name}`))
+    }
+    img.src = URL.createObjectURL(file)
+  })
+}
+
+async function uploadToR2(
+  data: Blob | File,
+  presignedUrl: string,
+  contentType: string,
+): Promise<boolean> {
+  try {
+    const response = await fetch(presignedUrl, {
+      method: 'PUT',
+      body: data,
+      headers: { 'Content-Type': contentType },
+    })
+    return response.ok
+  } catch (error) {
+    console.error('Upload failed:', error)
+    return false
+  }
+}
 
 export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoolId: number }) {
   const router = useRouter()
@@ -60,44 +158,6 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
 
   const fileRef = form.register("files")
 
-  async function uploadToS3(file: File, presignedUrl: string): Promise<boolean> {
-    try {
-      const response = await fetch(presignedUrl, {
-        method: 'PUT',
-        body: file,
-        headers: {
-          'Content-Type': file.type,
-        },
-      })
-      return response.ok
-    } catch (error) {
-      console.error(`Failed to upload ${file.name}:`, error)
-      return false
-    }
-  }
-
-  async function processBatch(
-    files: File[],
-    presignedUrls: Array<{ originalName: string; key: string; presignedUrl: string }>,
-    startIndex: number
-  ) {
-    const batchFiles = files.slice(startIndex, startIndex + BATCH_SIZE)
-    const batchUrls = presignedUrls.slice(startIndex, startIndex + BATCH_SIZE)
-
-    // Upload all files in this batch concurrently to S3
-    const uploadPromises = batchFiles.map((file, index) => {
-      const urlData = batchUrls[index]
-      setCurrentFile(file.name)
-      return uploadToS3(file, urlData.presignedUrl).then((success) => ({
-        success,
-        file,
-        urlData,
-      }))
-    })
-
-    return await Promise.allSettled(uploadPromises)
-  }
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsUploading(true)
     setProgress(0)
@@ -106,12 +166,29 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
     setUploadStats({ completed: 0, total: totalFiles, failed: 0 })
 
     try {
-      // Step 1: Get presigned URLs for all files
+      // Step 1: Process images client-side (extract dimensions + generate thumbnails)
+      setCurrentFile("Processing images...")
+      const processedImages: ProcessedImage[] = []
+      for (let i = 0; i < files.length; i++) {
+        setCurrentFile(`Processing ${files[i].name} (${i + 1}/${totalFiles})...`)
+        try {
+          const processed = await processImage(files[i])
+          processedImages.push(processed)
+        } catch (error) {
+          console.error(`Failed to process ${files[i].name}:`, error)
+          // Still include the file — it will upload without thumbnails
+          processedImages.push({ file: files[i], width: 0, height: 0, thumbnails: [] })
+        }
+        setProgress(Math.round(((i + 1) / totalFiles) * 20)) // 0-20% for processing
+      }
+
+      // Step 2: Get presigned URLs for originals + thumbnails
       setCurrentFile("Preparing uploads...")
-      const fileMetadata = files.map((file) => ({
-        name: file.name,
-        type: file.type,
-        size: file.size,
+      const fileMetadata = processedImages.map((img) => ({
+        name: img.file.name,
+        type: img.file.type,
+        size: img.file.size,
+        sizeNames: img.thumbnails.map((t) => t.name),
       }))
 
       const presignedResponse = await fetch('/api/photos/generate-presigned-urls', {
@@ -125,56 +202,96 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
       }
 
       const { presignedUrls } = await presignedResponse.json() as {
-        presignedUrls: Array<{ originalName: string; key: string; presignedUrl: string }>
+        presignedUrls: PresignedUrlData[]
       }
 
-      // Step 2: Upload files to S3 in batches
+      // Step 3: Upload originals + thumbnails to R2 in batches
       const successfulUploads: Array<{
         key: string
         originalName: string
         size: number
         type: string
         alt: string
+        width: number
+        height: number
+        sizes: Record<string, { key: string; width: number; height: number; filesize: number }>
       }> = []
       let failedCount = 0
 
       for (let i = 0; i < totalFiles; i += BATCH_SIZE) {
-        const batchResults = await processBatch(files, presignedUrls, i)
+        const batchEnd = Math.min(i + BATCH_SIZE, totalFiles)
+        const uploadPromises: Promise<{ index: number; success: boolean }>[] = []
 
-        batchResults.forEach((result, batchIndex) => {
-          const fileIndex = i + batchIndex
+        for (let j = i; j < batchEnd; j++) {
+          const processed = processedImages[j]
+          const urlData = presignedUrls[j]
+          setCurrentFile(`Uploading ${processed.file.name}...`)
+
+          // Upload original + all thumbnails for this file concurrently
+          const originalUpload = uploadToR2(processed.file, urlData.presignedUrl, processed.file.type)
+          const thumbnailUploads = processed.thumbnails.map((thumb) => {
+            const sizeUrl = urlData.sizes[thumb.name]
+            if (!sizeUrl) return Promise.resolve(true)
+            return uploadToR2(thumb.blob, sizeUrl.presignedUrl, 'image/webp')
+          })
+
+          uploadPromises.push(
+            Promise.all([originalUpload, ...thumbnailUploads]).then((results) => ({
+              index: j,
+              success: results.every(Boolean),
+            })),
+          )
+        }
+
+        const batchResults = await Promise.allSettled(uploadPromises)
+        for (const result of batchResults) {
           if (result.status === 'fulfilled' && result.value.success) {
-            const file = result.value.file
-            const urlData = result.value.urlData
+            const j = result.value.index
+            const processed = processedImages[j]
+            const urlData = presignedUrls[j]
+
+            const sizes: Record<string, { key: string; width: number; height: number; filesize: number }> = {}
+            processed.thumbnails.forEach((thumb) => {
+              const sizeUrl = urlData.sizes[thumb.name]
+              if (sizeUrl) {
+                sizes[thumb.name] = {
+                  key: sizeUrl.key,
+                  width: thumb.width,
+                  height: thumb.height,
+                  filesize: thumb.blob.size,
+                }
+              }
+            })
+
             successfulUploads.push({
               key: urlData.key,
-              originalName: file.name,
-              size: file.size,
-              type: file.type,
-              alt: file.name.replace(/\.[^/.]+$/, "") || "Untitled",
+              originalName: processed.file.name,
+              size: processed.file.size,
+              type: processed.file.type,
+              alt: processed.file.name.replace(/\.[^/.]+$/, "") || "Untitled",
+              width: processed.width,
+              height: processed.height,
+              sizes,
             })
           } else {
             failedCount++
           }
-          
-          setUploadStats((prev) => ({
-            ...prev,
-            completed: fileIndex + 1,
-            failed: failedCount,
-          }))
-          setProgress(Math.round(((fileIndex + 1) / totalFiles) * 100))
-        })
+        }
+
+        const completedSoFar = Math.min(batchEnd, totalFiles)
+        setUploadStats({ completed: completedSoFar, total: totalFiles, failed: failedCount })
+        setProgress(20 + Math.round((completedSoFar / totalFiles) * 60)) // 20-80%
       }
 
-      // Step 3: Register uploaded files in database (batches of 20)
+      // Step 4: Register uploaded files in database (batches of 20)
       if (successfulUploads.length > 0) {
         setCurrentFile("Registering uploads in database...")
         const REGISTER_BATCH_SIZE = 20
         let registeredCount = 0
-        
+
         for (let i = 0; i < successfulUploads.length; i += REGISTER_BATCH_SIZE) {
           const batch = successfulUploads.slice(i, i + REGISTER_BATCH_SIZE)
-          
+
           const registerResponse = await fetch('/api/photos/register-uploads', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -193,8 +310,10 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
             registeredCount += batch.length
             setCurrentFile(`Registered ${registeredCount} of ${successfulUploads.length} photos...`)
           }
+
+          setProgress(80 + Math.round(((i + REGISTER_BATCH_SIZE) / successfulUploads.length) * 20)) // 80-100%
         }
-        
+
         if (registeredCount > 0) {
           toast.success(`Successfully registered ${registeredCount} photos in database`)
         }
@@ -202,15 +321,14 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
 
       setIsUploading(false)
       toast.success(
-        `Upload complete! ${successfulUploads.length} successful, ${failedCount} failed.`
+        `Upload complete! ${successfulUploads.length} successful, ${failedCount} failed.`,
       )
       setOpen(false)
       form.reset()
       setProgress(0)
       setCurrentFile("")
       setUploadStats({ completed: 0, total: 0, failed: 0 })
-      
-      // Refresh the page data to show new photos
+
       router.refresh()
     } catch (error) {
       console.error('Upload error:', error)

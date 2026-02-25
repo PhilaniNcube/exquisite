@@ -1,27 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import sharp from 'sharp'
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
-
-const s3Client = new S3Client({
-  region: 'auto',
-  endpoint: process.env.S3_ENDPOINT || '',
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.S3_ACCESS_SECRET || '',
-  },
-  forcePathStyle: true,
-})
-
-async function streamToBuffer(stream: any): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = []
-    stream.on('data', (chunk: Buffer) => chunks.push(chunk))
-    stream.on('error', reject)
-    stream.on('end', () => resolve(Buffer.concat(chunks)))
-  })
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,6 +11,14 @@ export async function POST(request: NextRequest) {
         size: number
         type: string
         alt: string
+        width: number
+        height: number
+        sizes: Record<string, {
+          key: string
+          width: number
+          height: number
+          filesize: number
+        }>
       }>
       schoolId: number
       classId: number
@@ -43,43 +30,47 @@ export async function POST(request: NextRequest) {
     if (!uploads || uploads.length === 0) {
       return NextResponse.json(
         { error: 'No uploads provided' },
-        { status: 400 }
+        { status: 400 },
       )
     }
 
     const payload = await getPayload({ config })
-    const bucket = process.env.S3_BUCKET || ''
     const results = []
 
-    // Process each upload
     for (const upload of uploads) {
       try {
-        // Fetch the uploaded file from S3 to generate thumbnails
-        const getCommand = new GetObjectCommand({
-          Bucket: bucket,
-          Key: upload.key,
-        })
+        // Build sizes metadata from client-generated thumbnails
+        const sizesData: Record<string, {
+          filename: string
+          width: number
+          height: number
+          mimeType: string
+          filesize: number
+        }> = {}
 
-        const s3Response = await s3Client.send(getCommand)
-        const buffer = await streamToBuffer(s3Response.Body)
+        for (const [sizeName, sizeInfo] of Object.entries(upload.sizes)) {
+          sizesData[sizeName] = {
+            filename: sizeInfo.key,
+            width: sizeInfo.width,
+            height: sizeInfo.height,
+            mimeType: 'image/webp',
+            filesize: sizeInfo.filesize,
+          }
+        }
 
-        // Get image dimensions
-        const metadata = await sharp(buffer).metadata()
-
-        // Create media entry in PayloadCMS
-        // Note: Since the file is already in S3, we create the database entry
-        // PayloadCMS will generate thumbnails automatically via the S3 adapter
+        // Create media entry with metadata only — files already in R2.
+        // No file download, no sharp processing, no re-upload.
         const media = await payload.create({
           collection: 'media',
           data: {
             alt: upload.alt,
-          },
-          file: {
-            data: buffer,
-            name: upload.originalName,
-            mimetype: upload.type,
-            size: upload.size,
-          },
+            filename: upload.key,
+            mimeType: upload.type,
+            filesize: upload.size,
+            width: upload.width,
+            height: upload.height,
+            sizes: sizesData,
+          } as any, // upload fields are managed by PayloadCMS internally
         })
 
         // Create SchoolPhoto entry
@@ -128,7 +119,7 @@ export async function POST(request: NextRequest) {
     console.error('Error registering uploads:', error)
     return NextResponse.json(
       { error: 'Failed to register uploads' },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }

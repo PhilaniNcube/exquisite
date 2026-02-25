@@ -16,7 +16,7 @@ const s3Client = new S3Client({
 export async function POST(request: NextRequest) {
   try {
     const { files } = await request.json() as { 
-      files: Array<{ name: string; type: string; size: number }> 
+      files: Array<{ name: string; type: string; size: number; sizeNames?: string[] }> 
     }
 
     if (!files || files.length === 0) {
@@ -46,7 +46,8 @@ export async function POST(request: NextRequest) {
           .replace(/[^a-zA-Z0-9-_]/g, '-') // Replace special chars
           .toLowerCase()
         
-        const key = `${sanitizedName}-${timestamp}-${randomString}.${ext}`
+        const baseName = `${sanitizedName}-${timestamp}-${randomString}`
+        const key = `${baseName}.${ext}`
 
         const command = new PutObjectCommand({
           Bucket: bucket,
@@ -58,10 +59,30 @@ export async function POST(request: NextRequest) {
           expiresIn: 3600, // URL expires in 1 hour
         })
 
+        // Generate presigned URLs for image size variants (client-generated thumbnails)
+        const sizes: Record<string, { key: string; presignedUrl: string }> = {}
+        if (file.sizeNames && file.sizeNames.length > 0) {
+          await Promise.all(
+            file.sizeNames.map(async (sizeName) => {
+              const sizeKey = `${baseName}-${sizeName}.webp`
+              const sizeCommand = new PutObjectCommand({
+                Bucket: bucket,
+                Key: sizeKey,
+                ContentType: 'image/webp',
+              })
+              const sizePresignedUrl = await getSignedUrl(s3Client, sizeCommand, {
+                expiresIn: 3600,
+              })
+              sizes[sizeName] = { key: sizeKey, presignedUrl: sizePresignedUrl }
+            }),
+          )
+        }
+
         return {
           originalName: file.name,
           key,
           presignedUrl,
+          sizes,
         }
       })
     )
