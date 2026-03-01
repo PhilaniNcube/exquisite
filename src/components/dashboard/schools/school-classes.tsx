@@ -11,6 +11,7 @@ import config from "@payload-config"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CreateClassDialog } from "./create-class-dialog"
 import { DeleteClassButton } from "./delete-class-button"
+import Link from "next/link"
 
 export default async function SchoolClasses({
   params,
@@ -35,7 +36,7 @@ export default async function SchoolClasses({
   })
 
   return (
-    <Card>
+    <Card className="max-w-xl">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle>Classes</CardTitle>
         <CreateClassDialog schoolId={id} />
@@ -47,8 +48,10 @@ export default async function SchoolClasses({
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>ID</TableHead>
-                <TableHead className="text-right">Created At</TableHead>
-                <TableHead className="w-12.5"></TableHead>
+                <TableHead className="">Created At</TableHead>
+                <TableHead className="text-right">
+                  Actions
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -63,10 +66,13 @@ export default async function SchoolClasses({
                   <TableRow key={cls.id}>
                     <TableCell className="font-medium">{cls.name}</TableCell>
                     <TableCell>{cls.id}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="">
                       {new Date(cls.createdAt).toLocaleDateString()}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="flex items-center justify-end space-x-2 text-right">
+                      <Link href={`/dashboard/classes/${cls.id}`} className="text-blue-600 hover:underline">
+                        View Class
+                      </Link>
                       <DeleteClassButton classId={cls.id} schoolId={id} />
                     </TableCell>
                   </TableRow>

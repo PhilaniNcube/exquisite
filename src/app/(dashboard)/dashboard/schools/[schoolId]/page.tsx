@@ -1,6 +1,8 @@
 import React, { Suspense } from "react";
 import SchoolDetails from "@/components/dashboard/schools/school-details";
 import SchoolClasses from "@/components/dashboard/schools/school-classes";
+import SchoolPhotos from "@/components/dashboard/schools/school-photos";
+import SchoolBulkUpload from "@/components/dashboard/schools/school-bulk-upload";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -21,13 +23,22 @@ const SchoolPage = async ({
         </Button>
         <h1 className="text-3xl font-bold">School Details</h1>
       </div>
-      
+
       <Suspense fallback={<SchoolDetailsSkeleton />}>
         <SchoolDetails params={params} />
       </Suspense>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Suspense fallback={<SchoolClassesSkeleton />}>
+          <SchoolClasses params={params} />
+        </Suspense>
 
-      <Suspense fallback={<SchoolClassesSkeleton />}>
-        <SchoolClasses params={params} />
+        <Suspense fallback={<SchoolBulkUploadSkeleton />}>
+          <SchoolBulkUpload params={params} />
+        </Suspense>
+      </div>
+
+      <Suspense fallback={<SchoolPhotosSkeleton />}>
+        <SchoolPhotos params={params} />
       </Suspense>
     </div>
   );
@@ -60,7 +71,7 @@ function SchoolDetailsSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function SchoolClassesSkeleton() {
@@ -77,7 +88,48 @@ function SchoolClassesSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
+}
+
+function SchoolBulkUploadSkeleton() {
+  return (
+    <div className="rounded-xl border bg-card text-card-foreground shadow">
+      <div className="flex flex-row items-center justify-between p-6 pb-2">
+        <div className="space-y-1">
+          <Skeleton className="h-6 w-40" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <Skeleton className="h-9 w-28" />
+      </div>
+    </div>
+  );
+}
+
+function SchoolPhotosSkeleton() {
+  return (
+    <div className="rounded-xl border bg-card text-card-foreground shadow">
+      <div className="flex flex-row items-center justify-between p-6 pb-2">
+        <Skeleton className="h-8 w-1/4" />
+        <Skeleton className="h-9 w-24" />
+      </div>
+      <div className="p-6 pt-0 space-y-4">
+        <div className="flex gap-2">
+          <Skeleton className="h-6 w-24" />
+          <Skeleton className="h-6 w-24" />
+          <Skeleton className="h-6 w-24" />
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="space-y-1">
+              <Skeleton className="aspect-square w-full rounded-md" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-3 w-1/2" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default SchoolPage;
