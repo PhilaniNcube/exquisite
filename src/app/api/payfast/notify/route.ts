@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Security Check 1: Verify signature
-    const isValidSignature = payfastService.verifySignature(
+    const isValidSignature = payfastService.verifyITNSignature(
       pfData,
       receivedSignature
     );
@@ -90,16 +90,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Security Check 4: Server confirmation
-    // Create parameter string for validation
-    let paramString = "";
-    const sortedKeys = Object.keys(pfData).sort();
-    
-    for (const key of sortedKeys) {
-      if (key !== "signature") {
-        paramString += `${key}=${encodeURIComponent(pfData[key])}&`;
-      }
-    }
-    paramString = paramString.slice(0, -1); // Remove last &
+    const paramString = payfastService.createITNValidationString(pfData);
 
     const isValidServer = await payfastService.verifyServerConfirmation(
       paramString

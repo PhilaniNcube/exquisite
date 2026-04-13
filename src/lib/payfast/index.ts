@@ -105,6 +105,59 @@ export class PayFastService {
     "setup",
   ];
 
+  private buildParamString(
+    data: Record<string, string | undefined>,
+    options?: {
+      passphrase?: string;
+      orderedKeys?: string[];
+      excludeKeys?: string[];
+    }
+  ): string {
+    const entries: string[] = [];
+    const excludedKeys = new Set(options?.excludeKeys ?? []);
+    const orderedKeys = options?.orderedKeys ?? Object.keys(data);
+    const seenKeys = new Set<string>();
+
+    for (const key of orderedKeys) {
+      const value = data[key];
+
+      if (
+        seenKeys.has(key) ||
+        excludedKeys.has(key) ||
+        value === undefined ||
+        value === null ||
+        value === ""
+      ) {
+        continue;
+      }
+
+      seenKeys.add(key);
+      entries.push(`${key}=${this.pfEncode(String(value))}`);
+    }
+
+    for (const [key, value] of Object.entries(data)) {
+      if (
+        seenKeys.has(key) ||
+        excludedKeys.has(key) ||
+        value === undefined ||
+        value === null ||
+        value === ""
+      ) {
+        continue;
+      }
+
+      entries.push(`${key}=${this.pfEncode(String(value))}`);
+    }
+
+    const passphraseToUse = options?.passphrase ?? this.config.passphrase;
+
+    if (passphraseToUse) {
+      entries.push(`passphrase=${this.pfEncode(passphraseToUse)}`);
+    }
+
+    return entries.join("&");
+  }
+
   /**
    * Generate MD5 signature for PayFast payment
    */
@@ -112,39 +165,24 @@ export class PayFastService {
     data: Record<string, string | undefined>,
     passphrase?: string
   ): string {
-    // Build parameter string in the required field order
-    let pfOutput = "";
+    const paramString = this.buildParamString(data, {
+      passphrase,
+      orderedKeys: PayFastService.FIELD_ORDER,
+    });
 
-    for (const key of PayFastService.FIELD_ORDER) {
-      const value = data[key];
-      if (value !== undefined && value !== null && value !== "") {
-        pfOutput += `${key}=${this.pfEncode(String(value))}&`;
-      }
-    }
+    return crypto.createHash("md5").update(paramString).digest("hex");
+  }
 
-    // Handle any remaining keys not in the predefined order (e.g. ITN fields)
-    for (const key of Object.keys(data)) {
-      if (
-        !PayFastService.FIELD_ORDER.includes(key) &&
-        data[key] !== undefined &&
-        data[key] !== null &&
-        data[key] !== ""
-      ) {
-        pfOutput += `${key}=${this.pfEncode(String(data[key]))}&`;
-      }
-    }
+  generateITNSignature(
+    data: Record<string, string | undefined>,
+    passphrase?: string
+  ): string {
+    const paramString = this.buildParamString(data, {
+      passphrase,
+      excludeKeys: ["signature"],
+    });
 
-    // Remove trailing ampersand
-    let getString = pfOutput.slice(0, -1);
-
-    // Add passphrase
-    const passphraseToUse = passphrase || this.config.passphrase;
-    if (passphraseToUse) {
-      getString += `&passphrase=${this.pfEncode(passphraseToUse)}`;
-    }
-
-    // Generate MD5 hash
-    return crypto.createHash("md5").update(getString).digest("hex");
+    return crypto.createHash("md5").update(paramString).digest("hex");
   }
 
   /**
@@ -165,6 +203,23 @@ export class PayFastService {
     );
     
     return calculatedSignature === providedSignature;
+  }
+
+  verifyITNSignature(
+    data: Record<string, string>,
+    providedSignature: string,
+    passphrase?: string
+  ): boolean {
+    const calculatedSignature = this.generateITNSignature(data, passphrase);
+
+    return calculatedSignature === providedSignature;
+  }
+
+  createITNValidationString(data: Record<string, string>): string {
+    return this.buildParamString(data, {
+      passphrase: "",
+      excludeKeys: ["signature"],
+    });
   }
 
   /**
