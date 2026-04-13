@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import { Order, Product, SchoolPhoto } from "@/payload-types";
 import Link from "next/link";
+import { OrdersPageSkeleton } from "@/components/orders/orders-page-skeleton";
 
 export const metadata: Metadata = {
   title: "Orders | Exquisite Photography",
@@ -269,7 +270,7 @@ const OrdersContent = async ({ searchParams }: OrdersPageProps) => {
 
 const OrdersPage = ({ searchParams }: OrdersPageProps) => {
   return (
-    <Suspense fallback={<div>Loading orders...</div>}>
+    <Suspense fallback={<OrdersPageSkeleton />}>
       <OrdersContent searchParams={searchParams} />
     </Suspense>
   );
