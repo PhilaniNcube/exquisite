@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
 import { deleteOrder } from "@/lib/actions/orders"
+import { Route } from "next"
 
 interface DeleteOrderButtonProps {
   orderId: number
@@ -47,7 +48,7 @@ export function DeleteOrderButton({
       toast.success(result.message)
 
       if (redirectTo) {
-        router.push(redirectTo)
+        router.push(redirectTo as Route)
         return
       }
 
