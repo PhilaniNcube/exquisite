@@ -1,7 +1,7 @@
 import { headers as getHeaders } from "next/headers";
 import { getPayload } from "payload";
 import configPromise from "@payload-config";
-import type { Customer } from "@/payload-types";
+import type { Customer, User } from "@/payload-types";
 import type { Payload } from "payload";
 
 
@@ -27,4 +27,17 @@ const checkUser = async () => {
   return !!user;
 };
 
-export { getUser, checkUser };
+const isAdminUser = async (): Promise<boolean> => {
+  const headers = await getHeaders();
+  const payload: Payload = await getPayload({ config: await configPromise });
+
+  const { user } = await payload.auth({ headers });
+
+  if (user?.collection !== "users") {
+    return false;
+  }
+
+  return (user as User).roles?.includes("admin") ?? false;
+};
+
+export { getUser, checkUser, isAdminUser };

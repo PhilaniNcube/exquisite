@@ -1,4 +1,5 @@
 import React from "react";
+import { isAdminUser } from "@/lib/auth";
 import { getOrder } from "@/lib/queries/orders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -6,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Customer, Media, Product, SchoolPhoto } from "@/payload-types";
 import Image from "next/image";
+import { DeleteOrderButton } from "@/components/dashboard/orders/delete-order-button";
 
 interface OrderDetailsProps {
   params: Promise<{ orderId: string }>;
@@ -14,6 +16,7 @@ interface OrderDetailsProps {
 const OrderDetails = async ({ params }: OrderDetailsProps) => {
   const { orderId } = await params;
   const order = await getOrder(parseInt(orderId));
+  const canDeleteOrders = await isAdminUser();
 
   if (!order) {
     return <div>Order not found</div>;
@@ -26,17 +29,26 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold tracking-tight">Order #{order.id}</h2>
-        <Badge
-          variant={
-            order.orderStatus === "completed"
-              ? "default"
-              : order.orderStatus === "cancelled"
-              ? "destructive"
-              : "secondary"
-          }
-        >
-          {order.orderStatus}
-        </Badge>
+        <div className="flex items-center gap-3">
+          <Badge
+            variant={
+              order.orderStatus === "completed"
+                ? "default"
+                : order.orderStatus === "cancelled"
+                ? "destructive"
+                : "secondary"
+            }
+          >
+            {order.orderStatus}
+          </Badge>
+          {canDeleteOrders ? (
+            <DeleteOrderButton
+              orderId={order.id}
+              redirectTo="/dashboard/orders"
+              variant="button"
+            />
+          ) : null}
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

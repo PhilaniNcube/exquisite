@@ -21,13 +21,15 @@ import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import { Route } from "next"
 import { formatPrice } from "@/lib/utils"
+import { DeleteOrderButton } from "@/components/dashboard/orders/delete-order-button"
 
 interface OrdersTableProps {
   orders: Order[]
   totalPages: number
+  canDeleteOrders: boolean
 }
 
-export function OrdersTable({ orders, totalPages }: OrdersTableProps) {
+export function OrdersTable({ orders, totalPages, canDeleteOrders }: OrdersTableProps) {
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1))
   const router = useRouter()
 
@@ -42,6 +44,7 @@ export function OrdersTable({ orders, totalPages }: OrdersTableProps) {
               <TableHead>Status</TableHead>
               <TableHead>Total</TableHead>
               <TableHead>Date</TableHead>
+              {canDeleteOrders ? <TableHead className="w-[72px] text-right">Actions</TableHead> : null}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -62,6 +65,11 @@ export function OrdersTable({ orders, totalPages }: OrdersTableProps) {
                 </TableCell>
                 <TableCell>{order.orderTotal ? formatPrice(order.orderTotal) : "-"}</TableCell>
                 <TableCell>{format(new Date(order.createdAt), "PP")}</TableCell>
+                {canDeleteOrders ? (
+                  <TableCell className="text-right" onClick={(event) => event.stopPropagation()}>
+                    <DeleteOrderButton orderId={order.id} />
+                  </TableCell>
+                ) : null}
               </TableRow>
             ))}
           </TableBody>

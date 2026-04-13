@@ -139,6 +139,53 @@ export const Orders: CollectionConfig = {
       type: "text",
       label: "Payment Reference",
     },
+    {
+      type: "group",
+      name: "paymentDetails",
+      label: "Payment Details",
+      fields: [
+        {
+          name: "pfPaymentId",
+          type: "text",
+          label: "PayFast Payment ID",
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: "paymentStatus",
+          type: "text",
+          label: "Payment Status",
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: "amountGross",
+          type: "number",
+          label: "Amount Gross (ZAR)",
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: "amountFee",
+          type: "number",
+          label: "Amount Fee (ZAR)",
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: "amountNet",
+          type: "number",
+          label: "Amount Net (ZAR)",
+          admin: {
+            readOnly: true,
+          },
+        },
+      ],
+    },
   ],
   hooks: {
     afterRead: [

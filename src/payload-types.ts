@@ -417,6 +417,13 @@ export interface Order {
   orderTotal?: number | null;
   orderStatus?: ('pending' | 'processing' | 'completed' | 'cancelled') | null;
   paymentReference?: string | null;
+  paymentDetails?: {
+    pfPaymentId?: string | null;
+    paymentStatus?: string | null;
+    amountGross?: number | null;
+    amountFee?: number | null;
+    amountNet?: number | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -759,6 +766,15 @@ export interface OrdersSelect<T extends boolean = true> {
   orderTotal?: T;
   orderStatus?: T;
   paymentReference?: T;
+  paymentDetails?:
+    | T
+    | {
+        pfPaymentId?: T;
+        paymentStatus?: T;
+        amountGross?: T;
+        amountFee?: T;
+        amountNet?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

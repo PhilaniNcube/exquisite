@@ -2,11 +2,11 @@
 
 import { getPayload } from "payload";
 import config from "@payload-config";
-import { getUser } from "@/lib/auth";
 import { Order } from "@/payload-types";
 import { z } from "zod";
-import { redirect } from "next/navigation";
 import {headers as getHeaders} from "next/headers";
+import { getPayFastService } from "@/lib/payfast";
+import { revalidatePath } from "next/cache";
 
 // Validation schema for order creation
 const orderItemSchema = z.object({
@@ -101,8 +101,44 @@ export const createOrder = async (prevState: unknown, formData: FormData) => {
       data: finalOrderData,
     });
 
-    // Redirect to orders page with orderId
-    redirect(`/orders?orderId=${order.id}`);
+    // Generate PayFast payment data
+    const payfastService = getPayFastService();
+    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
+
+    const customerEmail = typeof user.email === "string" ? user.email : "customer@example.com";
+    const firstName = user.firstName || "Customer";
+    const lastName = user.lastName || "User";
+
+    // Calculate total amount
+    const totalAmount = validatedData.productDetails.orderItems.reduce(
+      (sum, item) => sum + item.linePrice,
+      0
+    );
+
+    const paymentData = payfastService.createPaymentData({
+      orderId: order.id.toString(),
+      amount: totalAmount,
+      itemName: `Order #${order.id}`,
+      itemDescription: `Payment for order #${order.id}`,
+      customerFirstName: firstName,
+      customerLastName: lastName,
+      customerEmail,
+      customerCell: cellNumber,
+      returnUrl: `${baseUrl}/checkout/success?orderId=${order.id}`,
+      cancelUrl: `${baseUrl}/checkout/cancel?orderId=${order.id}`,
+      notifyUrl: `${baseUrl}/api/payfast/notify`,
+    });
+
+    return {
+      success: true,
+      message: "Order created successfully",
+      orderId: order.id,
+      error: "",
+      paymentData: Object.fromEntries(
+        Object.entries(paymentData).filter(([, v]) => v !== undefined)
+      ) as Record<string, string>,
+      paymentUrl: payfastService.paymentUrl,
+    };
 
   } catch (error) {
     console.error("Error creating order:", error);
@@ -114,3 +150,56 @@ export const createOrder = async (prevState: unknown, formData: FormData) => {
     };
   }
 };
+
+const deleteOrderSchema = z.object({
+  orderId: z.number().int().positive(),
+});
+
+export async function deleteOrder(orderId: number) {
+  const validatedFields = deleteOrderSchema.safeParse({ orderId });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      message: "Invalid order ID",
+    };
+  }
+
+  try {
+    const payload = await getPayload({ config });
+    const headers = await getHeaders();
+    const result = await payload.auth({ headers, canSetHeaders: false });
+
+    const isAdmin =
+      result.user?.collection === "users" &&
+      result.user.roles?.includes("admin");
+
+    if (!isAdmin) {
+      return {
+        success: false,
+        message: "Unauthorized: Admin access required",
+      };
+    }
+
+    await payload.delete({
+      collection: "orders",
+      id: validatedFields.data.orderId,
+    });
+
+    revalidatePath("/dashboard/orders");
+    revalidatePath(`/dashboard/orders/${validatedFields.data.orderId}`);
+    revalidatePath("/orders");
+
+    return {
+      success: true,
+      message: "Order deleted successfully",
+    };
+  } catch (error) {
+    console.error("Error deleting order:", error);
+
+    return {
+      success: false,
+      message: "Failed to delete order",
+    };
+  }
+}
