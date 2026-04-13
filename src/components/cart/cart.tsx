@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useCartStore } from "@/store/cart-store";
 import {
   Sheet,
@@ -21,10 +22,12 @@ interface CartProps {
 export function Cart({ trigger }: CartProps) {
   const { items, getTotalItems, getTotalPrice, clearCart } = useCartStore();
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
 
   const handleCheckout = () => {
+    setIsOpen(false);
     router.push("/checkout");
   };
 
@@ -43,7 +46,7 @@ export function Cart({ trigger }: CartProps) {
   );
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         {trigger || defaultTrigger}
       </SheetTrigger>

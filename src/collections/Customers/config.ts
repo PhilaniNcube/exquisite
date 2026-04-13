@@ -4,6 +4,21 @@ export const Customers:CollectionConfig = {
     slug: 'customers',
     auth: {
         tokenExpiration: 12 * 60 * 60, // 12 hours
+        forgotPassword: {
+                        generateEmailSubject: (args) => `Reset your password, ${args?.user?.firstName ?? 'there'}`,
+                        generateEmailHTML: (args) => {
+                                const token = args?.token;
+                                const firstName = args?.user?.firstName ?? 'there';
+                const resetLink = `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password?token=${token}`;
+
+                return `
+                                <p>Hello ${firstName},</p>
+                <p>We received a request to reset your password.</p>
+                <p><a href="${resetLink}">Reset your password</a></p>
+                <p>If you did not request this, you can ignore this email.</p>
+              `;
+            }
+        },
         verify: {
             generateEmailSubject: (args) => `Please verify your email, ${args.user.firstName}`,
             generateEmailHTML: (args) => {

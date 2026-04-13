@@ -2,9 +2,10 @@
 
 import { Suspense, useActionState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useFormStatus } from "react-dom";
 
-import { forgotPassword } from "./action/forgot-password";
+import { resetPassword } from "../password-reset/actions/reset-password";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,32 +23,55 @@ function SubmitButton() {
 
   return (
     <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? "Sending link..." : "Send Reset Link"}
+      {pending ? "Resetting password..." : "Reset Password"}
     </Button>
   );
 }
 
-function ForgotPasswordForm() {
-  const [state, formAction] = useActionState(forgotPassword, null);
+function ResetPasswordForm() {
+  const [state, formAction] = useActionState(resetPassword, null);
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
+  if (!token) {
+    return (
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl">Invalid Link</CardTitle>
+          <CardDescription>
+            This password reset link is invalid or has expired.
+          </CardDescription>
+        </CardHeader>
+        <CardFooter>
+          <Button asChild className="w-full">
+            <Link href="/forgot-password">Request a new link</Link>
+          </Button>
+        </CardFooter>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl">Forgot Password</CardTitle>
+        <CardTitle className="text-2xl">Reset Password</CardTitle>
         <CardDescription>
-          Enter the email address for your account and we&apos;ll send you a
-          password reset link.
+          Enter your new password below.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="grid gap-4">
+          <input type="hidden" name="token" value={token} />
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="password">New Password</Label>
+            <Input id="password" name="password" type="password" required />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="confirmPassword">Confirm New Password</Label>
             <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
               required
             />
           </div>
@@ -62,9 +86,8 @@ function ForgotPasswordForm() {
       </CardContent>
       <CardFooter>
         <div className="text-sm text-center text-muted-foreground w-full">
-          Remember your password?{" "}
           <Link href="/login" className="underline">
-            Sign in
+            Back to Sign In
           </Link>
         </div>
       </CardFooter>
@@ -72,13 +95,13 @@ function ForgotPasswordForm() {
   );
 }
 
-export default function ForgotPasswordPage() {
+export default function ResetPasswordPage() {
   return (
     <div className="bg-slate-800 min-h-screen flex items-center px-4 py-8">
       <Suspense
         fallback={<div className="w-full max-w-md mx-auto p-4 text-center">Loading...</div>}
       >
-        <ForgotPasswordForm />
+        <ResetPasswordForm />
       </Suspense>
     </div>
   );

@@ -1,21 +1,31 @@
+"use server";
+
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { cookies } from "next/headers";
 
-interface ForgotPasswordParams {
-  email: string;
-}
-
 interface Response {
   success: boolean;
   error?: string;
+  message?: string;
 }
 
-export async function forgotPassword({
-  email,
-}: ForgotPasswordParams): Promise<Response> {
+export async function forgotPassword(
+  _prevState: Response | null,
+  formData: FormData
+): Promise<Response> {
+  const email = formData.get("email")?.toString().trim();
+
+  if (!email) {
+    return {
+      success: false,
+      error: "Please enter the email address for your account.",
+    };
+  }
+
   const payload = await getPayload({ config });
   const cookieStore = await cookies();
+
   try {
     await payload.forgotPassword({
       collection: "customers",
@@ -33,5 +43,10 @@ export async function forgotPassword({
       error: "Error requesting password reset. Please try again.",
     };
   }
-  return { success: true };
+
+  return {
+    success: true,
+    message:
+      "If an account with that email exists, a reset link has been sent.",
+  };
 }

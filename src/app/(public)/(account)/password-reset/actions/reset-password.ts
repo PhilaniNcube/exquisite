@@ -1,32 +1,48 @@
+"use server";
+
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { cookies } from "next/headers";
 
-interface ResetPasswordParams {
-  password: string;
-  token: string;
-}
 interface Response {
   success: boolean;
   error?: string;
+  message?: string;
 }
 
-export async function resetPassword({
-  password,
-  token,
-}: ResetPasswordParams): Promise<Response> {
+export async function resetPassword(
+  _prevState: Response | null,
+  formData: FormData
+): Promise<Response> {
+  const password = formData.get("password")?.toString();
+  const confirmPassword = formData.get("confirmPassword")?.toString();
+  const token = formData.get("token")?.toString();
+
+  if (!password || !confirmPassword || !token) {
+    return {
+      success: false,
+      error: "Missing required fields.",
+    };
+  }
+
+  if (password !== confirmPassword) {
+    return {
+      success: false,
+      error: "Passwords do not match.",
+    };
+  }
+
   const payload = await getPayload({ config });
   const cookieStore = await cookies();
 
   try {
     const result = await payload.resetPassword({
-      collection: "customers", // required
+      collection: "customers",
       data: {
-        // required
-        password: password, // the new password to set
-        token: token, // the token generated from the forgotPassword operation
+        password,
+        token,
       },
-      overrideAccess: false,
+      overrideAccess: true,
     });
 
     console.log("Password reset result:", result);
@@ -41,5 +57,8 @@ export async function resetPassword({
     };
   }
 
-  return { success: true };
+  return {
+    success: true,
+    message: "Password reset successfully. You can now sign in.",
+  };
 }
