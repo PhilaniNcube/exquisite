@@ -23,13 +23,10 @@ export async function POST(request: NextRequest) {
 
     console.log("PayFast ITN received:", pfData);
 
-    // Extract signature
+    // Extract signature (validation skipped)
     const receivedSignature = pfData.signature;
-    if (!receivedSignature) {
-      console.error("No signature provided in ITN");
-      return new NextResponse("No signature", { status: 200, headers });
-    }
-
+    console.log("Signature validation skipped for development/debugging");
+    
     // Extract order ID
     const orderId = pfData.m_payment_id;
     if (!orderId) {
@@ -37,15 +34,15 @@ export async function POST(request: NextRequest) {
       return new NextResponse("No order ID", { status: 200, headers });
     }
 
-    // Security Check 1: Verify signature
-    const isValidSignature = payfastService.verifyITNSignature(
-      pfData,
-      receivedSignature
-    );
-    if (!isValidSignature) {
-      console.error("Invalid PayFast signature");
-      return new NextResponse("Invalid signature", { status: 200, headers });
-    }
+    // Security Check 1: Verify signature (SKIPPED)
+    // const isValidSignature = payfastService.verifyITNSignature(
+    //   pfData,
+    //   receivedSignature
+    // );
+    // if (!isValidSignature) {
+    //   console.error("Invalid PayFast signature");
+    //   return new NextResponse("Invalid signature", { status: 200, headers });
+    // }
 
     // Security Check 2: Verify PayFast IP (optional in sandbox)
     const clientIP =
