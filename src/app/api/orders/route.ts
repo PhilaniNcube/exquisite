@@ -102,7 +102,7 @@ export async function POST(req: Request) {
       REFERENCE: order.id.toString(),
       AMOUNT: amountInCents.toString(),
       CURRENCY: "ZAR",
-      RETURN_URL: `${callbackBaseUrl}/checkout/success?orderId=${order.id}`,
+      RETURN_URL: `${callbackBaseUrl}/api/paygate/return?orderId=${order.id}`,
       TRANSACTION_DATE: new Date()
         .toISOString()
         .replace("T", " ")
