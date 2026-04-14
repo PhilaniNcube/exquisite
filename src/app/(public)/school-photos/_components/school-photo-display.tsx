@@ -27,7 +27,7 @@ export function SchoolPhotoDisplay({ photo }: SchoolPhotoDisplayProps) {
   };
 
   return (
-    <Card className="overflow-hidden border-2">
+    <Card className="overflow-hidden border-2 p-0">
       <div className="aspect-4/5 relative bg-muted">
         {photoMedia?.url ? (
             <Image

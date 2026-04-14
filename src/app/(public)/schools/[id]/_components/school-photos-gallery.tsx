@@ -127,10 +127,11 @@ const SchoolPhotosGallery = ({
                 </CardTitle>
                 {photo.photo && typeof photo.photo === "object" && (
                   <Image
-                    src={photo.photo.url || ""}
+                    src={photo.photo.sizes?.thumbnail?.url || photo.photo.url || ""}
                     alt={photo.photo.alt || "School photo"}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    width={400}
+                    height={600}
+                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
                   />
                 )}
 
