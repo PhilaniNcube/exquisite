@@ -10,10 +10,12 @@ export interface CartItem {
     name: string;
     price: number;
     image?: string;
+    thumbnailUrl?: string;
   };
   pictureDetails?: {
     name?: string;
     url?: string;
+    thumbnailUrl?: string;
   };
 }
 

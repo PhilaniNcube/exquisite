@@ -24,6 +24,8 @@ export function ProductSelector({
   const handleAddToCart = (product: Product) => {
     const productImage =
       typeof product.image === "number" ? null : (product.image as Media);
+    const schoolPhotoImage =
+      typeof schoolPhoto.photo === "number" ? null : (schoolPhoto.photo as Media);
 
     addItem({
       id: `${product.id}-${schoolPhoto.id}`,
@@ -34,10 +36,12 @@ export function ProductSelector({
         name: product.title,
         price: product.price,
         image: productImage?.url ?? undefined,
+        thumbnailUrl: productImage?.sizes?.thumbnail?.url ?? undefined,
       },
       pictureDetails: {
         name: schoolPhoto.name,
-        url: productImage?.url ?? undefined,
+        url: schoolPhotoImage?.url ?? undefined,
+        thumbnailUrl: schoolPhotoImage?.sizes?.thumbnail?.url ?? undefined,
       },
     });
 

@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { formatPrice } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import Image from "next/image";
 
 function redirectToPayGate(
   paymentUrl: string,
@@ -103,8 +104,30 @@ export function CheckoutForm() {
           </CardHeader>
           <CardContent className="space-y-4">
             {items.map((item) => (
-              <div key={item.id} className="flex justify-between items-start">
-                <div className="flex-1">
+              <div key={item.id} className="flex gap-3 items-start">
+                {(item.productDetails?.thumbnailUrl || item.productDetails?.image) && (
+                  <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0 bg-muted">
+                    <Image
+                      src={item.productDetails.thumbnailUrl || item.productDetails.image!}
+                      alt={item.productDetails?.name || "Product"}
+                      width={64}
+                      height={64}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                )}
+                {(item.pictureDetails?.thumbnailUrl || item.pictureDetails?.url) && (
+                  <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0 bg-muted">
+                    <Image
+                      src={item.pictureDetails.thumbnailUrl || item.pictureDetails.url!}
+                      alt={item.pictureDetails?.name || "School photo"}
+                      width={64}
+                      height={64}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
                   <h4 className="font-medium">{item.productDetails?.name}</h4>
                   <p className="text-sm text-muted-foreground">
                     {item.pictureDetails?.name}
