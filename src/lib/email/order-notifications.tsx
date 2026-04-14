@@ -70,7 +70,7 @@ const statusCopy: Record<
       "We have received your payment and your order is now confirmed. Here is a summary for your records.",
     adminHeading: "A customer order has been paid",
     adminIntro:
-      "PayFast confirmed payment for this order. Use the summary below to start fulfillment.",
+      "PayGate confirmed payment for this order. Use the summary below to start fulfillment.",
     preview: (orderId) => `Order #${orderId} payment confirmed`,
     label: "Completed",
   },
@@ -82,7 +82,7 @@ const statusCopy: Record<
       "We received a cancellation notice for this order. If this was unexpected, you can place the order again or contact us for help.",
     adminHeading: "An order payment was cancelled",
     adminIntro:
-      "PayFast reported this order as cancelled. Review the order details below if follow-up is required.",
+      "PayGate reported this order as cancelled. Review the order details below if follow-up is required.",
     preview: (orderId) => `Order #${orderId} payment cancelled`,
     label: "Cancelled",
   },
@@ -168,7 +168,7 @@ function buildNotificationData(
     lineItems: buildLineItems(order),
     customerOrderUrl: `${baseUrl}/orders?orderId=${order.id}`,
     adminOrderUrl: `${baseUrl}/dashboard/orders/${order.id}`,
-    paymentId: order.paymentDetails?.pfPaymentId ?? undefined,
+    paymentId: order.paymentDetails?.payRequestId ?? undefined,
   };
 }
 
@@ -207,7 +207,7 @@ function EmailLayout({
             <Text style={styles.metaText}>Status: {data.statusLabel}</Text>
             <Text style={styles.metaText}>Placed: {data.orderDate}</Text>
             <Text style={styles.metaText}>Total: {data.total}</Text>
-            {data.paymentId ? <Text style={styles.metaText}>PayFast ID: {data.paymentId}</Text> : null}
+            {data.paymentId ? <Text style={styles.metaText}>PayGate ID: {data.paymentId}</Text> : null}
           </Section>
 
           {showCustomerDetails ? (

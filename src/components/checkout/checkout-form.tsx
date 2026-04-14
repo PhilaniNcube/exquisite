@@ -10,9 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { formatPrice } from "@/lib/utils";
-import { createOrder } from "@/lib/actions/orders";
+import { Loader2 } from "lucide-react";
 
-function redirectToPayFast(
+function redirectToPayGate(
   paymentUrl: string,
   paymentData: Record<string, string>
 ) {
@@ -40,11 +40,26 @@ export function CheckoutForm() {
 
   const totalPrice = getTotalPrice();
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const result = await createOrder(null, formData);
+      const orderItems = items.map((item) => ({
+        product: item.product,
+        quantity: item.quantity,
+        priceAtPurchase: item.priceAtPurchase,
+        linePrice: item.linePrice,
+        picture: item.picture,
+      }));
+
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cellNumber, orderItems }),
+      });
+
+      const result = await response.json();
 
       if (!result.success) {
         toast.error(result.message || "Failed to place order. Please try again.");
@@ -54,7 +69,7 @@ export function CheckoutForm() {
 
       if (result.paymentData && result.paymentUrl) {
         toast.success("Redirecting to payment...");
-        redirectToPayFast(result.paymentUrl, result.paymentData);
+        redirectToPayGate(result.paymentUrl, result.paymentData);
       } else {
         toast.error("Failed to initialize payment.");
         setIsSubmitting(false);
@@ -119,18 +134,18 @@ export function CheckoutForm() {
             <CardTitle>Customer Details & Payment</CardTitle>
           </CardHeader>
           <CardContent>
-            <form action={handleSubmit} className="space-y-4">
-              <div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" className="bg-muted" />
               </div>
 
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
                 <Input id="name" type="text" className="bg-muted" />
             </div>
 
-            <div>
+            <div className="space-y-2">
                 <Label htmlFor="cellNumber">Cell Number *</Label>
                 <Input
                   id="cellNumber"
@@ -143,33 +158,23 @@ export function CheckoutForm() {
                 />
               </div>
 
-              {/* Hidden input for order items */}
-              <input
-                type="hidden"
-                name="orderItems"
-                value={JSON.stringify(
-                  items.map((item) => ({
-                    product: item.product,
-                    quantity: item.quantity,
-                    priceAtPurchase: item.priceAtPurchase,
-                    linePrice: item.linePrice,
-                    picture: item.picture,
-                  }))
-                )}
-              />
-
               <div className="space-y-2">
                 <Button
                   type="submit"
                   disabled={isSubmitting}
                   className="w-full"
                 >
-                  {isSubmitting
-                    ? "Processing..."
-                    : `Proceed to Payment (${formatPrice(totalPrice)})`}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    `Proceed to Payment (${formatPrice(totalPrice)})`
+                  )}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
-                  You will be redirected to PayFast to complete your payment securely
+                  You will be redirected to PayGate to complete your payment securely
                 </p>
               </div>
             </form>

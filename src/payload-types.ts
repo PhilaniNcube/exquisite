@@ -418,11 +418,14 @@ export interface Order {
   orderStatus?: ('pending' | 'processing' | 'completed' | 'cancelled') | null;
   paymentReference?: string | null;
   paymentDetails?: {
-    pfPaymentId?: string | null;
-    paymentStatus?: string | null;
-    amountGross?: number | null;
-    amountFee?: number | null;
-    amountNet?: number | null;
+    payRequestId?: string | null;
+    transactionId?: string | null;
+    transactionStatus?: string | null;
+    resultCode?: string | null;
+    resultDescription?: string | null;
+    payMethod?: string | null;
+    payMethodDetail?: string | null;
+    amount?: number | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -769,11 +772,14 @@ export interface OrdersSelect<T extends boolean = true> {
   paymentDetails?:
     | T
     | {
-        pfPaymentId?: T;
-        paymentStatus?: T;
-        amountGross?: T;
-        amountFee?: T;
-        amountNet?: T;
+        payRequestId?: T;
+        transactionId?: T;
+        transactionStatus?: T;
+        resultCode?: T;
+        resultDescription?: T;
+        payMethod?: T;
+        payMethodDetail?: T;
+        amount?: T;
       };
   updatedAt?: T;
   createdAt?: T;

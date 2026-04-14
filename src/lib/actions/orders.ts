@@ -5,7 +5,7 @@ import config from "@payload-config";
 import { Order } from "@/payload-types";
 import { z } from "zod";
 import {headers as getHeaders} from "next/headers";
-import { getPayFastService } from "@/lib/payfast";
+import { getPayGateService } from "@/lib/paygate";
 import { revalidatePath } from "next/cache";
 
 // Validation schema for order creation
@@ -101,43 +101,41 @@ export const createOrder = async (prevState: unknown, formData: FormData) => {
       data: finalOrderData,
     });
 
-    // Generate PayFast payment data
-    const payfastService = getPayFastService();
+    // Initiate PayGate PayWeb3 transaction
+    const payGateService = getPayGateService();
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
 
     const customerEmail = typeof user.email === "string" ? user.email : "customer@example.com";
-    const firstName = user.firstName || "Customer";
-    const lastName = user.lastName || "User";
 
-    // Calculate total amount
+    // Calculate total amount in cents (PayGate expects cents)
     const totalAmount = validatedData.productDetails.orderItems.reduce(
       (sum, item) => sum + item.linePrice,
       0
     );
+    const amountInCents = Math.round(totalAmount * 100);
 
-    const paymentData = payfastService.createPaymentData({
-      orderId: order.id.toString(),
-      amount: totalAmount,
-      itemName: `Order #${order.id}`,
-      itemDescription: `Payment for order #${order.id}`,
-      customerFirstName: firstName,
-      customerLastName: lastName,
-      customerEmail,
-      customerCell: cellNumber,
+    // Initiate transaction with PayGate (server-to-server)
+    const initiateResponse = await payGateService.initiateTransaction({
+      reference: order.id.toString(),
+      amountInCents,
+      email: customerEmail,
       returnUrl: `${baseUrl}/checkout/success?orderId=${order.id}`,
-      cancelUrl: `${baseUrl}/checkout/cancel?orderId=${order.id}`,
-      notifyUrl: `${baseUrl}/api/payfast/notify`,
+      notifyUrl: `${baseUrl}/api/paygate/notify`,
     });
+
+    // Get redirect form data (PAY_REQUEST_ID + CHECKSUM for redirect)
+    const redirectData = payGateService.getRedirectData(
+      initiateResponse.PAY_REQUEST_ID,
+      initiateResponse.REFERENCE
+    );
 
     return {
       success: true,
       message: "Order created successfully",
       orderId: order.id,
       error: "",
-      paymentData: Object.fromEntries(
-        Object.entries(paymentData).filter(([, v]) => v !== undefined)
-      ) as Record<string, string>,
-      paymentUrl: payfastService.paymentUrl,
+      paymentData: redirectData as unknown as Record<string, string>,
+      paymentUrl: payGateService.redirectUrl,
     };
 
   } catch (error) {

@@ -145,41 +145,65 @@ export const Orders: CollectionConfig = {
       label: "Payment Details",
       fields: [
         {
-          name: "pfPaymentId",
+          name: "payRequestId",
           type: "text",
-          label: "PayFast Payment ID",
+          label: "PayGate Pay Request ID",
           admin: {
             readOnly: true,
           },
         },
         {
-          name: "paymentStatus",
+          name: "transactionId",
           type: "text",
-          label: "Payment Status",
+          label: "PayGate Transaction ID",
           admin: {
             readOnly: true,
           },
         },
         {
-          name: "amountGross",
-          type: "number",
-          label: "Amount Gross (ZAR)",
+          name: "transactionStatus",
+          type: "text",
+          label: "Transaction Status",
           admin: {
             readOnly: true,
           },
         },
         {
-          name: "amountFee",
-          type: "number",
-          label: "Amount Fee (ZAR)",
+          name: "resultCode",
+          type: "text",
+          label: "Result Code",
           admin: {
             readOnly: true,
           },
         },
         {
-          name: "amountNet",
+          name: "resultDescription",
+          type: "text",
+          label: "Result Description",
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: "payMethod",
+          type: "text",
+          label: "Payment Method",
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: "payMethodDetail",
+          type: "text",
+          label: "Payment Method Detail",
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: "amount",
           type: "number",
-          label: "Amount Net (ZAR)",
+          label: "Amount (cents)",
           admin: {
             readOnly: true,
           },
