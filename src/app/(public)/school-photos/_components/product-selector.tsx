@@ -21,6 +21,16 @@ export function ProductSelector({
 }: ProductSelectorProps) {
   const { addItem } = useCartStore();
 
+  const isSportsPhoto = schoolPhoto.photoType === "Sports";
+  const allowedSportsProducts = [
+    "A3 Canvas Poster",
+    "A4 Canvas Poster",
+    "A5 Canvas Poster",
+  ];
+  const filteredProducts = isSportsPhoto
+    ? products.filter((p) => allowedSportsProducts.includes(p.title))
+    : products;
+
   const handleAddToCart = (product: Product) => {
     const productImage =
       typeof product.image === "number" ? null : (product.image as Media);
@@ -60,7 +70,7 @@ export function ProductSelector({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {products.map((product) => {
+        {filteredProducts.map((product) => {
           const productImage =
             typeof product.image === "number" ? null : (product.image as Media);
 
