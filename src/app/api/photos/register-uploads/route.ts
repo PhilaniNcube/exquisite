@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
         }>
       }>
       schoolId: number
-      classId: number
+      classId?: number
       photoType: string
     }
 
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
             photoType: photoType as any,
             schoolDetails: {
               school: schoolId,
-              class: classId,
+              ...(classId != null && { class: classId }),
             },
             studentName: '',
             photo: media.id,

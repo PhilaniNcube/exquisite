@@ -37,7 +37,7 @@ import {
 import { Progress } from "@/components/ui/progress"
 
 const formSchema = z.object({
-  classId: z.string().min(1, "Please select a class"),
+  classId: z.string().optional(),
   photoType: z.enum(["Individual", "Class", "Sports", "Group"]),
   files: z.any().refine((files) => files?.length > 0, "Files are required"),
 })
@@ -197,7 +197,7 @@ export function SchoolBulkUploadPhotos({ schoolId }: { schoolId: number }) {
     setProgress(0)
     const files = Array.from(values.files as FileList)
     const totalFiles = files.length
-    const classId = parseInt(values.classId, 10)
+    const classId = values.classId && values.classId !== '__none' ? parseInt(values.classId, 10) : undefined
     setUploadStats({ completed: 0, total: totalFiles, failed: 0 })
 
     try {
@@ -331,7 +331,7 @@ export function SchoolBulkUploadPhotos({ schoolId }: { schoolId: number }) {
             body: JSON.stringify({
               uploads: batch,
               schoolId,
-              classId,
+              ...(classId != null && { classId }),
               photoType: values.photoType,
             }),
           })
@@ -384,7 +384,7 @@ export function SchoolBulkUploadPhotos({ schoolId }: { schoolId: number }) {
         <DialogHeader>
           <DialogTitle>Bulk Upload Photos</DialogTitle>
           <DialogDescription>
-            Select a class, choose a photo type, then upload multiple photos at once.
+            Choose a photo type, optionally select a class, then upload multiple photos at once.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -406,23 +406,18 @@ export function SchoolBulkUploadPhotos({ schoolId }: { schoolId: number }) {
                       <SelectTrigger className="w-full">
                         <SelectValue
                           placeholder={
-                            loadingClasses ? "Loading classes..." : "Select a class"
+                            loadingClasses ? "Loading classes..." : "Select a class (optional)"
                           }
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="w-full">
-                      {classes.length === 0 && !loadingClasses ? (
-                        <SelectItem value="__none" disabled>
-                          No classes found
+                      <SelectItem value="__none">No class</SelectItem>
+                      {classes.map((cls) => (
+                        <SelectItem key={cls.id} value={String(cls.id)}>
+                          {cls.name}
                         </SelectItem>
-                      ) : (
-                        classes.map((cls) => (
-                          <SelectItem key={cls.id} value={String(cls.id)}>
-                            {cls.name}
-                          </SelectItem>
-                        ))
-                      )}
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -492,7 +487,7 @@ export function SchoolBulkUploadPhotos({ schoolId }: { schoolId: number }) {
             )}
 
             <DialogFooter>
-              <Button type="submit" disabled={isUploading || loadingClasses || classes.length === 0}>
+              <Button type="submit" disabled={isUploading || loadingClasses}>
                 {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isUploading ? "Uploading..." : "Start Upload"}
               </Button>
