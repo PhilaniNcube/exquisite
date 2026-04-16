@@ -46,7 +46,7 @@ export default async function ClassesTable() {
                 </TableCell>
                 <TableCell className="text-right">
                   <Button asChild variant="ghost" size="sm">
-                    <Link href={`/dashboard/classes/${cls.id}`}>View</Link>
+                    <Link href={`/dashboard/classes/${cls.id}`} prefetch={false}>View</Link>
                   </Button>
                 </TableCell>
               </TableRow>

@@ -42,7 +42,7 @@ export async function createClass(
   try {
     const payload = await getPayload({ config })
 
-    await payload.create({
+    const createdClass = await payload.create({
       collection: "classes",
       data: {
         name,
@@ -51,6 +51,8 @@ export async function createClass(
     })
 
     revalidatePath(`/dashboard/schools/${schoolId}`)
+    revalidatePath('/dashboard/classes')
+    revalidatePath(`/dashboard/classes/${createdClass.id}`)
     
     return {
       success: true,

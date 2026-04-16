@@ -12,6 +12,7 @@ export async function deleteClass(classId: number, schoolId: number) {
       id: classId,
     })
     revalidatePath(`/dashboard/schools/${schoolId}`)
+    revalidatePath('/dashboard/classes')
     return { success: true, message: "Class deleted successfully" }
   } catch (error) {
     console.error("Error deleting class:", error)

@@ -70,7 +70,7 @@ export default async function SchoolClasses({
                       {new Date(cls.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="flex items-center justify-end space-x-2 text-right">
-                      <Link href={`/dashboard/classes/${cls.id}`} className="text-blue-600 hover:underline">
+                      <Link href={`/dashboard/classes/${cls.id}`} prefetch={false} className="text-blue-600 hover:underline">
                         View Class
                       </Link>
                       <DeleteClassButton classId={cls.id} schoolId={id} />
