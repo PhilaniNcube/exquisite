@@ -27,10 +27,10 @@ function OrderDetailsSkeleton() {
         <Skeleton className="h-6 w-24" />
       </div>
       <div className="grid gap-6 md:grid-cols-2">
-        <Skeleton className="h-[200px]" />
-        <Skeleton className="h-[200px]" />
+        <Skeleton className="h-50" />
+        <Skeleton className="h-50" />
       </div>
-      <Skeleton className="h-[300px]" />
+      <Skeleton className="h-75" />
     </div>
   )
 }

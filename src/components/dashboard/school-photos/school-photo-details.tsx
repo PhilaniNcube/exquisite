@@ -61,8 +61,9 @@ const SchoolPhotoDetails = async ({
                     src={imageUrl}
                     alt={photo.name || "School Photo"}
                     fill
-                    className="object-contain"
+                    className="object-cover"
                     priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 ) : (
                   <div className="text-muted-foreground">

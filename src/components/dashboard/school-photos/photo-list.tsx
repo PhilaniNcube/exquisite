@@ -52,7 +52,7 @@ export async function SchoolPhotosList({
           const imageUrl = image?.sizes?.card?.url || image?.url
 
           return (
-            <Card key={photo.id} className="overflow-hidden">
+            <Card key={photo.id} className="overflow-hidden p-0">
               <CardContent className="p-0">
                 <div className="relative aspect-square bg-muted">
                   {imageUrl ? (
