@@ -4,16 +4,14 @@ import ClassPhotos from "@/components/dashboard/classes/class-photos";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 import { UploadButtons } from "@/components/dashboard/classes/upload-buttons";
 
-const ClassPage = async ({
+const ClassPage = ({
   params,
 }: {
   params: Promise<{ classId: string }>;
 }) => {
-
-
   return (
     <div className="container mx-auto py-10 space-y-6">
       <div className="flex items-center justify-between">
@@ -25,9 +23,14 @@ const ClassPage = async ({
           </Button>
           <h1 className="text-3xl font-bold">Class Details</h1>
         </div>
-        <Suspense fallback={<div className="h-10 w-50 animate-pulse bg-muted rounded-md" />}>
-          <UploadButtons params={params} />
-        </Suspense>
+        <div className="flex items-center gap-2">
+          <Suspense fallback={<div className="h-9 w-28 animate-pulse bg-muted rounded-md" />}>
+            <EditClassLink params={params} />
+          </Suspense>
+          <Suspense fallback={<div className="h-10 w-50 animate-pulse bg-muted rounded-md" />}>
+            <UploadButtons params={params} />
+          </Suspense>
+        </div>
       </div>
       
       <Suspense fallback={<ClassDetailsSkeleton />}>
@@ -40,6 +43,18 @@ const ClassPage = async ({
     </div>
   );
 };
+
+async function EditClassLink({ params }: { params: Promise<{ classId: string }> }) {
+  const { classId } = await params;
+  return (
+    <Button asChild variant="outline" size="sm">
+      <Link href={`/dashboard/classes/${classId}/edit`}>
+        <Pencil className="h-4 w-4 mr-2" />
+        Edit Class
+      </Link>
+    </Button>
+  );
+}
 
 function ClassDetailsSkeleton() {
   return (

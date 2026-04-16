@@ -6,22 +6,27 @@ import SchoolBulkUpload from "@/components/dashboard/schools/school-bulk-upload"
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 
-const SchoolPage = async ({
+const SchoolPage = ({
   params,
 }: {
   params: Promise<{ schoolId: string }>;
 }) => {
   return (
     <div className="container mx-auto py-10 space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/dashboard/schools">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <h1 className="text-3xl font-bold">School Details</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/dashboard/schools">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <h1 className="text-3xl font-bold">School Details</h1>
+        </div>
+        <Suspense fallback={<div className="h-9 w-28 animate-pulse bg-muted rounded-md" />}>
+          <EditSchoolLink params={params} />
+        </Suspense>
       </div>
 
       <Suspense fallback={<SchoolDetailsSkeleton />}>
@@ -43,6 +48,18 @@ const SchoolPage = async ({
     </div>
   );
 };
+
+async function EditSchoolLink({ params }: { params: Promise<{ schoolId: string }> }) {
+  const { schoolId } = await params;
+  return (
+    <Button asChild variant="outline" size="sm">
+      <Link href={`/dashboard/schools/${schoolId}/edit`}>
+        <Pencil className="h-4 w-4 mr-2" />
+        Edit School
+      </Link>
+    </Button>
+  );
+}
 
 function SchoolDetailsSkeleton() {
   return (
