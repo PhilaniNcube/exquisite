@@ -3,6 +3,7 @@ import config from "@payload-config"
 import { notFound } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { CopySchoolLink } from "./copy-school-link"
 
 export default async function SchoolDetails({
   schoolId,
@@ -26,6 +27,11 @@ export default async function SchoolDetails({
     if (!school) {
         notFound()
     }
+
+    const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || ""
+    const parentLink = school.pass_code
+      ? `${baseUrl}/schools/${school.id}?pass_code=${school.pass_code}`
+      : null
 
     return (
       <Card>
@@ -56,6 +62,13 @@ export default async function SchoolDetails({
               <p>{new Date(school.updatedAt).toLocaleDateString()}</p>
             </div>
           </div>
+          {parentLink ? (
+            <CopySchoolLink url={parentLink} />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              No pass code set — parent access link unavailable.
+            </p>
+          )}
         </CardContent>
       </Card>
     )
