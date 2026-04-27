@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import { connection } from "next/server";
 import SchoolDetails from "@/components/dashboard/schools/school-details";
 import SchoolClasses from "@/components/dashboard/schools/school-classes";
 import SchoolPhotos from "@/components/dashboard/schools/school-photos";
@@ -27,6 +28,7 @@ async function SchoolPageContent({
 }: {
   params: Promise<{ schoolId: string }>;
 }) {
+  await connection();
   const { schoolId } = await params;
 
   return (
