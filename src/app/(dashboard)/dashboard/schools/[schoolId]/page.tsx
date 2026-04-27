@@ -15,6 +15,22 @@ const SchoolPage = ({
 }) => {
   return (
     <div className="container mx-auto py-10 space-y-6">
+      <Suspense fallback={<SchoolPageSkeleton />}>
+        <SchoolPageContent params={params} />
+      </Suspense>
+    </div>
+  );
+};
+
+async function SchoolPageContent({
+  params,
+}: {
+  params: Promise<{ schoolId: string }>;
+}) {
+  const { schoolId } = await params;
+
+  return (
+    <>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" asChild>
@@ -24,33 +40,30 @@ const SchoolPage = ({
           </Button>
           <h1 className="text-3xl font-bold">School Details</h1>
         </div>
-        <Suspense fallback={<div className="h-9 w-28 animate-pulse bg-muted rounded-md" />}>
-          <EditSchoolLink params={params} />
-        </Suspense>
+        <EditSchoolLink schoolId={schoolId} />
       </div>
 
       <Suspense fallback={<SchoolDetailsSkeleton />}>
-        <SchoolDetails params={params} />
+        <SchoolDetails schoolId={schoolId} />
       </Suspense>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Suspense fallback={<SchoolClassesSkeleton />}>
-          <SchoolClasses params={params} />
+          <SchoolClasses schoolId={schoolId} />
         </Suspense>
 
         <Suspense fallback={<SchoolBulkUploadSkeleton />}>
-          <SchoolBulkUpload params={params} />
+          <SchoolBulkUpload schoolId={schoolId} />
         </Suspense>
       </div>
 
       <Suspense fallback={<SchoolPhotosSkeleton />}>
-        <SchoolPhotos params={params} />
+        <SchoolPhotos schoolId={schoolId} />
       </Suspense>
-    </div>
+    </>
   );
-};
+}
 
-async function EditSchoolLink({ params }: { params: Promise<{ schoolId: string }> }) {
-  const { schoolId } = await params;
+function EditSchoolLink({ schoolId }: { schoolId: string }) {
   return (
     <Button asChild variant="outline" size="sm">
       <Link href={`/dashboard/schools/${schoolId}/edit`}>
@@ -58,6 +71,26 @@ async function EditSchoolLink({ params }: { params: Promise<{ schoolId: string }
         Edit School
       </Link>
     </Button>
+  );
+}
+
+function SchoolPageSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-9 w-9 rounded-md" />
+          <Skeleton className="h-9 w-48" />
+        </div>
+        <Skeleton className="h-9 w-28" />
+      </div>
+      <SchoolDetailsSkeleton />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SchoolClassesSkeleton />
+        <SchoolBulkUploadSkeleton />
+      </div>
+      <SchoolPhotosSkeleton />
+    </div>
   );
 }
 

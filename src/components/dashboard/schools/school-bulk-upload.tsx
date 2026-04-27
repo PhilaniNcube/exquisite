@@ -2,11 +2,10 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { SchoolBulkUploadPhotos } from "./school-bulk-upload-photos";
 
 export default async function SchoolBulkUpload({
-  params,
+  schoolId,
 }: {
-  params: Promise<{ schoolId: string }>;
+  schoolId: string;
 }) {
-  const { schoolId } = await params;
   const id = parseInt(schoolId, 10);
   if (isNaN(id)) return null;
 

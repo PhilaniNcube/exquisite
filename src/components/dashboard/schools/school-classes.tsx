@@ -14,11 +14,10 @@ import { DeleteClassButton } from "./delete-class-button"
 import Link from "next/link"
 
 export default async function SchoolClasses({
-  params,
+  schoolId,
 }: {
-  params: Promise<{ schoolId: string }>
+  schoolId: string
 }) {
-  const { schoolId } = await params
   const id = parseInt(schoolId, 10)
   if (isNaN(id)) return null
 

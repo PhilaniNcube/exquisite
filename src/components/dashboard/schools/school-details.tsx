@@ -5,11 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
 export default async function SchoolDetails({
-  params,
+  schoolId,
 }: {
-  params: Promise<{ schoolId: string }>
+  schoolId: string
 }) {
-  const { schoolId } = await params
   const payload = await getPayload({ config })
   
   // Check if schoolId is a valid number since School ID is a number
