@@ -28,17 +28,19 @@ export function SchoolPhotoDisplay({ photo }: SchoolPhotoDisplayProps) {
 
   return (
     <Card className="overflow-hidden border-2 p-0">
-      <div className="aspect-4/5 relative bg-muted">
+      <div className="relative bg-muted">
         {photoMedia?.url ? (
             <Image
               src={photoMedia.url || "/placeholder.svg"}
               alt={photoMedia.alt || photo.name}
-              fill
-              className="object-cover"
+              width={photoMedia.width || 800}
+              height={photoMedia.height || 1000}
+              style={{ width: "100%", height: "auto" }}
+              className="block"
               priority
             />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full aspect-4/5 flex items-center justify-center">
             <span className="text-muted-foreground">No photo available</span>
           </div>
         )}

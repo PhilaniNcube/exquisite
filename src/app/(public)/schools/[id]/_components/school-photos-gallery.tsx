@@ -112,15 +112,15 @@ const SchoolPhotosGallery = ({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
           {filteredPhotos.map((photo) => (
             <Card
               key={photo.id}
-              className="group overflow-hidden hover:shadow-lg transition-all duration-300 relative p-0 cursor-pointer"
+              className="group overflow-hidden hover:shadow-lg transition-all duration-300 relative p-0 cursor-pointer break-inside-avoid mb-6"
             >
               <Link
                 href={`/school-photos/${photo.id}`}
-                className="aspect-square relative overflow-hidden"
+                className="relative overflow-hidden block"
               >
                 <CardTitle className="sr-only">
                   {photo.name|| "School Photo"}
@@ -129,9 +129,10 @@ const SchoolPhotosGallery = ({
                   <Image
                     src={photo.photo.sizes?.thumbnail?.url || photo.photo.url || ""}
                     alt={photo.photo.alt || "School photo"}
-                    width={400}
-                    height={600}
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                    width={photo.photo.sizes?.thumbnail?.width || photo.photo.width || 400}
+                    height={photo.photo.sizes?.thumbnail?.height || photo.photo.height || 600}
+                    style={{ width: "100%", height: "auto" }}
+                    className="group-hover:scale-105 transition-transform duration-300"
                   />
                 )}
 
