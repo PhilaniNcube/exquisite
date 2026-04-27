@@ -1,16 +1,8 @@
 import React, { Suspense } from "react";
-import { redirect } from "next/navigation";
 import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { CheckoutPageSkeleton } from "@/components/checkout/checkout-page-skeleton";
-import { getAuthState } from "@/lib/auth-state";
 
 const CheckoutContent = async () => {
-  const { isLoggedIn } = await getAuthState();
-
-  if (!isLoggedIn) {
-    redirect("/login?redirect=/checkout");
-  }
-
   return <CheckoutForm />;
 };
 

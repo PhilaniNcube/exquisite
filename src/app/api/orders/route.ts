@@ -24,6 +24,8 @@ const orderItemSchema = z.object({
 });
 
 const orderSchema = z.object({
+  name: z.string().optional(),
+  email: z.string().email("Invalid email").optional(),
   cellNumber: z.string().min(1, "Cell number is required"),
   orderItems: z.array(orderItemSchema).min(1, "At least one item is required"),
 });
@@ -38,13 +40,6 @@ export async function POST(req: Request) {
 
     const user =
       result.user?.collection === "customers" ? result.user : null;
-
-    if (!user) {
-      return Response.json(
-        { success: false, message: "You must be logged in to place an order" },
-        { status: 401 }
-      );
-    }
 
     console.log("[Orders API] Step 2: Parsing request body...");
     const body = await req.json();
@@ -61,11 +56,13 @@ export async function POST(req: Request) {
       );
     }
 
-    const { cellNumber, orderItems } = validationResult.data;
+    const { name, email, cellNumber, orderItems } = validationResult.data;
 
     const finalOrderData: Omit<Order, "id" | "createdAt" | "updatedAt"> = {
       customerDetails: {
-        customer: user.id,
+        customer: user?.id || null,
+        name: name || undefined,
+        email: email || undefined,
         cellNumber,
       },
       productDetails: {
@@ -89,7 +86,7 @@ export async function POST(req: Request) {
       process.env.NEXT_PUBLIC_SERVER_URL ||
       "http://localhost:3000";
     const customerEmail =
-      typeof user.email === "string" ? user.email : "customer@example.com";
+      (user && typeof user.email === "string") ? user.email : (email || "customer@example.com");
 
     const totalAmount = orderItems.reduce(
       (sum, item) => sum + item.linePrice,
@@ -140,7 +137,7 @@ export async function POST(req: Request) {
     if (!pgResponse.ok) {
       const errorBody = await pgResponse.text();
       console.error("[PayGate] Error body:", errorBody.substring(0, 300));
-      throw new Error(`PayGate initiate HTTP error: ${pgResponse.status}`);
+      throw new Error(`PayGate initiate HTTP error: ${pgResponse.status} - ${errorBody.substring(0, 300)}`);
     }
 
     const responseText = await pgResponse.text();

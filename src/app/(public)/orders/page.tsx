@@ -45,9 +45,10 @@ const OrdersContent = async ({ searchParams }: OrdersPageProps) => {
       }) as Order;
 
       // Check if user owns this order
-      if (typeof order.customerDetails.customer === 'object' 
+      if (!order.customerDetails.customer || 
+          (typeof order.customerDetails.customer === 'object' 
           ? order.customerDetails.customer.id !== user.id 
-          : order.customerDetails.customer !== user.id) {
+          : order.customerDetails.customer !== user.id)) {
         redirect("/orders");
       }
 

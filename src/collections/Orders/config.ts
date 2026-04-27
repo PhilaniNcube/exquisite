@@ -49,8 +49,20 @@ export const Orders: CollectionConfig = {
           name: "customer",
           type: "relationship",
           relationTo: "customers",
-          required: true,
+          required: false,
           label: "Customer",
+        },
+        {
+          name: "name",
+          type: "text",
+          required: false,
+          label: "Name (Guest)",
+        },
+        {
+          name: "email",
+          type: "email",
+          required: false,
+          label: "Email (Guest)",
         },
         {
           name: "cellNumber",

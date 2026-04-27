@@ -401,7 +401,9 @@ export interface SchoolPhoto {
 export interface Order {
   id: number;
   customerDetails: {
-    customer: number | Customer;
+    customer?: (number | null) | Customer;
+    name?: string | null;
+    email?: string | null;
     cellNumber: string;
   };
   productDetails: {
@@ -750,6 +752,8 @@ export interface OrdersSelect<T extends boolean = true> {
     | T
     | {
         customer?: T;
+        name?: T;
+        email?: T;
         cellNumber?: T;
       };
   productDetails?:

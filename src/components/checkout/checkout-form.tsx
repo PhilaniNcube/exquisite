@@ -35,6 +35,8 @@ function redirectToPayGate(
 
 export function CheckoutForm() {
   const { items, getTotalPrice } = useCartStore();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [cellNumber, setCellNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -57,7 +59,7 @@ export function CheckoutForm() {
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cellNumber, orderItems }),
+        body: JSON.stringify({ name, email, cellNumber, orderItems }),
       });
 
       const result = await response.json();
@@ -159,14 +161,29 @@ export function CheckoutForm() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" className="bg-muted" />
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  className="bg-muted"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g., jane@example.com"
+                  required
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" type="text" className="bg-muted" />
-            </div>
+                <Input
+                  id="name"
+                  type="text"
+                  className="bg-muted"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g., Jane Doe"
+                />
+              </div>
 
             <div className="space-y-2">
                 <Label htmlFor="cellNumber">Cell Number *</Label>
