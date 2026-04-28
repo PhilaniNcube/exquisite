@@ -50,7 +50,7 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "bg-background/95 backdrop-blur-sm shadow-sm"
           : "bg-slate-50 shadow-lg"
