@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Pencil } from "lucide-react";
+import { DeleteSchoolButton } from "@/components/dashboard/schools/delete-school-button";
 
 const SchoolPage = ({
   params,
@@ -42,7 +43,14 @@ async function SchoolPageContent({
           </Button>
           <h1 className="text-3xl font-bold">School Details</h1>
         </div>
-        <EditSchoolLink schoolId={schoolId} />
+        <div className="flex items-center gap-2">
+          <EditSchoolLink schoolId={schoolId} />
+          <DeleteSchoolButton
+            schoolId={Number(schoolId)}
+            redirectTo="/dashboard/schools"
+            variant="button"
+          />
+        </div>
       </div>
 
       <Suspense fallback={<SchoolDetailsSkeleton />}>

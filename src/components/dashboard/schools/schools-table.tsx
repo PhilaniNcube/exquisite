@@ -11,6 +11,7 @@ import config from "@payload-config"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Route } from "next"
+import { DeleteSchoolButton } from "./delete-school-button"
 
 export default async function SchoolsTable() {
   const payload = await getPayload({ config })
@@ -45,9 +46,12 @@ export default async function SchoolsTable() {
                 <TableCell className="capitalize">{school.type}</TableCell>
                 <TableCell>{school.pass_code || "-"}</TableCell>
                 <TableCell className="text-right">
-                  <Button asChild variant="ghost" size="sm">
-                    <Link href={`/dashboard/schools/${school.id}` as Route}>View</Link>
-                  </Button>
+                  <div className="flex items-center justify-end gap-1">
+                    <Button asChild variant="ghost" size="sm">
+                      <Link href={`/dashboard/schools/${school.id}` as Route}>View</Link>
+                    </Button>
+                    <DeleteSchoolButton schoolId={school.id} schoolName={school.name} />
+                  </div>
                 </TableCell>
               </TableRow>
             ))
