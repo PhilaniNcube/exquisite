@@ -22,7 +22,17 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
     return <div>Order not found</div>;
   }
 
-  const customer = order.customerDetails.customer as Customer;
+  const customerRel = order.customerDetails.customer;
+  const isSignedIn = typeof customerRel === "object" && customerRel !== null;
+  const customer = isSignedIn ? (customerRel as Customer) : null;
+
+  const customerName = customer
+    ? [customer.firstName, customer.lastName].filter(Boolean).join(" ") || "—"
+    : order.customerDetails.name || "—";
+  const customerEmail = customer
+    ? customer.email
+    : order.customerDetails.email || "—";
+
   const items = order.productDetails.orderItems;
 
   return (
@@ -41,6 +51,9 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
           >
             {order.orderStatus}
           </Badge>
+          {!isSignedIn && (
+            <Badge variant="secondary">Guest</Badge>
+          )}
           {canDeleteOrders ? (
             <DeleteOrderButton
               orderId={order.id}
@@ -62,13 +75,13 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
                 Name
               </div>
               <div className="text-sm">
-                {customer.firstName} {customer.lastName}
+                {customerName}
               </div>
 
               <div className="text-sm font-medium text-muted-foreground">
                 Email
               </div>
-              <div className="text-sm">{customer.email}</div>
+              <div className="text-sm">{customerEmail}</div>
 
               <div className="text-sm font-medium text-muted-foreground">
                 Phone
