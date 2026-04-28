@@ -23,7 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useQueryState, parseAsInteger, parseAsString } from "nuqs"
-import { Order, School, Class as PayloadClass, Product, SchoolPhoto, Media } from "@/payload-types"
+import { Order, School, Class as PayloadClass, Product, SchoolPhoto, Media, Customer } from "@/payload-types"
+import { Mail, Phone, User } from "lucide-react"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import { Route } from "next"
@@ -47,6 +48,23 @@ function getStatusColor(status: string) {
     case "processing": return "bg-blue-100 text-blue-800"
     case "cancelled": return "bg-red-100 text-red-800"
     default: return "bg-yellow-100 text-yellow-800"
+  }
+}
+
+function extractCustomerInfo(order: Order) {
+  const customerRel = order.customerDetails.customer
+  const isSignedIn = typeof customerRel === "object" && customerRel !== null
+  const customer = isSignedIn ? (customerRel as Customer) : null
+
+  return {
+    name: customer
+      ? [customer.firstName, customer.lastName].filter(Boolean).join(" ") || "—"
+      : order.customerDetails.name || "—",
+    email: customer
+      ? customer.email
+      : order.customerDetails.email || "—",
+    phone: order.customerDetails.cellNumber || "—",
+    isGuest: !isSignedIn,
   }
 }
 
@@ -190,10 +208,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
         ) : (
           filteredOrders.map((order) => {
             const info = extractOrderSchoolInfo(order)
-            const customer =
-              typeof order.customerDetails.customer === "object" && order.customerDetails.customer !== null
-                ? order.customerDetails.customer
-                : null
+            const customerInfo = extractCustomerInfo(order)
 
             return (
               <div
@@ -208,6 +223,11 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
                     <Badge className={getStatusColor(order.orderStatus ?? "pending")} variant="outline">
                       {order.orderStatus ?? "pending"}
                     </Badge>
+                    {customerInfo.isGuest && (
+                      <Badge variant="secondary" className="text-xs">
+                        Guest
+                      </Badge>
+                    )}
                     <span className="text-sm text-muted-foreground">
                       {format(new Date(order.createdAt), "PPp")}
                     </span>
@@ -226,12 +246,21 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
 
                 {/* Customer & School Info */}
                 <div className="px-4 py-2 border-b flex flex-wrap gap-x-6 gap-y-1 text-sm">
-                  {customer && (
-                    <span>
-                      <span className="text-muted-foreground">Customer:</span>{" "}
-                      {customer.firstName} {customer.lastName}
-                    </span>
-                  )}
+                  <span className="inline-flex items-center gap-1">
+                    <User className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-muted-foreground">Name:</span>{" "}
+                    {customerInfo.name}
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-muted-foreground">Email:</span>{" "}
+                    {customerInfo.email}
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-muted-foreground">Phone:</span>{" "}
+                    {customerInfo.phone}
+                  </span>
                   {info.schools.length > 0 && (
                     <span>
                       <span className="text-muted-foreground">School:</span>{" "}
