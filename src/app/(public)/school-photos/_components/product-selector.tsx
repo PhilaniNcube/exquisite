@@ -19,7 +19,7 @@ export function ProductSelector({
   products,
   schoolPhoto,
 }: ProductSelectorProps) {
-  const { addItem } = useCartStore();
+  const { addItem, setIsOpen } = useCartStore();
 
   const isSportsPhoto = schoolPhoto.photoType === "Sports";
   const allowedSportsProducts = [
@@ -56,6 +56,7 @@ export function ProductSelector({
     });
 
     toast.success(`Added ${product.title} to cart!`);
+    setIsOpen(true);
   };
 
   return (

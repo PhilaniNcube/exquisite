@@ -27,4 +27,6 @@ export interface CartState {
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }

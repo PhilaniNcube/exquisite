@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useCartStore } from "@/store/cart-store";
 import {
   Sheet,
@@ -20,9 +19,8 @@ interface CartProps {
 }
 
 export function Cart({ trigger }: CartProps) {
-  const { items, getTotalItems, getTotalPrice, clearCart } = useCartStore();
+  const { items, getTotalItems, getTotalPrice, clearCart, isOpen, setIsOpen } = useCartStore();
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
 

@@ -184,9 +184,12 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
           </div>
 
           {/* Mobile Navigation */}
-          <MobileSheet>
-            {children}
-          </MobileSheet>
+          <div className="flex md:hidden items-center gap-4">
+            <Cart />
+            <MobileSheet>
+              {children}
+            </MobileSheet>
+          </div>
         </div>
       </div>
     </header>

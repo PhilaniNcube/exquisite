@@ -6,6 +6,8 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      isOpen: false,
+      setIsOpen: (isOpen) => set({ isOpen }),
 
       addItem: (newItem) =>
         set((state) => {
@@ -82,6 +84,7 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "cart-storage",
+      partialize: (state) => ({ items: state.items }),
     }
   )
 );

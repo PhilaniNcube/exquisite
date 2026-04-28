@@ -6,6 +6,7 @@ import { Product } from "@/payload-types";
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { RichText } from "@payloadcms/richtext-lexical/react";
+import { useCartStore } from "@/store/cart-store";
 
 interface ProductInfoProps {
   product: Product;
@@ -14,10 +15,12 @@ interface ProductInfoProps {
 
 export function ProductInfo({ product, children }: ProductInfoProps) {
   const [quantity, setQuantity] = useState(1);
+  const setIsOpen = useCartStore((state) => state.setIsOpen);
 
   const handleAddToCart = () => {
     console.log("[v0] Adding to cart:", { product: product.id, quantity });
     // Add your cart logic here
+    setIsOpen(true);
   };
 
   return (
