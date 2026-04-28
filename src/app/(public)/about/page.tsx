@@ -9,13 +9,13 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="relative h-[60vh] min-h-125 flex items-center justify-center">
         <div className="absolute inset-0 bg-linear-to-b from-black/60 to-black/40 z-10" />
-        <Image
+        {/* <Image
           src="/api/media/file/valeria-nikitina.jpg"
           alt="Professional photographer at work"
           className="absolute inset-0 w-full h-full object-cover"
           fill
           priority
-        />
+        /> */}
         <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 text-balance">
             About Us
