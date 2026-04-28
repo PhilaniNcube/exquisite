@@ -48,7 +48,7 @@ export function Cart({ trigger }: CartProps) {
       <SheetTrigger asChild>
         {trigger || defaultTrigger}
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-lg px-4">
+      <SheetContent className="w-full sm:max-w-2xl px-4">
         <SheetHeader>
           <SheetTitle className="flex items-center justify-between">
             Shopping Cart
@@ -80,7 +80,7 @@ export function Cart({ trigger }: CartProps) {
                 ))}
               </div>
               
-              <div className="border-t pt-4 space-y-4">
+              <div className="border-t py-4 space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Total Items:</span>
