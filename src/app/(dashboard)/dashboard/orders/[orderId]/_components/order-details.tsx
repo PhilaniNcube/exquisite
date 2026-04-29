@@ -91,7 +91,7 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
               <div className="text-sm font-medium text-muted-foreground">
                 Student
               </div>
-              <div className="text-sm">{order.customerDetails.studentName}</div>
+              <div className="text-sm">{order.customerDetails.studentName || "N/A"}</div>
             </div>
           </CardContent>
         </Card>

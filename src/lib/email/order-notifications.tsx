@@ -165,7 +165,7 @@ function buildNotificationData(
     customerName: getCustomerName(customer),
     customerEmail: customer.email,
     customerCell: order.customerDetails.cellNumber,
-    studentName: order.customerDetails.studentName,
+    studentName: order.customerDetails.studentName || "N/A",
     total: formatCurrency(calculateOrderTotal(order)),
     lineItems: buildLineItems(order),
     customerOrderUrl: `${baseUrl}/orders?orderId=${order.id}`,
