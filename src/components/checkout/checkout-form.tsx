@@ -175,7 +175,7 @@ export function CheckoutForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">Name *</Label>
                 <Input
                   id="name"
                   type="text"
@@ -183,6 +183,7 @@ export function CheckoutForm() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Jane Doe"
+                  required
                 />
               </div>
 
