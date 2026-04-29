@@ -73,7 +73,7 @@ export const Orders: CollectionConfig = {
         {
           name: "studentName",
           type: "text",
-          required: true,
+          required: false,
           label: "Student Name & Surname",
         },
       ],
@@ -122,11 +122,11 @@ export const Orders: CollectionConfig = {
               defaultValue: 0,
             },
             {
-                name: "picture",
-                type: "relationship",
-                relationTo: "schoolPhotos",
-                required: true,
-                label: "Picture",
+              name: "picture",
+              type: "relationship",
+              relationTo: "schoolPhotos",
+              required: true,
+              label: "Picture",
             }
           ],
         },
