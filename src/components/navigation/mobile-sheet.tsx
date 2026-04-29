@@ -16,9 +16,9 @@ import { Route } from "next";
 
 const navigationItems: { href: Route; label: string }[] = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
   { href: "/portfolio", label: "Portfolio" },
-  { href: "/products", label: "Products" },
+  { href: "/about", label: "About" },
+  { href: "/schools", label: "Schools" },
   { href: "/contact", label: "Contact Us" },
 ];
 
