@@ -405,7 +405,7 @@ export interface Order {
     name?: string | null;
     email?: string | null;
     cellNumber: string;
-    studentName: string;
+    studentName?: string | null;
   };
   productDetails: {
     orderItems: {
