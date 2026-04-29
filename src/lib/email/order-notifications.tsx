@@ -33,6 +33,7 @@ type OrderNotificationData = {
   customerName: string;
   customerEmail: string;
   customerCell: string;
+  studentName: string;
   total: string;
   lineItems: OrderLineItem[];
   customerOrderUrl: string;
@@ -164,6 +165,7 @@ function buildNotificationData(
     customerName: getCustomerName(customer),
     customerEmail: customer.email,
     customerCell: order.customerDetails.cellNumber,
+    studentName: order.customerDetails.studentName,
     total: formatCurrency(calculateOrderTotal(order)),
     lineItems: buildLineItems(order),
     customerOrderUrl: `${baseUrl}/orders?orderId=${order.id}`,
@@ -216,6 +218,7 @@ function EmailLayout({
               <Text style={styles.detailText}>{data.customerName}</Text>
               <Text style={styles.detailText}>{data.customerEmail}</Text>
               <Text style={styles.detailText}>{data.customerCell}</Text>
+              <Text style={styles.detailText}>Student: {data.studentName}</Text>
             </Section>
           ) : null}
 

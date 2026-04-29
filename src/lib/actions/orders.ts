@@ -20,6 +20,7 @@ const orderItemSchema = z.object({
 const orderSchema = z.object({
   customerDetails: z.object({
     cellNumber: z.string().min(1, "Cell number is required"),
+    studentName: z.string().min(1, "Student name is required"),
   }),
   productDetails: z.object({
     orderItems: z.array(orderItemSchema).min(1, "At least one item is required"),
@@ -47,6 +48,7 @@ export const createOrder = async (prevState: unknown, formData: FormData) => {
 
     // Extract form data
     const cellNumber = formData.get("cellNumber") as string;
+    const studentName = formData.get("studentName") as string;
     const orderItemsJson = formData.get("orderItems") as string;
 
     if (!orderItemsJson) {
@@ -64,6 +66,7 @@ export const createOrder = async (prevState: unknown, formData: FormData) => {
       customerDetails: {
         customer: user.id,
         cellNumber,
+        studentName,
       },
       productDetails: {
         orderItems,
@@ -88,6 +91,7 @@ export const createOrder = async (prevState: unknown, formData: FormData) => {
       customerDetails: {
         customer: user.id,
         cellNumber: validatedData.customerDetails.cellNumber,
+        studentName: validatedData.customerDetails.studentName,
       },
       productDetails: {
         orderItems: validatedData.productDetails.orderItems,

@@ -87,6 +87,11 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
                 Phone
               </div>
               <div className="text-sm">{order.customerDetails.cellNumber}</div>
+
+              <div className="text-sm font-medium text-muted-foreground">
+                Student
+              </div>
+              <div className="text-sm">{order.customerDetails.studentName}</div>
             </div>
           </CardContent>
         </Card>

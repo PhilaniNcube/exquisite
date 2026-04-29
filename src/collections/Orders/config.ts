@@ -70,6 +70,12 @@ export const Orders: CollectionConfig = {
           required: true,
           label: "Cell Number",
         },
+        {
+          name: "studentName",
+          type: "text",
+          required: true,
+          label: "Student Name & Surname",
+        },
       ],
     },
     {

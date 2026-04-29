@@ -86,7 +86,7 @@ const PhotoFilters = ({ photos, classes, filters, onFiltersChange }: PhotoFilter
           </div>
 
           {/* Student Name Filter */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Student Name
             </label>
@@ -105,7 +105,7 @@ const PhotoFilters = ({ photos, classes, filters, onFiltersChange }: PhotoFilter
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
 
           {/* Photo Type Filter */}
           <div>

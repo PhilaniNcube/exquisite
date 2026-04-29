@@ -27,6 +27,7 @@ const orderSchema = z.object({
   name: z.string().optional(),
   email: z.string().email("Invalid email").optional(),
   cellNumber: z.string().min(1, "Cell number is required"),
+  studentName: z.string().min(1, "Student name is required"),
   orderItems: z.array(orderItemSchema).min(1, "At least one item is required"),
 });
 
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, email, cellNumber, orderItems } = validationResult.data;
+    const { name, email, cellNumber, studentName, orderItems } = validationResult.data;
 
     const finalOrderData: Omit<Order, "id" | "createdAt" | "updatedAt"> = {
       customerDetails: {
@@ -64,6 +65,7 @@ export async function POST(req: Request) {
         name: name || undefined,
         email: email || undefined,
         cellNumber,
+        studentName,
       },
       productDetails: {
         orderItems,

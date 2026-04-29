@@ -38,6 +38,7 @@ export function CheckoutForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [cellNumber, setCellNumber] = useState("");
+  const [studentName, setStudentName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -59,7 +60,7 @@ export function CheckoutForm() {
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, cellNumber, orderItems }),
+        body: JSON.stringify({ name, email, cellNumber, studentName, orderItems }),
       });
 
       const result = await response.json();
@@ -182,6 +183,19 @@ export function CheckoutForm() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Jane Doe"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="studentName">Student Name & Surname *</Label>
+                <Input
+                  id="studentName"
+                  type="text"
+                  className="bg-muted"
+                  value={studentName}
+                  onChange={(e) => setStudentName(e.target.value)}
+                  placeholder="e.g., John Smith"
+                  required
                 />
               </div>
 

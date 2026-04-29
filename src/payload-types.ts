@@ -405,6 +405,7 @@ export interface Order {
     name?: string | null;
     email?: string | null;
     cellNumber: string;
+    studentName: string;
   };
   productDetails: {
     orderItems: {
@@ -755,6 +756,7 @@ export interface OrdersSelect<T extends boolean = true> {
         name?: T;
         email?: T;
         cellNumber?: T;
+        studentName?: T;
       };
   productDetails?:
     | T
