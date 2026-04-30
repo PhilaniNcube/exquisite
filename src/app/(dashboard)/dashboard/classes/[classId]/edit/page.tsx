@@ -60,7 +60,7 @@ async function EditClassContent({
     notFound()
   }
 
-  const schoolName = typeof cls.school === "object" ? cls.school.name : "Unknown School"
+  const schoolName = cls.school && typeof cls.school === "object" && 'name' in cls.school ? cls.school.name : "Unknown School"
 
   return (
     <Card>

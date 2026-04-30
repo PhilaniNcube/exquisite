@@ -29,12 +29,16 @@ export async function UploadButtons({
       return null;
     }
 
-    const schoolId = typeof cls.school === "object" ? cls.school.id : cls.school;
+    const schoolId = cls.school && typeof cls.school === "object" && 'id' in cls.school ? cls.school.id : cls.school;
+
+    if (!schoolId) {
+      return null;
+    }
 
     return (
       <div className="flex gap-2">
-        <BulkUploadPhotos classId={id} schoolId={schoolId} />
-        <UploadPhotoDialog classId={id} schoolId={schoolId} />
+        <BulkUploadPhotos classId={id} schoolId={schoolId as number} />
+        <UploadPhotoDialog classId={id} schoolId={schoolId as number} />
       </div>
     );
   } catch (error) {

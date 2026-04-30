@@ -12,11 +12,11 @@ export function SchoolPhotoDisplay({ photo }: SchoolPhotoDisplayProps) {
   const photoMedia =
     typeof photo.photo === "number" ? null : (photo.photo as Media);
   const school =
-    typeof photo.schoolDetails.school === "number"
+    !photo.schoolDetails || typeof photo.schoolDetails.school === "number"
       ? null
       : (photo.schoolDetails.school as School);
   const classInfo =
-    photo.schoolDetails.class && typeof photo.schoolDetails.class !== "number"
+    photo.schoolDetails?.class && typeof photo.schoolDetails.class !== "number"
       ? (photo.schoolDetails.class as Class)
       : null;
 

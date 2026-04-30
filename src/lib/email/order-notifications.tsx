@@ -97,7 +97,7 @@ function isProduct(value: Order["productDetails"]["orderItems"][number]["product
   return typeof value === "object" && value !== null && "title" in value;
 }
 
-function isSchool(value: SchoolPhoto["schoolDetails"]["school"]): value is School {
+function isSchool(value: any): value is School {
   return typeof value === "object" && value !== null && "name" in value;
 }
 
@@ -126,7 +126,7 @@ function getPictureName(picture: Order["productDetails"]["orderItems"][number]["
     return "Selected school photo";
   }
 
-  const schoolName = isSchool(picture.schoolDetails.school)
+  const schoolName = picture.schoolDetails && isSchool(picture.schoolDetails.school)
     ? picture.schoolDetails.school.name
     : null;
 

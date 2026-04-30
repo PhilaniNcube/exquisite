@@ -36,7 +36,7 @@ export function EditClassForm({ cls }: { cls: Class }) {
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(editClass, initialState)
 
-  const schoolId = typeof cls.school === 'object' ? (cls.school as School).id : cls.school
+  const schoolId = cls.school && typeof cls.school === 'object' && 'id' in cls.school ? (cls.school as School).id : cls.school
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -66,7 +66,7 @@ export function EditClassForm({ cls }: { cls: Class }) {
     const formData = new FormData()
     formData.append('id', cls.id.toString())
     formData.append('name', values.name)
-    formData.append('schoolId', schoolId.toString())
+    if (schoolId) formData.append('schoolId', schoolId.toString())
 
     startTransition(() => {
       formAction(formData)

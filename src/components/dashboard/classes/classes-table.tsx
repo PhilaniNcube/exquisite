@@ -42,7 +42,7 @@ export default async function ClassesTable() {
               <TableRow key={cls.id}>
                 <TableCell className="font-medium">{cls.name}</TableCell>
                 <TableCell>
-                  {typeof cls.school === "object" ? cls.school.name : cls.school}
+                  {cls.school && typeof cls.school === "object" && 'name' in cls.school ? cls.school.name : String(cls.school || '')}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button asChild variant="ghost" size="sm">

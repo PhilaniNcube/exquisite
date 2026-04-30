@@ -28,8 +28,8 @@ export default async function ClassDetails({
         notFound()
     }
 
-    const schoolName = typeof cls.school === "object" ? cls.school.name : "Unknown School"
-    const schoolId = typeof cls.school === "object" ? cls.school.id : cls.school
+    const schoolName = cls.school && typeof cls.school === "object" && 'name' in cls.school ? cls.school.name : "Unknown School"
+    const schoolId = cls.school && typeof cls.school === "object" && 'id' in cls.school ? cls.school.id : cls.school
 
     return (
       <Card>
