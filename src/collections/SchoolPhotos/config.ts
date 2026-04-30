@@ -35,7 +35,7 @@ export const SchoolPhotos: CollectionConfig = {
           name: "school",
           type: "relationship",
           relationTo: "schools",
-          required: true,
+          required: false,
           label: "School",
         },
         {

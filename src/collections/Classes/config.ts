@@ -23,7 +23,7 @@ export const Classes: CollectionConfig = {
       name: "school",
       type: "relationship",
       relationTo: "schools",
-      required: true,
+      required: false,
     },   
   ],
 };

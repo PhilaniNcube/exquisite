@@ -346,7 +346,7 @@ export interface School {
 export interface Class {
   id: number;
   name: string;
-  school: number | School;
+  school?: (number | null) | School;
   updatedAt: string;
   createdAt: string;
 }
@@ -385,8 +385,8 @@ export interface SchoolPhoto {
   id: number;
   name: string;
   photoType?: PhotoTypeRadio;
-  schoolDetails: {
-    school: number | School;
+  schoolDetails?: {
+    school?: (number | null) | School;
     class?: (number | null) | Class;
   };
   studentName?: string | null;
