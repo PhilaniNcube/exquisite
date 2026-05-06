@@ -9,17 +9,31 @@ import { useState, useMemo } from "react";
 import PhotoModal from "./photo-modal";
 import PhotoFilters from "./photo-filters";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface SchoolPhotosGalleryProps {
   photos: SchoolPhoto[];
   classes: Class[];
   schoolName: string;
+  totalPages?: number;
+  currentPage?: number;
 }
 
 const SchoolPhotosGallery = ({
   photos,
   classes,
   schoolName,
+  totalPages,
+  currentPage,
 }: SchoolPhotosGalleryProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<SchoolPhoto | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -71,6 +85,15 @@ const SchoolPhotosGallery = ({
     setSelectedPhoto(null);
   };
 
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const createPageURL = (pageNumber: number | string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", pageNumber.toString());
+    return `${pathname}?${params.toString()}`;
+  };
+
   if (photos.length === 0) {
     return (
       <div className="text-center py-16">
@@ -112,7 +135,7 @@ const SchoolPhotosGallery = ({
           </p>
         </div>
       ) : (
-        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+        <div className="columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
           {filteredPhotos.map((photo) => (
             <Card
               key={photo.id}
@@ -123,7 +146,7 @@ const SchoolPhotosGallery = ({
                 className="relative overflow-hidden block"
               >
                 <CardTitle className="sr-only">
-                  {photo.name|| "School Photo"}
+                  {photo.name || "School Photo"}
                 </CardTitle>
                 {photo.photo && typeof photo.photo === "object" && (
                   <Image
@@ -157,6 +180,60 @@ const SchoolPhotosGallery = ({
               </Link>
             </Card>
           ))}
+        </div>
+      )}
+
+      {totalPages && totalPages > 1 && (
+        <div className="mt-12">
+          <Pagination>
+            <PaginationContent>
+              {currentPage && currentPage > 1 && (
+                <PaginationItem>
+                  <PaginationPrevious href={createPageURL(currentPage - 1)} />
+                </PaginationItem>
+              )}
+
+              {Array.from({ length: totalPages }).map((_, i) => {
+                const pageNum = i + 1;
+                
+                if (
+                  pageNum === 1 ||
+                  pageNum === totalPages ||
+                  (currentPage && Math.abs(pageNum - currentPage) <= 1)
+                ) {
+                  return (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink
+                        href={createPageURL(pageNum)}
+                        isActive={currentPage === pageNum}
+                      >
+                        {pageNum}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                }
+                
+                if (
+                  (currentPage && pageNum === currentPage - 2) ||
+                  (currentPage && pageNum === currentPage + 2)
+                ) {
+                  return (
+                    <PaginationItem key={pageNum}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  );
+                }
+
+                return null;
+              })}
+
+              {currentPage && currentPage < totalPages && (
+                <PaginationItem>
+                  <PaginationNext href={createPageURL(currentPage + 1)} />
+                </PaginationItem>
+              )}
+            </PaginationContent>
+          </Pagination>
         </div>
       )}
     </div>

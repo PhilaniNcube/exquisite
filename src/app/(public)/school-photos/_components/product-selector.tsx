@@ -70,7 +70,7 @@ export function ProductSelector({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {filteredProducts.map((product) => {
           const productImage =
             typeof product.image === "number" ? null : (product.image as Media);
@@ -117,7 +117,7 @@ export function ProductSelector({
                       <ShoppingCart className="w-4 h-4" />
                     </Button>
                   </div>
-                 
+
                 </div>
               </div>
             </Card>
