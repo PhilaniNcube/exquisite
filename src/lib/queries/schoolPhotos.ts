@@ -8,6 +8,7 @@ export const getSchoolPhotos = async (options?: {
   const payload = await getPayload({ config });
   const photosData = await payload.find({
     collection: "schoolPhotos",
+    sort: "-name",
     ...options,
   });
   return photosData;
@@ -30,6 +31,7 @@ export const getSchoolPhotosBySchoolId = async (
       },
     },
     depth: 1,
+    sort: "-name",
     ...options,
   });
   return photosData;
@@ -52,6 +54,7 @@ export const getSchoolPhotosByClassId = async (
       },
     },
     depth: 1,
+    sort: "-name",
     ...options,
   });
   return photosData;
