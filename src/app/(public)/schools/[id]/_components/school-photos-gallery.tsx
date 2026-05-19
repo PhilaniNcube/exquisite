@@ -113,28 +113,7 @@ const SchoolPhotosGallery = ({
   totalPages,
   currentPage,
 }: SchoolPhotosGalleryProps) => {
-  const [filters, setFilters] = useState({
-    class: "",
-    studentName: "",
-    photoType: "",
-  });
-
-  const filteredPhotos = useMemo(() => {
-    return photos.filter((photo) => {
-      if (
-        filters.class &&
-        photo.schoolDetails &&
-        typeof photo.schoolDetails.class === "object" &&
-        photo.schoolDetails.class?.id !== parseInt(filters.class)
-      ) {
-        return false;
-      }
-      if (filters.photoType && photo.photoType !== filters.photoType) {
-        return false;
-      }
-      return true;
-    });
-  }, [photos, filters]);
+  const filteredPhotos = photos;
 
   // Track the container width with a ResizeObserver so the layout
   // recalculates whenever the container resizes (window resize, sidebar open…).
@@ -198,10 +177,7 @@ const SchoolPhotosGallery = ({
       </div>
 
       <PhotoFilters
-        photos={photos}
         classes={classes}
-        filters={filters}
-        onFiltersChange={setFilters}
       />
 
       {filteredPhotos.length === 0 ? (
@@ -284,16 +260,16 @@ const SchoolPhotosGallery = ({
                     {/* Photo details overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                       <div className="flex flex-wrap gap-2">
-                        {photo.schoolDetails &&
-                          typeof photo.schoolDetails.class === "object" &&
-                          photo.schoolDetails.class && (
-                            <Badge
-                              variant="secondary"
-                              className="text-xs bg-white/20 text-white border-white/30 hover:bg-white/30"
-                            >
-                              {photo.schoolDetails.class.name}
-                            </Badge>
-                          )}
+                        {photo.schoolDetails?.class && (
+                          <Badge
+                            variant="secondary"
+                            className="text-xs bg-white/20 text-white border-white/30 hover:bg-white/30"
+                          >
+                            {typeof photo.schoolDetails.class === "object"
+                              ? photo.schoolDetails.class.name
+                              : classes.find((c) => c.id === photo.schoolDetails?.class)?.name}
+                          </Badge>
+                        )}
                       </div>
                     </div>
                   </Link>

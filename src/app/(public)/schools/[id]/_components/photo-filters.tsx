@@ -5,45 +5,47 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { X, Filter } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useQueryState, parseAsString } from "nuqs";
 
 interface PhotoFiltersProps {
-  photos: SchoolPhoto[];
   classes: Class[];
-  filters: {
-    class: string;
-    studentName: string;
-    photoType: string;
-  };
-  onFiltersChange: (filters: { class: string; studentName: string; photoType: string }) => void;
 }
 
-const PhotoFilters = ({ photos, classes, filters, onFiltersChange }: PhotoFiltersProps) => {
-  // Get unique photo types from the photos
-  const photoTypes = Array.from(new Set(photos.map(photo => photo.photoType).filter(Boolean)));
+const PhotoFilters = ({ classes }: PhotoFiltersProps) => {
+  const [classFilter, setClassFilter] = useQueryState(
+    "class",
+    parseAsString.withDefault("").withOptions({ shallow: false })
+  );
   
-  // Get unique student names from the photos
-  const studentNames = Array.from(new Set(
-    photos.flatMap(photo => 
-      Array.isArray(photo.studentName) ? photo.studentName : []
-    ).filter(Boolean)
-  ));
+  const [photoTypeFilter, setPhotoTypeFilter] = useQueryState(
+    "photoType",
+    parseAsString.withDefault("").withOptions({ shallow: false })
+  );
+  
+  const [, setPage] = useQueryState(
+    "page",
+    parseAsString.withDefault("").withOptions({ shallow: false })
+  );
 
-  const handleFilterChange = (key: string, value: string) => {
-    onFiltersChange({
-      ...filters,
-      [key]: value,
-    });
+  const photoTypes = ["Individual", "Class", "Sports", "Group"];
+
+  const handleClassChange = (value: string) => {
+    setClassFilter(value === "all_classes" ? null : value);
+    setPage(null); // Reset pagination to first page
+  };
+
+  const handlePhotoTypeChange = (value: string) => {
+    setPhotoTypeFilter(value === "all_types" ? null : value);
+    setPage(null); // Reset pagination to first page
   };
 
   const clearFilters = () => {
-    onFiltersChange({
-      class: '',
-      studentName: '',
-      photoType: '',
-    });
+    setClassFilter(null);
+    setPhotoTypeFilter(null);
+    setPage(null);
   };
 
-  const hasActiveFilters = filters.class || filters.studentName || filters.photoType;
+  const hasActiveFilters = classFilter || photoTypeFilter;
 
   return (
     <Card className="mb-6">
@@ -64,18 +66,18 @@ const PhotoFilters = ({ photos, classes, filters, onFiltersChange }: PhotoFilter
           )}
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Class Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Class
             </label>
-            <Select value={filters.class} onValueChange={(value) => handleFilterChange('class', value)}>
+            <Select value={classFilter || "all_classes"} onValueChange={handleClassChange}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="All classes" />
               </SelectTrigger>
               <SelectContent>
-           
+                <SelectItem value="all_classes">All classes</SelectItem>
                 {classes.map((classItem) => (
                   <SelectItem key={classItem.id} value={classItem.id.toString()}>
                     {classItem.name}
@@ -85,41 +87,19 @@ const PhotoFilters = ({ photos, classes, filters, onFiltersChange }: PhotoFilter
             </Select>
           </div>
 
-          {/* Student Name Filter */}
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Student Name
-            </label>
-            <Select value={filters.studentName} onValueChange={(value) => handleFilterChange('studentName', value)}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="All students" />
-              </SelectTrigger>
-              <SelectContent>
-                {studentNames.length === 0 && (
-                    <SelectItem value="all">No students available</SelectItem>
-                )}
-                {studentNames.map((name) => (
-                  <SelectItem key={name} value={name}>
-                    {name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div> */}
-
           {/* Photo Type Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Photo Type
             </label>
-            <Select value={filters.photoType} onValueChange={(value) => handleFilterChange('photoType', value)}>
+            <Select value={photoTypeFilter || "all_types"} onValueChange={handlePhotoTypeChange}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="All types" />
               </SelectTrigger>
               <SelectContent>
-              
+                <SelectItem value="all_types">All types</SelectItem>
                 {photoTypes.map((type) => (
-                  <SelectItem key={type} value={type!}>
+                  <SelectItem key={type} value={type}>
                     {type}
                   </SelectItem>
                 ))}

@@ -20,19 +20,39 @@ export const getSchoolPhotosBySchoolId = async (
   options?: {
     page?: number;
     limit?: number;
+    classId?: string;
+    photoType?: string;
   }
 ) => {
   const payload = await getPayload({ config });
+
+  const where: any = {
+    "schoolDetails.school": {
+      equals: schoolId,
+    },
+  };
+
+  if (options?.classId) {
+    where["schoolDetails.class"] = {
+      equals: options.classId,
+    };
+  }
+
+  if (options?.photoType) {
+    where.photoType = {
+      equals: options.photoType,
+    };
+  }
+
+  const { page, limit } = options || {};
+
   const photosData = await payload.find({
     collection: "schoolPhotos",
-    where: {
-      "schoolDetails.school": {
-        equals: schoolId,
-      },
-    },
+    where,
     depth: 1,
     sort: "-name",
-    ...options,
+    page,
+    limit,
   });
   return photosData;
 };

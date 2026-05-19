@@ -6,13 +6,22 @@ const SchoolPhotosSection = async ({
   schoolId,
   schoolName,
   page = 1,
+  classFilter,
+  photoType,
 }: {
   schoolId: string;
   schoolName: string;
   page?: number;
+  classFilter?: string;
+  photoType?: string;
 }) => {
   const [photosData, classesData] = await Promise.all([
-    getSchoolPhotosBySchoolId(schoolId, { limit: 36, page }),
+    getSchoolPhotosBySchoolId(schoolId, {
+      limit: 36,
+      page,
+      classId: classFilter,
+      photoType,
+    }),
     getClassesBySchoolId(schoolId, { limit: 1000 }),
   ]);
 
