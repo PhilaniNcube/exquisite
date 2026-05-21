@@ -1,0 +1,7 @@
+allowBuilds:
+  - '@swc/core'
+  - 'core-js'
+  - 'esbuild'
+  - 'protobufjs'
+  - 'sharp'
+  - 'unrs-resolver'
