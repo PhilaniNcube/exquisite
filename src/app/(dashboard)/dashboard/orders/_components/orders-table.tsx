@@ -121,8 +121,8 @@ function orderMatchesFilters(
 
 export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, classes }: OrdersTableProps) {
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1).withOptions({ shallow: false }))
-  const [schoolFilter, setSchoolFilter] = useQueryState("school", parseAsString.withDefault(""))
-  const [classFilter, setClassFilter] = useQueryState("class", parseAsString.withDefault(""))
+  const [schoolFilter, setSchoolFilter] = useQueryState("school", parseAsString.withDefault("").withOptions({ shallow: false }))
+  const [classFilter, setClassFilter] = useQueryState("class", parseAsString.withDefault("").withOptions({ shallow: false }))
   const router = useRouter()
 
   const filteredClasses = useMemo(() => {
@@ -150,6 +150,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
             onValueChange={(val) => {
               setSchoolFilter(val === "all" ? "" : val)
               setClassFilter("")
+              setPage(null)
             }}
           >
             <SelectTrigger className="w-55">
@@ -170,7 +171,10 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           <label className="text-sm font-medium text-muted-foreground">Filter by Class</label>
           <Select
             value={classFilter}
-            onValueChange={(val) => setClassFilter(val === "all" ? "" : val)}
+            onValueChange={(val) => {
+              setClassFilter(val === "all" ? "" : val)
+              setPage(null)
+            }}
           >
             <SelectTrigger className="w-55">
               <SelectValue placeholder="All Classes" />
@@ -192,6 +196,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
             onClick={() => {
               setSchoolFilter("")
               setClassFilter("")
+              setPage(null)
             }}
           >
             Clear filters
