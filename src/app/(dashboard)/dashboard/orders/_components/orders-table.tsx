@@ -120,7 +120,7 @@ function orderMatchesFilters(
 }
 
 export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, classes }: OrdersTableProps) {
-  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1))
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1).withOptions({ shallow: false }))
   const [schoolFilter, setSchoolFilter] = useQueryState("school", parseAsString.withDefault(""))
   const [classFilter, setClassFilter] = useQueryState("class", parseAsString.withDefault(""))
   const router = useRouter()
