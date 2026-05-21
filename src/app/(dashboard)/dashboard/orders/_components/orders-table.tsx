@@ -33,6 +33,7 @@ import { DeleteOrderButton } from "@/components/dashboard/orders/delete-order-bu
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { useMemo } from "react"
+import { PrintPdfButton } from "./print-pdf-button"
 
 interface OrdersTableProps {
   orders: Order[]
@@ -202,6 +203,15 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
             Clear filters
           </button>
         )}
+        <div className="ml-auto">
+          <PrintPdfButton 
+            currentOrders={orders} 
+            schoolFilter={schoolFilter} 
+            classFilter={classFilter} 
+            schools={schools} 
+            classes={classes} 
+          />
+        </div>
       </div>
 
       {/* Orders */}
