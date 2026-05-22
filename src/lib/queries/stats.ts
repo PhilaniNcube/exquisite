@@ -27,11 +27,18 @@ export const getDashboardStats = async () => {
     payload.count({ collection: "client-galleries" }),
   ]);
 
-  const totalRevenue = orders.docs.reduce((acc, order) => acc + (order.orderTotal || 0), 0);
+  const paidRevenue = orders.docs
+    .filter(order => order.orderStatus === 'completed' || order.orderStatus === 'processing')
+    .reduce((acc, order) => acc + (order.orderTotal || 0), 0);
+
+  const pendingRevenue = orders.docs
+    .filter(order => order.orderStatus === 'pending' || order.orderStatus === 'cancelled' || !order.orderStatus)
+    .reduce((acc, order) => acc + (order.orderTotal || 0), 0);
 
   return {
     orders: orders.totalDocs,
-    revenue: totalRevenue,
+    paidRevenue,
+    pendingRevenue,
     products: productsCount.totalDocs,
     customers: customersCount.totalDocs,
     schools: schoolsCount.totalDocs,
