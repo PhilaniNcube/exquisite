@@ -2,16 +2,16 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import Image from "next/image";
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Camera } from "lucide-react";
+import { Camera, Trash2 } from "lucide-react";
 import type { Media, SchoolPhoto } from "@/payload-types";
 
 export default async function SchoolPhotos({
@@ -45,6 +45,16 @@ export default async function SchoolPhotos({
     },
     {} as Record<string, number>
   );
+
+  async function deletePhoto(photoId: string | number) {
+    "use server";
+    const payload = await getPayload({ config });
+    await payload.delete({
+      collection: "schoolPhotos",
+      id: photoId,
+    });
+    revalidatePath(`/dashboard/schools/${id}`);
+  }
 
   return (
     <Card>
@@ -87,34 +97,47 @@ export default async function SchoolPhotos({
                 image?.url;
 
               return (
-                <Link
-                  key={photo.id}
-                  href={`/dashboard/school-photos/${photo.id}`}
-                  className="group"
-                >
-                  <div className="relative aspect-square rounded-md overflow-hidden border bg-muted">
-                    {imageUrl ? (
-                      <Image
-                        src={imageUrl}
-                        alt={photo.name || "School Photo"}
-                        fill
-                        className="object-cover transition-transform group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                        No Image
-                      </div>
+                <div key={photo.id} className="group relative">
+                  <Link
+                    href={`/dashboard/school-photos/${photo.id}`}
+                    className="block"
+                  >
+                    <div className="relative aspect-square rounded-md overflow-hidden border bg-muted">
+                      {imageUrl ? (
+                        <Image
+                          src={imageUrl}
+                          alt={photo.name || "School Photo"}
+                          fill
+                          className="object-cover transition-transform group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
+                          No Image
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                  
+                  <form 
+                    action={deletePhoto.bind(null, photo.id)} 
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  >
+                     <Button type="submit" variant="destructive" size="icon" className="h-7 w-7 rounded-full shadow-md" title="Delete photo">
+                       <Trash2 className="h-3.5 w-3.5" />
+                     </Button>
+                  </form>
+
+                  <div className="mt-1">
+                    <p className="text-sm truncate" title={photo.name || ""}>
+                      {photo.name || "Untitled"}
+                    </p>
+                    {photo.photoType && (
+                      <p className="text-xs text-muted-foreground">
+                        {photo.photoType}
+                      </p>
                     )}
                   </div>
-                  <p className="mt-1 text-sm truncate" title={photo.name}>
-                    {photo.name || "Untitled"}
-                  </p>
-                  {photo.photoType && (
-                    <p className="text-xs text-muted-foreground">
-                      {photo.photoType}
-                    </p>
-                  )}
-                </Link>
+                </div>
               );
             })}
           </div>
