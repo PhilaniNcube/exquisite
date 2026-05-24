@@ -57,7 +57,16 @@ export default buildConfig({
   // database-adapter-config-start
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI || process.env.DATABASE_URL,
+      connectionString: (() => {
+        let url = process.env.DATABASE_URI || process.env.DATABASE_URL || '';
+        if (url) {
+          // Upgrade warning-triggering SSL modes to verify-full to maintain secure behavior
+          url = url.replace('sslmode=require', 'sslmode=verify-full')
+                   .replace('sslmode=prefer', 'sslmode=verify-full')
+                   .replace('sslmode=verify-ca', 'sslmode=verify-full');
+        }
+        return url;
+      })(),
     },
     // Explicitly configure SSL to avoid future deprecation warnings
     migrationDir: path.resolve(dirname, 'migrations'),
