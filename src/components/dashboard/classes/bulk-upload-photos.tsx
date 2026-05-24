@@ -7,6 +7,7 @@ import * as z from "zod"
 import { Upload, Loader2, Files } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { runWithConcurrency } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -168,19 +169,22 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
     try {
       // Step 1: Process images client-side (extract dimensions + generate thumbnails)
       setCurrentFile("Processing images...")
-      const processedImages: ProcessedImage[] = []
-      for (let i = 0; i < files.length; i++) {
-        setCurrentFile(`Processing ${files[i].name} (${i + 1}/${totalFiles})...`)
+      let processedCount = 0
+      const processedImages = await runWithConcurrency(files, 3, async (file) => {
         try {
-          const processed = await processImage(files[i])
-          processedImages.push(processed)
+          const res = await processImage(file)
+          processedCount++
+          setCurrentFile(`Processed ${processedCount} of ${totalFiles} images...`)
+          setProgress(Math.round((processedCount / totalFiles) * 20))
+          return res
         } catch (error) {
-          console.error(`Failed to process ${files[i].name}:`, error)
-          // Still include the file — it will upload without thumbnails
-          processedImages.push({ file: files[i], width: 0, height: 0, thumbnails: [] })
+          console.error(`Failed to process ${file.name}:`, error)
+          processedCount++
+          setCurrentFile(`Processed ${processedCount} of ${totalFiles} images...`)
+          setProgress(Math.round((processedCount / totalFiles) * 20))
+          return { file, width: 0, height: 0, thumbnails: [] }
         }
-        setProgress(Math.round(((i + 1) / totalFiles) * 20)) // 0-20% for processing
-      }
+      })
 
       // Step 2: Get presigned URLs for originals + thumbnails
       setCurrentFile("Preparing uploads...")
@@ -205,7 +209,7 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
         presignedUrls: PresignedUrlData[]
       }
 
-      // Step 3: Upload originals + thumbnails to R2 in batches
+      // Step 3: Upload originals + thumbnails to R2 concurrently using sliding window
       const successfulUploads: Array<{
         key: string
         originalName: string
@@ -217,17 +221,13 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
         sizes: Record<string, { key: string; width: number; height: number; filesize: number }>
       }> = []
       let failedCount = 0
+      let completedUploads = 0
 
-      for (let i = 0; i < totalFiles; i += BATCH_SIZE) {
-        const batchEnd = Math.min(i + BATCH_SIZE, totalFiles)
-        const uploadPromises: Promise<{ index: number; success: boolean }>[] = []
+      await runWithConcurrency(processedImages, 5, async (processed, j) => {
+        const urlData = presignedUrls[j]
+        setCurrentFile(`Uploading ${processed.file.name}...`)
 
-        for (let j = i; j < batchEnd; j++) {
-          const processed = processedImages[j]
-          const urlData = presignedUrls[j]
-          setCurrentFile(`Uploading ${processed.file.name}...`)
-
-          // Upload original + all thumbnails for this file concurrently
+        try {
           const originalUpload = uploadToR2(processed.file, urlData.presignedUrl, processed.file.type)
           const thumbnailUploads = processed.thumbnails.map((thumb) => {
             const sizeUrl = urlData.sizes[thumb.name]
@@ -235,21 +235,10 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
             return uploadToR2(thumb.blob, sizeUrl.presignedUrl, 'image/webp')
           })
 
-          uploadPromises.push(
-            Promise.all([originalUpload, ...thumbnailUploads]).then((results) => ({
-              index: j,
-              success: results.every(Boolean),
-            })),
-          )
-        }
+          const results = await Promise.all([originalUpload, ...thumbnailUploads])
+          const success = results.every(Boolean)
 
-        const batchResults = await Promise.allSettled(uploadPromises)
-        for (const result of batchResults) {
-          if (result.status === 'fulfilled' && result.value.success) {
-            const j = result.value.index
-            const processed = processedImages[j]
-            const urlData = presignedUrls[j]
-
+          if (success) {
             const sizes: Record<string, { key: string; width: number; height: number; filesize: number }> = {}
             processed.thumbnails.forEach((thumb) => {
               const sizeUrl = urlData.sizes[thumb.name]
@@ -276,12 +265,15 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
           } else {
             failedCount++
           }
+        } catch (error) {
+          console.error(`Failed to upload ${processed.file.name}:`, error)
+          failedCount++
         }
 
-        const completedSoFar = Math.min(batchEnd, totalFiles)
-        setUploadStats({ completed: completedSoFar, total: totalFiles, failed: failedCount })
-        setProgress(20 + Math.round((completedSoFar / totalFiles) * 60)) // 20-80%
-      }
+        completedUploads++
+        setUploadStats({ completed: completedUploads, total: totalFiles, failed: failedCount })
+        setProgress(20 + Math.round((completedUploads / totalFiles) * 60))
+      })
 
       // Step 4: Register uploaded files in database (batches of 20)
       if (successfulUploads.length > 0) {
