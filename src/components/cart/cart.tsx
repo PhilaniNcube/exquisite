@@ -66,7 +66,7 @@ export function Cart({ trigger }: CartProps) {
           </SheetTitle>
         </SheetHeader>
         
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col flex-1 min-h-0">
           {items.length === 0 ? (
             <div className="flex-1 flex items-center justify-center flex-col gap-4">
               <ShoppingCart className="h-12 w-12 text-muted-foreground" />
@@ -80,7 +80,7 @@ export function Cart({ trigger }: CartProps) {
                 ))}
               </div>
               
-              <div className="border-t py-4 space-y-4">
+              <div className="border-t pt-4 pb-6 sm:pb-4 space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Total Items:</span>
