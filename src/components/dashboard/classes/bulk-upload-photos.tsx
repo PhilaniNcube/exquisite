@@ -223,20 +223,27 @@ export function BulkUploadPhotos({ classId, schoolId }: { classId: number, schoo
       let failedCount = 0
       let completedUploads = 0
 
-      await runWithConcurrency(processedImages, 5, async (processed, j) => {
+      await runWithConcurrency(processedImages, 4, async (processed, j) => {
         const urlData = presignedUrls[j]
         setCurrentFile(`Uploading ${processed.file.name}...`)
 
         try {
-          const originalUpload = uploadToR2(processed.file, urlData.presignedUrl, processed.file.type)
-          const thumbnailUploads = processed.thumbnails.map((thumb) => {
-            const sizeUrl = urlData.sizes[thumb.name]
-            if (!sizeUrl) return Promise.resolve(true)
-            return uploadToR2(thumb.blob, sizeUrl.presignedUrl, 'image/webp')
-          })
+          // Upload original first
+          const originalUploadSuccess = await uploadToR2(processed.file, urlData.presignedUrl, processed.file.type)
 
-          const results = await Promise.all([originalUpload, ...thumbnailUploads])
-          const success = results.every(Boolean)
+          // Upload thumbnails sequentially to avoid browser connection limit exhaustion (limit of 6)
+          let thumbnailsSuccess = true
+          for (const thumb of processed.thumbnails) {
+            const sizeUrl = urlData.sizes[thumb.name]
+            if (sizeUrl) {
+              const res = await uploadToR2(thumb.blob, sizeUrl.presignedUrl, 'image/webp')
+              if (!res) {
+                thumbnailsSuccess = false
+              }
+            }
+          }
+
+          const success = originalUploadSuccess && thumbnailsSuccess
 
           if (success) {
             const sizes: Record<string, { key: string; width: number; height: number; filesize: number }> = {}

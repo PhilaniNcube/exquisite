@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { runWithConcurrency } from '@/lib/utils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,8 +37,10 @@ export async function POST(request: NextRequest) {
 
     const payload = await getPayload({ config })
     const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || ''
-    const results = await Promise.all(
-      uploads.map(async (upload) => {
+    const results = await runWithConcurrency(
+      uploads,
+      5, // Limit concurrency to 5 to prevent database connection pool starvation
+      async (upload) => {
         try {
           // Build sizes metadata from client-generated thumbnails
           // Include url so Payload's static handler can serve them
@@ -125,7 +128,7 @@ export async function POST(request: NextRequest) {
             error: error instanceof Error ? error.message : 'Unknown error',
           }
         }
-      })
+      }
     )
 
     const successCount = results.filter((r) => r.success).length
