@@ -70,7 +70,7 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-8">
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem asChild>
@@ -184,7 +184,7 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
           </div>
 
           {/* Mobile Navigation */}
-          <div className="flex md:hidden items-center gap-4">
+          <div className="flex lg:hidden items-center gap-4">
             <Cart />
             <MobileSheet>
               {children}

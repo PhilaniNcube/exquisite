@@ -35,7 +35,7 @@ const MobileSheet = ({ children }: { children: React.ReactNode }) => {
         <Button
           variant="ghost"
           size="icon"
-          className="md:hidden"
+          className="lg:hidden"
           onClick={() => setOpen(true)}
         >
           <Menu className="h-6 w-6" />
