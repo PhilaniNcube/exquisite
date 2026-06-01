@@ -26,15 +26,10 @@ interface OrdersPageProps {
 
 const OrdersContent = async ({ searchParams }: OrdersPageProps) => {
   const user = await getUser();
-
-  if (!user) {
-    redirect("/login?redirect=/orders");
-  }
-
   const { orderId } = await searchParams;
 
   if (orderId) {
-    // Fetch specific order
+    // Fetch specific order — accessible to both logged-in users and guests
     try {
       const payload = await getPayload({ config });
       
@@ -44,13 +39,21 @@ const OrdersContent = async ({ searchParams }: OrdersPageProps) => {
         depth: 2, // To populate product and picture relationships
       }) as Order;
 
-      // Check if user owns this order
-      if (!order.customerDetails.customer || 
-          (typeof order.customerDetails.customer === 'object' 
-          ? order.customerDetails.customer.id !== user.id 
-          : order.customerDetails.customer !== user.id)) {
-        redirect("/orders");
+      // If this order belongs to a registered customer, require the correct user to be logged in
+      if (order.customerDetails.customer) {
+        if (!user) {
+          // Redirect guest to success page which shows order details without auth
+          redirect(`/checkout/success?orderId=${orderId}`);
+        }
+        const customerId =
+          typeof order.customerDetails.customer === 'object'
+            ? order.customerDetails.customer.id
+            : order.customerDetails.customer;
+        if (customerId !== user.id) {
+          redirect("/orders");
+        }
       }
+      // Guest orders (no customer attached) are accessible to anyone with the orderId
 
       return (
         <div className="container mx-auto px-4 lg:px-8 lg:py-24 py-8">
@@ -160,7 +163,12 @@ const OrdersContent = async ({ searchParams }: OrdersPageProps) => {
     }
   }
 
-  // Generic orders page - fetch user's orders
+  // Generic orders page — requires login
+  if (!user) {
+    redirect("/login?redirect=/orders");
+  }
+
+  // Fetch user's orders
   try {
     const payload = await getPayload({ config });
     
