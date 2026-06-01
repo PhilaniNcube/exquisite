@@ -80,7 +80,7 @@ export function Cart({ trigger }: CartProps) {
                 ))}
               </div>
               
-              <div className="border-t pt-4 pb-6 sm:pb-4 space-y-4">
+              <div className="border-t pt-4 pb-6 sm:pb-4 space-y-3">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Total Items:</span>
@@ -94,6 +94,14 @@ export function Cart({ trigger }: CartProps) {
                 
                 <Button className="w-full" size="lg" onClick={handleCheckout}>
                   Proceed to Checkout
+                </Button>
+                <Button
+                  className="w-full"
+                  size="lg"
+                  variant="outline"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Continue Shopping
                 </Button>
               </div>
             </>
