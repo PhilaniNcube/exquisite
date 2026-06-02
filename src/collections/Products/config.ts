@@ -35,6 +35,15 @@ export const Products: CollectionConfig = {
       label: "Product Image",
     },
     {
+      name: "availableForGroupSports",
+      type: "checkbox",
+      label: "Available for Group/Sports Photos",
+      defaultValue: true,
+      admin: {
+        description: "If checked, this product will be available for purchase when viewing Group, Sports, or Class photos.",
+      },
+    },
+    {
         name: "productDetails",
         type: "richText",
         required: true,

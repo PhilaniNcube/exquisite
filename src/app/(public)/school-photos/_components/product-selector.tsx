@@ -21,14 +21,13 @@ export function ProductSelector({
 }: ProductSelectorProps) {
   const { addItem, setIsOpen } = useCartStore();
 
-  const isSportsPhoto = schoolPhoto.photoType === "Sports";
-  const allowedSportsProducts = [
-    "A3 Canvas Poster",
-    "A4 Canvas Poster",
-    "A5 Canvas Poster",
-  ];
-  const filteredProducts = isSportsPhoto
-    ? products.filter((p) => allowedSportsProducts.includes(p.title))
+  const isGroupOrSportsPhoto =
+    schoolPhoto.photoType === "Sports" ||
+    schoolPhoto.photoType === "Group" ||
+    schoolPhoto.photoType === "Class";
+
+  const filteredProducts = isGroupOrSportsPhoto
+    ? products.filter((p) => p.availableForGroupSports !== false)
     : products;
 
   const handleAddToCart = (product: Product) => {

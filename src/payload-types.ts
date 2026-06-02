@@ -359,6 +359,10 @@ export interface Product {
   title: string;
   price: number;
   image: number | Media;
+  /**
+   * If checked, this product will be available for purchase when viewing Group, Sports, or Class photos.
+   */
+  availableForGroupSports?: boolean | null;
   productDetails: {
     root: {
       type: string;
@@ -722,6 +726,7 @@ export interface ProductsSelect<T extends boolean = true> {
   title?: T;
   price?: T;
   image?: T;
+  availableForGroupSports?: T;
   productDetails?: T;
   updatedAt?: T;
   createdAt?: T;
