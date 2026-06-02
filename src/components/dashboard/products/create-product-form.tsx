@@ -10,6 +10,7 @@ import { Form, FormItem, FormLabel } from "@/components/ui/form";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Loader2, Upload, X } from "lucide-react";
 import Image from "next/image";
@@ -19,9 +20,7 @@ const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   price: z.number().min(0, "Price must be a positive number"),
   productDetails: z.string().min(1, "Product details are required"),
-  // We'll handle image validation manually or via a separate check, 
-  // but keeping it in schema helps with type inference if we want.
-  // However, since file inputs are uncontrolled usually, we'll just check state.
+  availableForGroupSports: z.boolean(),
 });
 
 export function CreateProductForm() {
@@ -36,6 +35,7 @@ export function CreateProductForm() {
       title: "",
       price: 0,
       productDetails: "",
+      availableForGroupSports: true,
     },
   });
 
@@ -141,6 +141,7 @@ export function CreateProductForm() {
           price: values.price,
           imageId: registerResult.mediaId,
           productDetails: values.productDetails,
+          availableForGroupSports: values.availableForGroupSports,
         });
 
         if (result.success && result.product?.id) {
@@ -224,6 +225,30 @@ export function CreateProductForm() {
             )}
           </div>
         </FormItem>
+
+        <Field
+          control={form.control}
+          name="availableForGroupSports"
+          label="Available for Group/Sports Photos"
+        >
+          {(field) => (
+            <div className="flex items-center space-x-3 rounded-lg border p-4 shadow-xs bg-muted/20">
+              <Switch
+                id="availableForGroupSports"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+              <div className="space-y-0.5">
+                <span className="text-sm font-medium block">
+                  Enable availability
+                </span>
+                <span className="text-xs text-muted-foreground block">
+                  Customers can purchase this product when viewing Group, Sports, or Class photos.
+                </span>
+              </div>
+            </div>
+          )}
+        </Field>
 
         <Field
           control={form.control}

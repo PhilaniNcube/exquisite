@@ -133,6 +133,7 @@ export async function createProduct(data: {
   price: number;
   imageId: number;
   productDetails: string;
+  availableForGroupSports?: boolean;
 }) {
   try {
     const payload = await getPayload({ config });
@@ -175,6 +176,7 @@ export async function createProduct(data: {
         price: data.price,
         image: data.imageId,
         productDetails: productDetailsJSON,
+        availableForGroupSports: data.availableForGroupSports ?? true,
       },
     });
 
@@ -184,6 +186,31 @@ export async function createProduct(data: {
   } catch (error) {
     console.error("Error creating product:", error);
     return { success: false, error: "Failed to create product" };
+  }
+}
+
+export async function updateProductAvailability(
+  productId: number,
+  availableForGroupSports: boolean
+) {
+  try {
+    const payload = await getPayload({ config });
+
+    const updatedProduct = await payload.update({
+      collection: "products",
+      id: productId,
+      data: {
+        availableForGroupSports,
+      },
+    });
+
+    revalidatePath("/dashboard/products");
+    revalidatePath(`/dashboard/products/${productId}`);
+
+    return { success: true, product: updatedProduct };
+  } catch (error) {
+    console.error("Error updating product availability:", error);
+    return { success: false, error: "Failed to update product availability" };
   }
 }
 

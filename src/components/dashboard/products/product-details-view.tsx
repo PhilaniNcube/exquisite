@@ -4,6 +4,7 @@ import { UpdateProductTitle } from "./update-product-title";
 import { UpdateProductPrice } from "./update-product-price";
 import { UpdateProductImage } from "./update-product-image";
 import { UpdateProductDetails } from "./update-product-details";
+import { UpdateProductAvailability } from "./update-product-availability";
 import type { Media } from "@/payload-types";
 
 export default async function ProductDetailsView({ productId }: { productId: string }) {
@@ -31,7 +32,10 @@ export default async function ProductDetailsView({ productId }: { productId: str
           productId={product.id}
           currentImage={product.image as Media}
         />
-       
+        <UpdateProductAvailability
+          productId={product.id}
+          currentAvailable={product.availableForGroupSports !== false}
+        />
       </div>
     </div>
   );
