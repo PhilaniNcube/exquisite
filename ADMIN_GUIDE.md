@@ -44,5 +44,27 @@ To upload multiple photos for a class simultaneously:
 
 ---
 
+## 4. Managing Product Availability for Group/Sports Photos
+
+Administrators can control which products are available for purchase when customers view group, sports, or class photos:
+
+### A. Updating Existing Products
+1.  **Navigate to Products**: In the dashboard sidebar, click on **Products** (or go to `/dashboard/products`).
+2.  **Select Product**: Click on the title of the product you wish to modify to view its details.
+3.  **Toggle Availability**:
+    -   Locate the **Availability Settings** card on the right-hand side.
+    -   Click the **Available for Group/Sports Photos** switch to enable or disable availability.
+    -   A success toast notification will confirm the change, and the updated setting is saved automatically.
+
+### B. Setting Availability for New Products
+1.  **Add New Product**: On the Products page, click **Add New Product**.
+2.  **Fill the Form**:
+    -   Enter title, price, image, and details.
+    -   The **Available for Group/Sports Photos** switch is enabled by default. If you do not want this product to be available for group, sports, or class photos, toggle this switch to off.
+3.  **Create**: Click **Create Product**.
+
+---
+
 > [!TIP]
 > Each class has a unique gallery. Ensure you are in the correct class dashboard before starting a bulk upload to avoid mixing up photos between different groups.
+
