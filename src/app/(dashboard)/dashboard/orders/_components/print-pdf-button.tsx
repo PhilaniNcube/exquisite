@@ -20,6 +20,7 @@ interface PrintPdfButtonProps {
   currentOrders: Order[]
   schoolFilter: string | null
   classFilter: string | null
+  paidOnly: boolean
   schools: School[]
   classes: PayloadClass[]
 }
@@ -71,6 +72,7 @@ export function PrintPdfButton({
   currentOrders,
   schoolFilter,
   classFilter,
+  paidOnly,
   schools,
   classes,
 }: PrintPdfButtonProps) {
@@ -97,7 +99,7 @@ export function PrintPdfButton({
     yPos += 6
 
     let filterText = "Filters: None"
-    if (schoolFilter || classFilter) {
+    if (schoolFilter || classFilter || paidOnly) {
       const parts = []
       if (schoolFilter) {
         const schoolName = schools.find((s) => String(s.id) === schoolFilter)?.name || schoolFilter
@@ -106,6 +108,9 @@ export function PrintPdfButton({
       if (classFilter) {
         const className = classes.find((c) => String(c.id) === classFilter)?.name || classFilter
         parts.push(`Class: ${className}`)
+      }
+      if (paidOnly) {
+        parts.push("Paid Only")
       }
       filterText = `Filters: ${parts.join(" | ")}`
     }
@@ -141,7 +146,7 @@ export function PrintPdfButton({
         `S: ${schoolsStr || "-"}\nC: ${classesStr || "-"}`,
         itemsStr,
         order.orderTotal ? formatPrice(order.orderTotal) : "-",
-        (order.orderStatus || "pending").toUpperCase()
+        (order.orderStatus === "printed" ? "PRINTED & DELIVERED" : (order.orderStatus || "pending").toUpperCase())
       ]
     })
 
@@ -177,7 +182,7 @@ export function PrintPdfButton({
   const handlePrintAllFiltered = async () => {
     try {
       setIsGenerating(true)
-      const allOrders = await getFilteredOrdersForPrint(schoolFilter || undefined, classFilter || undefined)
+      const allOrders = await getFilteredOrdersForPrint(schoolFilter || undefined, classFilter || undefined, paidOnly || undefined)
       generatePDF(allOrders, "Filtered List")
     } catch (error) {
       console.error("Failed to fetch all orders for PDF", error)

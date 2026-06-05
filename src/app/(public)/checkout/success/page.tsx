@@ -96,7 +96,7 @@ async function SuccessContent({ searchParams }: SuccessPageProps) {
                   <span>Order #{order.id}</span>
                   <Badge
                     variant={
-                      order.orderStatus === "completed"
+                      order.orderStatus === "completed" || order.orderStatus === "printed"
                         ? "default"
                         : order.orderStatus === "processing"
                         ? "secondary"
@@ -106,8 +106,10 @@ async function SuccessContent({ searchParams }: SuccessPageProps) {
                     }
                   >
                     {order.orderStatus
-                      ? order.orderStatus.charAt(0).toUpperCase() +
-                        order.orderStatus.slice(1)
+                      ? order.orderStatus === "printed"
+                        ? "Printed & Delivered"
+                        : order.orderStatus.charAt(0).toUpperCase() +
+                          order.orderStatus.slice(1)
                       : "Pending"}
                   </Badge>
                 </CardTitle>

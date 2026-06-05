@@ -3,7 +3,7 @@ import OrdersList from './_components/orders-list'
 import { OrdersListSkeleton } from './_components/orders-skeleton'
 
 interface PageProps {
-  searchParams: Promise<{ page?: string; school?: string; class?: string }>
+  searchParams: Promise<{ page?: string; school?: string; class?: string; paidOnly?: string }>
 }
 
 export default function OrdersPage({ searchParams }: PageProps) {

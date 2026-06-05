@@ -4,7 +4,7 @@ import { getPayload } from "payload"
 import config from "@payload-config"
 import { Order } from "@/payload-types"
 
-export async function getFilteredOrdersForPrint(schoolId?: string, classId?: string): Promise<Order[]> {
+export async function getFilteredOrdersForPrint(schoolId?: string, classId?: string, paidOnly?: boolean): Promise<Order[]> {
   const payload = await getPayload({ config })
   const where: any = {}
 
@@ -26,6 +26,12 @@ export async function getFilteredOrdersForPrint(schoolId?: string, classId?: str
     }
   }
 
+  if (paidOnly) {
+    where["orderStatus"] = {
+      in: ["completed", "processing", "printed"],
+    }
+  }
+
   const orders = await payload.find({
     collection: "orders",
     depth: 4,
@@ -33,6 +39,5 @@ export async function getFilteredOrdersForPrint(schoolId?: string, classId?: str
     limit: 1000,
   })
 
-  // We return the docs directly
   return orders.docs as unknown as Order[]
 }

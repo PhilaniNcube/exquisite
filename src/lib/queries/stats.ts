@@ -28,7 +28,7 @@ export const getDashboardStats = async () => {
   ]);
 
   const paidRevenue = orders.docs
-    .filter(order => order.orderStatus === 'completed' || order.orderStatus === 'processing')
+    .filter(order => order.orderStatus === 'completed' || order.orderStatus === 'processing' || order.orderStatus === 'printed')
     .reduce((acc, order) => acc + (order.orderTotal || 0), 0);
 
   const pendingRevenue = orders.docs

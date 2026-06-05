@@ -7,7 +7,8 @@ export const getOrders = async (
   page = 1,
   limit = 10,
   schoolId?: string | number,
-  classId?: string | number
+  classId?: string | number,
+  paidOnly?: boolean
 ) => {
   "use cache";
   cacheLife("minutes");
@@ -32,6 +33,12 @@ export const getOrders = async (
         equals: numClassId,
       };
     }
+  }
+
+  if (paidOnly) {
+    where["orderStatus"] = {
+      in: ["completed", "processing", "printed"],
+    };
   }
 
   const orders = await payload.find({

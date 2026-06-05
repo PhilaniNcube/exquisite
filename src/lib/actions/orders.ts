@@ -25,7 +25,7 @@ const orderSchema = z.object({
   productDetails: z.object({
     orderItems: z.array(orderItemSchema).min(1, "At least one item is required"),
   }),
-  orderStatus: z.enum(["pending", "processing", "completed", "cancelled"]).optional().default("pending"),
+  orderStatus: z.enum(["pending", "processing", "completed", "printed", "cancelled"]).optional().default("pending"),
 });
 
 export const createOrder = async (prevState: unknown, formData: FormData) => {

@@ -42,14 +42,14 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
         <div className="flex items-center gap-3">
           <Badge
             variant={
-              order.orderStatus === "completed"
+              order.orderStatus === "completed" || order.orderStatus === "printed"
                 ? "default"
                 : order.orderStatus === "cancelled"
                 ? "destructive"
                 : "secondary"
             }
           >
-            {order.orderStatus}
+            {order.orderStatus === "printed" ? "Printed & Delivered" : order.orderStatus}
           </Badge>
           {!isSignedIn && (
             <Badge variant="secondary">Guest</Badge>

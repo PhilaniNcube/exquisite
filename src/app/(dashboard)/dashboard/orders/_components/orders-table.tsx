@@ -34,6 +34,7 @@ import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { useMemo } from "react"
 import { PrintPdfButton } from "./print-pdf-button"
+import { Checkbox } from "@/components/ui/checkbox"
 
 interface OrdersTableProps {
   orders: Order[]
@@ -46,9 +47,17 @@ interface OrdersTableProps {
 function getStatusColor(status: string) {
   switch (status) {
     case "completed": return "bg-green-100 text-green-800"
+    case "printed": return "bg-purple-100 text-purple-800"
     case "processing": return "bg-blue-100 text-blue-800"
     case "cancelled": return "bg-red-100 text-red-800"
     default: return "bg-yellow-100 text-yellow-800"
+  }
+}
+
+function getStatusLabel(status: string) {
+  switch (status) {
+    case "printed": return "Printed & Delivered"
+    default: return status.charAt(0).toUpperCase() + status.slice(1)
   }
 }
 
@@ -97,8 +106,13 @@ function extractOrderSchoolInfo(order: Order) {
 function orderMatchesFilters(
   order: Order,
   schoolFilter: string | null,
-  classFilter: string | null
+  classFilter: string | null,
+  paidOnly: boolean
 ): boolean {
+  if (paidOnly && order.orderStatus !== "completed" && order.orderStatus !== "processing" && order.orderStatus !== "printed") {
+    return false
+  }
+
   if (!schoolFilter && !classFilter) return true
 
   for (const item of order.productDetails.orderItems) {
@@ -124,6 +138,8 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1).withOptions({ shallow: false }))
   const [schoolFilter, setSchoolFilter] = useQueryState("school", parseAsString.withDefault("").withOptions({ shallow: false }))
   const [classFilter, setClassFilter] = useQueryState("class", parseAsString.withDefault("").withOptions({ shallow: false }))
+  const [paidOnly, setPaidOnly] = useQueryState("paidOnly", parseAsString.withDefault("").withOptions({ shallow: false }))
+  const isPaidOnly = paidOnly === "true"
   const router = useRouter()
 
   const filteredClasses = useMemo(() => {
@@ -136,9 +152,9 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) =>
-      orderMatchesFilters(order, schoolFilter || null, classFilter || null)
+      orderMatchesFilters(order, schoolFilter || null, classFilter || null, isPaidOnly)
     )
-  }, [orders, schoolFilter, classFilter])
+  }, [orders, schoolFilter, classFilter, isPaidOnly])
 
   return (
     <div className="space-y-4">
@@ -191,12 +207,27 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           </Select>
         </div>
 
-        {(schoolFilter || classFilter) && (
+        <div className="flex items-center gap-2 pb-1">
+          <Checkbox
+            id="paidOnly"
+            checked={isPaidOnly}
+            onCheckedChange={(checked) => {
+              setPaidOnly(checked ? "true" : "")
+              setPage(null)
+            }}
+          />
+          <label htmlFor="paidOnly" className="text-sm font-medium text-muted-foreground cursor-pointer">
+            Paid only
+          </label>
+        </div>
+
+        {(schoolFilter || classFilter || isPaidOnly) && (
           <button
             className="text-sm text-muted-foreground underline hover:text-foreground pb-1"
             onClick={() => {
               setSchoolFilter("")
               setClassFilter("")
+              setPaidOnly("")
               setPage(null)
             }}
           >
@@ -208,6 +239,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
             currentOrders={orders} 
             schoolFilter={schoolFilter} 
             classFilter={classFilter} 
+            paidOnly={isPaidOnly}
             schools={schools} 
             classes={classes} 
           />
@@ -236,7 +268,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
                   <div className="flex items-center gap-4">
                     <span className="font-semibold text-sm">Order #{order.id}</span>
                     <Badge className={getStatusColor(order.orderStatus ?? "pending")} variant="outline">
-                      {order.orderStatus ?? "pending"}
+                      {getStatusLabel(order.orderStatus ?? "pending")}
                     </Badge>
                     {customerInfo.isGuest && (
                       <Badge variant="secondary" className="text-xs">

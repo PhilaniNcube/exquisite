@@ -24,6 +24,11 @@ interface OrdersPageProps {
   }>;
 }
 
+function getStatusLabel(status: string) {
+  if (status === "printed") return "Printed & Delivered";
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
 const OrdersContent = async ({ searchParams }: OrdersPageProps) => {
   const user = await getUser();
   const { orderId } = await searchParams;
@@ -72,13 +77,13 @@ const OrdersContent = async ({ searchParams }: OrdersPageProps) => {
                   Order #{order.id}
                   <Badge 
                     variant={
-                      order.orderStatus === 'completed' ? 'default' : 
+                      order.orderStatus === 'completed' || order.orderStatus === 'printed' ? 'default' : 
                       order.orderStatus === 'processing' ? 'secondary' : 
                       order.orderStatus === 'cancelled' ? 'destructive' : 
                       'outline'
                     }
                   >
-                    {order.orderStatus ? order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1) : 'Unknown'}
+                    {order.orderStatus ? getStatusLabel(order.orderStatus) : 'Unknown'}
                   </Badge>
                 </CardTitle>
               </CardHeader>
@@ -218,13 +223,13 @@ const OrdersContent = async ({ searchParams }: OrdersPageProps) => {
                     </div>
                     <Badge 
                       variant={
-                        order.orderStatus === 'completed' ? 'default' : 
+                        order.orderStatus === 'completed' || order.orderStatus === 'printed' ? 'default' : 
                         order.orderStatus === 'processing' ? 'secondary' : 
                         order.orderStatus === 'cancelled' ? 'destructive' : 
                         'outline'
                       }
                     >
-                      {order.orderStatus ? order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1) : 'Unknown'}
+                      {order.orderStatus ? getStatusLabel(order.orderStatus) : 'Unknown'}
                     </Badge>
                   </div>
                   

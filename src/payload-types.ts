@@ -422,7 +422,7 @@ export interface Order {
     }[];
   };
   orderTotal?: number | null;
-  orderStatus?: ('pending' | 'processing' | 'completed' | 'cancelled') | null;
+  orderStatus?: ('pending' | 'processing' | 'completed' | 'printed' | 'cancelled') | null;
   paymentReference?: string | null;
   paymentDetails?: {
     payRequestId?: string | null;

@@ -6,7 +6,7 @@ import { getClasses } from '@/lib/queries/classes'
 import { OrdersTable } from './orders-table'
 
 interface OrdersListProps {
-  searchParams: Promise<{ page?: string; school?: string; class?: string }>
+  searchParams: Promise<{ page?: string; school?: string; class?: string; paidOnly?: string }>
 }
 
 const OrdersList = async ({ searchParams }: OrdersListProps) => {
@@ -14,9 +14,10 @@ const OrdersList = async ({ searchParams }: OrdersListProps) => {
   const page = params.page ? parseInt(params.page) : 1
   const schoolId = params.school
   const classId = params.class
+  const paidOnly = params.paidOnly === "true"
   const [canDeleteOrders, ordersData, schoolsData, classesData] = await Promise.all([
     isAdminUser(),
-    getOrders(page, 10, schoolId, classId),
+    getOrders(page, 10, schoolId, classId, paidOnly),
     getSchools({ limit: 200 }),
     getClasses({ limit: 500 }),
   ])
