@@ -205,3 +205,71 @@ export async function deleteOrder(orderId: number) {
     };
   }
 }
+
+const markOrderAsPrintedSchema = z.object({
+  orderId: z.number().int().positive(),
+});
+
+export async function markOrderAsPrinted(orderId: number) {
+  const validatedFields = markOrderAsPrintedSchema.safeParse({ orderId });
+
+  if (!validatedFields.success) {
+    return {
+      success: false,
+      message: "Invalid order ID",
+    };
+  }
+
+  try {
+    const payload = await getPayload({ config });
+    const headers = await getHeaders();
+    const result = await payload.auth({ headers, canSetHeaders: false });
+
+    const isAdmin =
+      result.user?.collection === "users" &&
+      result.user.roles?.includes("admin");
+
+    if (!isAdmin) {
+      return {
+        success: false,
+        message: "Unauthorized: Admin access required",
+      };
+    }
+
+    const order = await payload.findByID({
+      collection: "orders",
+      id: validatedFields.data.orderId,
+    });
+
+    if (order.orderStatus !== "completed") {
+      return {
+        success: false,
+        message: "Only completed orders can be marked as printed",
+      };
+    }
+
+    await payload.update({
+      collection: "orders",
+      id: validatedFields.data.orderId,
+      data: {
+        orderStatus: "printed",
+      },
+    });
+
+    revalidatePath("/dashboard/orders");
+    revalidatePath(`/dashboard/orders/${validatedFields.data.orderId}`);
+    revalidatePath("/orders");
+
+    return {
+      success: true,
+      message: "Order marked as printed & delivered",
+    };
+  } catch (error) {
+    console.error("Error marking order as printed:", error);
+
+    return {
+      success: false,
+      message: "Failed to mark order as printed",
+    };
+  }
+}

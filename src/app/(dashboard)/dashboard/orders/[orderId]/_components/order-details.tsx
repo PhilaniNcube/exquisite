@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { Customer, Media, Product, SchoolPhoto } from "@/payload-types";
 import Image from "next/image";
 import { DeleteOrderButton } from "@/components/dashboard/orders/delete-order-button";
+import { MarkAsPrintedButton } from "@/components/dashboard/orders/mark-as-printed-button";
 
 interface OrderDetailsProps {
   params: Promise<{ orderId: string }>;
@@ -53,6 +54,9 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
           </Badge>
           {!isSignedIn && (
             <Badge variant="secondary">Guest</Badge>
+          )}
+          {canDeleteOrders && order.orderStatus === "completed" && (
+            <MarkAsPrintedButton orderId={order.id} />
           )}
           {canDeleteOrders ? (
             <DeleteOrderButton
