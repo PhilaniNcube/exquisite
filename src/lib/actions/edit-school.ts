@@ -10,6 +10,7 @@ const editSchoolSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   type: z.enum(['creche', 'school']),
   pass_code: z.string().optional(),
+  order_deadline: z.string().optional().nullable(),
 })
 
 export type EditSchoolState = {
@@ -17,6 +18,7 @@ export type EditSchoolState = {
     name?: string[]
     type?: string[]
     pass_code?: string[]
+    order_deadline?: string[]
     _form?: string[]
   }
   message?: string
@@ -27,11 +29,13 @@ export async function editSchool(
   prevState: EditSchoolState,
   formData: FormData
 ): Promise<EditSchoolState> {
+  const orderDeadlineValue = formData.get('order_deadline')
   const validatedFields = editSchoolSchema.safeParse({
     id: Number(formData.get('id')),
     name: formData.get('name'),
     type: formData.get('type'),
     pass_code: formData.get('pass_code') || undefined,
+    order_deadline: orderDeadlineValue ? String(orderDeadlineValue) : null,
   })
 
   if (!validatedFields.success) {
@@ -42,7 +46,7 @@ export async function editSchool(
     }
   }
 
-  const { id, name, type, pass_code } = validatedFields.data
+  const { id, name, type, pass_code, order_deadline } = validatedFields.data
 
   try {
     const payload = await getPayload({ config })
@@ -54,6 +58,7 @@ export async function editSchool(
         name,
         type,
         pass_code,
+        order_deadline: order_deadline || undefined,
       },
     })
 

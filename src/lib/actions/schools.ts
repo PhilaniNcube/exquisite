@@ -9,6 +9,7 @@ const createSchoolSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   type: z.enum(['creche', 'school']),
   pass_code: z.string().optional(),
+  order_deadline: z.string().optional().nullable(),
 })
 
 export type CreateSchoolState = {
@@ -16,6 +17,7 @@ export type CreateSchoolState = {
     name?: string[]
     type?: string[]
     pass_code?: string[]
+    order_deadline?: string[]
     _form?: string[]
   }
   message?: string
@@ -27,10 +29,12 @@ export async function createSchool(
   prevState: CreateSchoolState,
   formData: FormData
 ): Promise<CreateSchoolState> {
+  const orderDeadlineValue = formData.get('order_deadline')
   const validatedFields = createSchoolSchema.safeParse({
     name: formData.get('name'),
     type: formData.get('type'),
     pass_code: formData.get('pass_code') || undefined,
+    order_deadline: orderDeadlineValue ? String(orderDeadlineValue) : null,
   })
 
   if (!validatedFields.success) {
@@ -41,7 +45,7 @@ export async function createSchool(
     }
   }
 
-  const { name, type, pass_code } = validatedFields.data
+  const { name, type, pass_code, order_deadline } = validatedFields.data
 
   try {
     const payload = await getPayload({ config })
@@ -52,6 +56,7 @@ export async function createSchool(
         name,
         type,
         pass_code,
+        order_deadline: order_deadline || undefined,
       },
     })
 

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,12 +25,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { DatePicker } from '@/components/ui/date-picker'
 import { createSchool, type CreateSchoolState } from '@/lib/actions/schools'
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   type: z.enum(['creche', 'school']),
   pass_code: z.string().optional(),
+  order_deadline: z.string().optional().nullable(),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -50,6 +53,7 @@ export function CreateSchoolForm() {
       name: '',
       type: 'school',
       pass_code: '',
+      order_deadline: null,
     },
   })
 
@@ -64,6 +68,10 @@ export function CreateSchoolForm() {
 
     if (state.errors?.pass_code?.[0]) {
       form.setError('pass_code', { message: state.errors.pass_code[0] })
+    }
+
+    if (state.errors?.order_deadline?.[0]) {
+      form.setError('order_deadline', { message: state.errors.order_deadline[0] })
     }
 
     if (state.success && state.schoolId) {
@@ -83,6 +91,9 @@ export function CreateSchoolForm() {
     formData.append('name', values.name)
     formData.append('type', values.type)
     formData.append('pass_code', values.pass_code || '')
+    if (values.order_deadline) {
+      formData.append('order_deadline', values.order_deadline)
+    }
 
     startTransition(() => {
       formAction(formData)
@@ -137,6 +148,29 @@ export function CreateSchoolForm() {
               <FormControl>
                 <Input placeholder="Leave blank to auto-generate" {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="order_deadline"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Order Deadline (Optional)</FormLabel>
+              <FormControl>
+                <DatePicker
+                  value={field.value ? new Date(field.value) : null}
+                  onChange={(date) => {
+                    field.onChange(date ? date.toISOString().split('T')[0] : null)
+                  }}
+                  placeholder="Pick a deadline date"
+                />
+              </FormControl>
+              <FormDescription>
+                After this date, parents cannot order photos. Leave empty to allow orders indefinitely.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

@@ -54,6 +54,18 @@ export default async function SchoolDetails({
               <p>{school.id}</p>
             </div>
             <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">Order Deadline</p>
+              <p>
+                {school.order_deadline
+                  ? new Date(school.order_deadline).toLocaleDateString("en-ZA", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "No deadline set"}
+              </p>
+            </div>
+            <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">Created At</p>
               <p>{new Date(school.createdAt).toLocaleDateString()}</p>
             </div>
