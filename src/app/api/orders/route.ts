@@ -3,6 +3,7 @@ import config from "@payload-config";
 import { Order } from "@/payload-types";
 import { z } from "zod";
 import crypto from "crypto";
+import { endOfDay } from "date-fns";
 
 const PAYGATE_ID = process.env.PAYGATE_ID || "";
 const ENCRYPTION_KEY = process.env.PAYGATE_ENCRYPTION_KEY || "";
@@ -58,6 +59,50 @@ export async function POST(req: Request) {
     }
 
     const { name, email, cellNumber, studentName, orderItems } = validationResult.data;
+
+    console.log("[Orders API] Step 2b: Checking school order deadlines...");
+    const pictureIds = orderItems.map((item) => item.picture);
+    const schoolPhotos = await payload.find({
+      collection: "schoolPhotos",
+      where: { id: { in: pictureIds } },
+      depth: 1,
+      limit: pictureIds.length,
+    });
+
+    const schoolIds = new Set<number>();
+    const photoSchoolMap = new Map<number, number>();
+    for (const photo of schoolPhotos.docs) {
+      const school = photo.schoolDetails?.school;
+      if (school && typeof school !== "number") {
+        schoolIds.add(school.id);
+        photoSchoolMap.set(photo.id, school.id);
+      }
+    }
+
+    if (schoolIds.size > 0) {
+      const schools = await payload.find({
+        collection: "schools",
+        where: { id: { in: [...schoolIds] } },
+        limit: schoolIds.size,
+      });
+
+      const now = new Date();
+      for (const school of schools.docs) {
+        if (school.order_deadline) {
+          const deadlineEnd = endOfDay(new Date(school.order_deadline));
+          if (deadlineEnd < now) {
+            return Response.json(
+              {
+                success: false,
+                message: `Orders for ${school.name} closed on ${new Intl.DateTimeFormat("en-ZA", { day: "numeric", month: "long", year: "numeric" }).format(deadlineEnd)}. Please remove items for this school from your cart.`,
+              },
+              { status: 400 }
+            );
+          }
+        }
+      }
+    }
+    console.log("[Orders API] Step 2b done. All deadlines valid.");
 
     const finalOrderData: Omit<Order, "id" | "createdAt" | "updatedAt"> = {
       customerDetails: {

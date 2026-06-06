@@ -36,6 +36,10 @@ export function ProductSelector({
     const schoolPhotoImage =
       typeof schoolPhoto.photo === "number" ? null : (schoolPhoto.photo as Media);
 
+    const school = schoolPhoto.schoolDetails?.school;
+    const schoolId = typeof school === "number" ? school.toString() : (school ? school.id.toString() : undefined);
+    const schoolName = typeof school === "object" && school ? school.name : undefined;
+
     addItem({
       id: `${product.id}-${schoolPhoto.id}`,
       product: product.id.toString(),
@@ -51,6 +55,8 @@ export function ProductSelector({
         name: schoolPhoto.name,
         url: schoolPhotoImage?.url ?? undefined,
         thumbnailUrl: schoolPhotoImage?.sizes?.thumbnail?.url ?? undefined,
+        schoolId,
+        schoolName,
       },
     });
 

@@ -336,6 +336,10 @@ export interface School {
    * Unique pass code required to view school photos. Leave empty to auto-generate.
    */
   pass_code?: string | null;
+  /**
+   * After this date, parents cannot order photos for this school. Leave empty to allow orders indefinitely.
+   */
+  order_deadline?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -705,6 +709,7 @@ export interface SchoolsSelect<T extends boolean = true> {
   name?: T;
   type?: T;
   pass_code?: T;
+  order_deadline?: T;
   updatedAt?: T;
   createdAt?: T;
 }

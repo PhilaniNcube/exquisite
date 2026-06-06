@@ -16,6 +16,8 @@ export interface CartItem {
     name?: string;
     url?: string;
     thumbnailUrl?: string;
+    schoolId?: string;
+    schoolName?: string;
   };
 }
 

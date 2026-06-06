@@ -43,6 +43,17 @@ export const Schools: CollectionConfig = {
       admin: {
         description: "Unique pass code required to view school photos. Leave empty to auto-generate.",
       },
+    },
+    {
+      name: "order_deadline",
+      type: "date",
+      label: "Order Deadline",
+      admin: {
+        date: {
+          pickerAppearance: "dayOnly",
+        },
+        description: "After this date, parents cannot order photos for this school. Leave empty to allow orders indefinitely.",
+      },
     }
   ],
 };

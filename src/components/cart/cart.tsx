@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useCartStore } from "@/store/cart-store";
 import {
   Sheet,
@@ -10,9 +11,11 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, Trash2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ShoppingCart, Trash2, AlertTriangle, Clock } from "lucide-react";
 import { CartItem } from "./cart-item";
 import { useRouter } from "next/navigation";
+import { useSchoolDeadlines } from "@/hooks/use-school-deadlines";
 
 interface CartProps {
   trigger?: React.ReactNode;
@@ -23,6 +26,19 @@ export function Cart({ trigger }: CartProps) {
   const router = useRouter();
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
+
+  const schoolIds = useMemo(
+    () => items.map((item) => item.pictureDetails?.schoolId).filter(Boolean) as string[],
+    [items]
+  );
+
+  const { deadlineStatuses, hasExpiredDeadlines, hasApproachingDeadlines } =
+    useSchoolDeadlines(schoolIds);
+
+  const expiredStatuses = deadlineStatuses.filter((s) => s.hasPassed);
+  const approachingStatuses = deadlineStatuses.filter(
+    (s) => !s.hasPassed && s.daysRemaining !== null && s.daysRemaining <= 7
+  );
 
   const handleCheckout = () => {
     setIsOpen(false);
@@ -75,6 +91,34 @@ export function Cart({ trigger }: CartProps) {
           ) : (
             <>
               <div className="flex-1 overflow-y-auto py-4 space-y-4">
+                {hasExpiredDeadlines && (
+                  <Alert variant="destructive">
+                    <AlertTriangle />
+                    <AlertDescription>
+                      {expiredStatuses.map((s) => (
+                        <p key={s.school.id}>
+                          Orders for <strong>{s.school.name}</strong> closed on {s.formattedDeadline}. Please remove these items to proceed.
+                        </p>
+                      ))}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {hasApproachingDeadlines && (
+                  <Alert>
+                    <Clock />
+                    <AlertDescription>
+                      {approachingStatuses.map((s) => (
+                        <p key={s.school.id}>
+                          Order deadline for <strong>{s.school.name}</strong>: {s.formattedDeadline}
+                          {s.daysRemaining === 0 && " (today!)"}
+                          {s.daysRemaining !== null && s.daysRemaining === 1 && " (tomorrow)"}
+                        </p>
+                      ))}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 {items.map((item) => (
                   <CartItem key={item.id} item={item} />
                 ))}
@@ -92,7 +136,12 @@ export function Cart({ trigger }: CartProps) {
                   </div>
                 </div>
                 
-                <Button className="w-full" size="lg" onClick={handleCheckout}>
+                <Button
+                  className="w-full"
+                  size="lg"
+                  onClick={handleCheckout}
+                  disabled={hasExpiredDeadlines}
+                >
                   Proceed to Checkout
                 </Button>
                 <Button

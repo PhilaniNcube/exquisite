@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cart-store";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { formatPrice } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertTriangle, Clock } from "lucide-react";
 import Image from "next/image";
+import { useSchoolDeadlines } from "@/hooks/use-school-deadlines";
 
 function redirectToPayGate(
   paymentUrl: string,
@@ -43,6 +45,19 @@ export function CheckoutForm() {
   const router = useRouter();
 
   const totalPrice = getTotalPrice();
+
+  const schoolIds = useMemo(
+    () => items.map((item) => item.pictureDetails?.schoolId).filter(Boolean) as string[],
+    [items]
+  );
+
+  const { deadlineStatuses, hasExpiredDeadlines, hasApproachingDeadlines } =
+    useSchoolDeadlines(schoolIds);
+
+  const expiredStatuses = deadlineStatuses.filter((s) => s.hasPassed);
+  const approachingStatuses = deadlineStatuses.filter(
+    (s) => !s.hasPassed && s.daysRemaining !== null && s.daysRemaining <= 7
+  );
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -106,6 +121,34 @@ export function CheckoutForm() {
             <CardTitle>Order Summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {hasExpiredDeadlines && (
+              <Alert variant="destructive">
+                <AlertTriangle />
+                <AlertDescription>
+                  {expiredStatuses.map((s) => (
+                    <p key={s.school.id}>
+                      Orders for <strong>{s.school.name}</strong> closed on {s.formattedDeadline}. Please remove these items from your cart.
+                    </p>
+                  ))}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {hasApproachingDeadlines && (
+              <Alert>
+                <Clock />
+                <AlertDescription>
+                  {approachingStatuses.map((s) => (
+                    <p key={s.school.id}>
+                      Order deadline for <strong>{s.school.name}</strong>: {s.formattedDeadline}
+                      {s.daysRemaining === 0 && " (today!)"}
+                      {s.daysRemaining !== null && s.daysRemaining === 1 && " (tomorrow)"}
+                    </p>
+                  ))}
+                </AlertDescription>
+              </Alert>
+            )}
+
             {items.map((item) => (
               <div key={item.id} className="flex gap-3 items-start">
                 {(item.productDetails?.thumbnailUrl || item.productDetails?.image) && (
@@ -216,7 +259,7 @@ export function CheckoutForm() {
               <div className="space-y-2">
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || hasExpiredDeadlines}
                   className="w-full"
                 >
                   {isSubmitting ? (
@@ -224,6 +267,8 @@ export function CheckoutForm() {
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Processing...
                     </>
+                  ) : hasExpiredDeadlines ? (
+                    "Remove expired items to proceed"
                   ) : (
                     `Proceed to Payment (${formatPrice(totalPrice)})`
                   )}
