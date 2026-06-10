@@ -218,7 +218,7 @@ export function CheckoutForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="name">Name *</Label>
+                <Label htmlFor="name">Parent Name *</Label>
                 <Input
                   id="name"
                   type="text"
