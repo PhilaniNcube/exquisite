@@ -32,7 +32,7 @@ import { formatPrice } from "@/lib/utils"
 import { DeleteOrderButton } from "@/components/dashboard/orders/delete-order-button"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
-import { useMemo } from "react"
+import { useMemo, useEffect } from "react"
 import { PrintPdfButton } from "./print-pdf-button"
 import { Checkbox } from "@/components/ui/checkbox"
 
@@ -141,6 +141,10 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
   const [paidOnly, setPaidOnly] = useQueryState("paidOnly", parseAsString.withDefault("").withOptions({ shallow: false }))
   const isPaidOnly = paidOnly === "true"
   const router = useRouter()
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }, [page])
 
   const filteredClasses = useMemo(() => {
     if (!schoolFilter) return classes
