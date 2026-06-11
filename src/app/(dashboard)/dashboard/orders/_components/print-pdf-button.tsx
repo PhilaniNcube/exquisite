@@ -33,7 +33,7 @@ function extractCustomerInfo(order: Order) {
   return {
     name: customer
       ? [customer.firstName, customer.lastName].filter(Boolean).join(" ") || "—"
-      : order.customerDetails?.name || "—",
+      : order.customerDetails?.studentName || "—",
     email: customer
       ? customer.email
       : order.customerDetails?.email || "—",
@@ -142,7 +142,7 @@ export function PrintPdfButton({
       return [
         order.id,
         format(new Date(order.createdAt), "dd MMM yyyy"),
-        `${customerInfo.name}\n${customerInfo.email}\n${customerInfo.phone}`,
+        `${order.customerDetails?.studentName || "—"}\n${customerInfo.email}\n${customerInfo.phone}`,
         `S: ${schoolsStr || "-"}\nC: ${classesStr || "-"}`,
         itemsStr,
         order.orderTotal ? formatPrice(order.orderTotal) : "-",
