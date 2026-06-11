@@ -299,11 +299,6 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
                 <div className="px-4 py-2 border-b flex flex-wrap gap-x-6 gap-y-1 text-sm">
                   <span className="inline-flex items-center gap-1">
                     <User className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="text-muted-foreground">Parent Name:</span>{" "}
-                    {customerInfo.name}
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <User className="h-3.5 w-3.5 text-muted-foreground" />
                     <span className="text-muted-foreground">Student Name:</span>{" "}
                     {order.customerDetails.studentName || "—"}
                   </span>

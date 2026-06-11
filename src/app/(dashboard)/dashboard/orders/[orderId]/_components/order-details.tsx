@@ -29,7 +29,7 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
 
   const customerName = customer
     ? [customer.firstName, customer.lastName].filter(Boolean).join(" ") || "—"
-    : order.customerDetails.name || "—";
+    : order.customerDetails.studentName || "—";
   const customerEmail = customer
     ? customer.email
     : order.customerDetails.email || "—";

@@ -218,19 +218,6 @@ export function CheckoutForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="name">Parent Name *</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  className="bg-muted"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g., Jane Doe"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="studentName">Student Name & Surname *</Label>
                 <Input
                   id="studentName"

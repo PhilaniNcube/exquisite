@@ -73,7 +73,7 @@ export const Orders: CollectionConfig = {
         {
           name: "studentName",
           type: "text",
-          required: false,
+          required: true,
           label: "Student Name & Surname",
         },
       ],

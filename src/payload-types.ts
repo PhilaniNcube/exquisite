@@ -413,7 +413,7 @@ export interface Order {
     name?: string | null;
     email?: string | null;
     cellNumber: string;
-    studentName?: string | null;
+    studentName: string;
   };
   productDetails: {
     orderItems: {
