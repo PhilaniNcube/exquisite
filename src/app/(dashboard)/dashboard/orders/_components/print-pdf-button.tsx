@@ -142,7 +142,8 @@ export function PrintPdfButton({
       return [
         order.id,
         format(new Date(order.createdAt), "dd MMM yyyy"),
-        `${order.customerDetails?.studentName || "—"}\n${customerInfo.email}\n${customerInfo.phone}`,
+        `${customerInfo.name}\n${customerInfo.email}\n${customerInfo.phone}`,
+        order.customerDetails?.studentName || "—",
         `S: ${schoolsStr || "-"}\nC: ${classesStr || "-"}`,
         itemsStr,
         order.orderTotal ? formatPrice(order.orderTotal) : "-",
@@ -152,19 +153,20 @@ export function PrintPdfButton({
 
     autoTable(doc, {
       startY: yPos + 6,
-      head: [["ID", "Date", "Customer", "School & Class", "Items", "Total", "Status"]],
+      head: [["ID", "Date", "Customer", "Student Name", "School & Class", "Items", "Total", "Status"]],
       body: tableBody,
       theme: "striped",
       headStyles: { fillColor: [41, 128, 185], textColor: 255 },
       styles: { fontSize: 8, cellPadding: 3, overflow: "linebreak" },
       columnStyles: {
-        0: { cellWidth: 15 },
-        1: { cellWidth: 20 },
-        2: { cellWidth: 40 },
-        3: { cellWidth: 30 },
-        4: { cellWidth: 50 },
-        5: { cellWidth: 20 },
-        6: { cellWidth: 20 },
+        0: { cellWidth: 12 },
+        1: { cellWidth: 18 },
+        2: { cellWidth: 35 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 25 },
+        5: { cellWidth: 45 },
+        6: { cellWidth: 18 },
+        7: { cellWidth: 18 },
       },
     })
 
