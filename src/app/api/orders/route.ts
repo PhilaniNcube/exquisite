@@ -206,6 +206,19 @@ export async function POST(req: Request) {
       );
     }
 
+    // Persist payRequestId and amount immediately so payment details are
+    // captured even if the PayGate notify webhook never fires.
+    await payload.update({
+      collection: "orders",
+      id: order.id,
+      data: {
+        paymentDetails: {
+          payRequestId: pgResult.PAY_REQUEST_ID,
+          amount: amountInCents,
+        },
+      },
+    });
+
     // Build redirect checksum: md5(PAYGATE_ID + PAY_REQUEST_ID + REFERENCE + key)
     const redirectChecksum = crypto
       .createHash("md5")

@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Customer, Media, Product, SchoolPhoto } from "@/payload-types";
+import { formatPrice } from "@/lib/utils";
 import Image from "next/image";
 import { DeleteOrderButton } from "@/components/dashboard/orders/delete-order-button";
 import { MarkAsPrintedButton } from "@/components/dashboard/orders/mark-as-printed-button";
@@ -212,6 +213,75 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {order.paymentDetails && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Payment Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-sm font-medium text-muted-foreground">
+                Pay Request ID
+              </div>
+              <div className="text-sm">
+                {order.paymentDetails.payRequestId || "N/A"}
+              </div>
+
+              <div className="text-sm font-medium text-muted-foreground">
+                Transaction ID
+              </div>
+              <div className="text-sm">
+                {order.paymentDetails.transactionId || "N/A"}
+              </div>
+
+              <div className="text-sm font-medium text-muted-foreground">
+                Transaction Status
+              </div>
+              <div className="text-sm">
+                {order.paymentDetails.transactionStatus || "N/A"}
+              </div>
+
+              <div className="text-sm font-medium text-muted-foreground">
+                Result Code
+              </div>
+              <div className="text-sm">
+                {order.paymentDetails.resultCode || "N/A"}
+              </div>
+
+              <div className="text-sm font-medium text-muted-foreground">
+                Result Description
+              </div>
+              <div className="text-sm">
+                {order.paymentDetails.resultDescription || "N/A"}
+              </div>
+
+              <div className="text-sm font-medium text-muted-foreground">
+                Payment Method
+              </div>
+              <div className="text-sm">
+                {order.paymentDetails.payMethod || "N/A"}
+              </div>
+
+              <div className="text-sm font-medium text-muted-foreground">
+                Payment Method Detail
+              </div>
+              <div className="text-sm">
+                {order.paymentDetails.payMethodDetail || "N/A"}
+              </div>
+
+              <div className="text-sm font-medium text-muted-foreground">
+                Amount
+              </div>
+              <div className="text-sm">
+                {order.paymentDetails.amount != null
+                  ? formatPrice(order.paymentDetails.amount / 100)
+                  : "N/A"}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

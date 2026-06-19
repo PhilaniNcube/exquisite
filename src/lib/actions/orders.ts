@@ -127,6 +127,19 @@ export const createOrder = async (prevState: unknown, formData: FormData) => {
       notifyUrl: `${baseUrl}/api/paygate/notify`,
     });
 
+    // Persist payRequestId and amount immediately so payment details are
+    // captured even if the PayGate notify webhook never fires.
+    await payload.update({
+      collection: "orders",
+      id: order.id,
+      data: {
+        paymentDetails: {
+          payRequestId: initiateResponse.PAY_REQUEST_ID,
+          amount: amountInCents,
+        },
+      },
+    });
+
     // Get redirect form data (PAY_REQUEST_ID + CHECKSUM for redirect)
     const redirectData = payGateService.getRedirectData(
       initiateResponse.PAY_REQUEST_ID,
