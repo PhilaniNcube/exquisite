@@ -1,8 +1,11 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
+import { connection } from "next/server";
 
 export async function GET(req: Request) {
   try {
+    await connection();
+
     const { searchParams } = new URL(req.url);
     const idsParam = searchParams.get("ids");
 
