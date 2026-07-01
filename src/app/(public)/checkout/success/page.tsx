@@ -7,11 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CheckCircle2 } from "lucide-react";
 import { ClearCart } from "./clear-cart";
+import { CheckoutSuccessPageSkeleton } from "@/components/checkout/checkout-success-skeleton";
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { formatPrice } from "@/lib/utils";
 import { Order, Product, SchoolPhoto } from "@/payload-types";
 import { getUser } from "@/lib/auth";
+import { verifyOrderPaymentStatus } from "@/lib/paygate/verify";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -39,7 +41,32 @@ async function SuccessContent({ searchParams }: SuccessPageProps) {
       depth: 2,
     })) as Order;
   } catch {
-    // Order not found or invalid ID — just show a generic success message
+    // Order not found or invalid ID — fall through to verification below.
+  }
+
+  // Verify the order was actually paid before trusting this as a success.
+  // This guards against direct navigation, cancelled/failed payments, or
+  // the PayGate return redirect landing here without a confirmed payment.
+  // Only clear the cart if payment is confirmed server-side.
+  const paymentStatus = await verifyOrderPaymentStatus(orderId);
+  if (paymentStatus === "cancelled" || paymentStatus === "not_found") {
+    redirect("/checkout/cancel");
+  }
+  const isPaid = paymentStatus === "paid";
+
+  // Re-fetch the order so any status update made during verification is
+  // reflected in the displayed order details.
+  if (order) {
+    try {
+      const payload = await getPayload({ config });
+      order = (await payload.findByID({
+        collection: "orders",
+        id: orderId,
+        depth: 2,
+      })) as Order;
+    } catch {
+      // Keep the previously fetched order if the re-fetch fails.
+    }
   }
 
   const user = await getUser();
@@ -52,8 +79,8 @@ async function SuccessContent({ searchParams }: SuccessPageProps) {
 
   return (
     <div className="container mx-auto px-4 py-8 lg:px-8 lg:py-24">
-      {/* Clear the cart on successful payment */}
-      <ClearCart />
+      {/* Clear the cart ONLY after a verified successful payment */}
+      <ClearCart shouldClear={isPaid} />
 
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Success Header */}
@@ -62,12 +89,16 @@ async function SuccessContent({ searchParams }: SuccessPageProps) {
             <div className="flex justify-center mb-4">
               <CheckCircle2 className="w-16 h-16 text-green-500" />
             </div>
-            <CardTitle className="text-3xl">Payment Successful!</CardTitle>
+            <CardTitle className="text-3xl">
+              {isPaid ? "Payment Successful!" : "Payment Confirmation Pending"}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="text-center text-muted-foreground">
               <p className="mb-2">
-                Thank you for your payment. Your order has been confirmed.
+                {isPaid
+                  ? "Thank you for your payment. Your order has been confirmed."
+                  : "We have not yet received confirmation of your payment from PayGate. If you completed payment, please check back shortly — your cart has been preserved until payment is confirmed."}
               </p>
               <p className="text-sm">
                 Order ID:{" "}
@@ -210,13 +241,7 @@ export default function CheckoutSuccessPage({
   searchParams,
 }: SuccessPageProps) {
   return (
-    <Suspense
-      fallback={
-        <div className="container mx-auto px-4 py-8 text-center">
-          Loading your order details...
-        </div>
-      }
-    >
+    <Suspense fallback={<CheckoutSuccessPageSkeleton />}>
       <SuccessContent searchParams={searchParams} />
     </Suspense>
   );
