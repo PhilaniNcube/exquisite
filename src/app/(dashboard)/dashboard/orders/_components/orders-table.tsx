@@ -258,8 +258,48 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           </div>
         ) : (
           filteredOrders.map((order) => {
-            const info = extractOrderSchoolInfo(order)
             const customerInfo = extractCustomerInfo(order)
+
+            // Filter order items based on school and class filters
+            const filteredItems = order.productDetails.orderItems.filter((item) => {
+              const picture = typeof item.picture === "object" ? (item.picture as SchoolPhoto) : null
+              if (!picture) return false
+
+              const school = picture.schoolDetails?.school
+              const schoolId = typeof school === "object" && school !== null ? school.id : typeof school === "number" ? school : null
+
+              const cls = picture.schoolDetails?.class
+              const classId = typeof cls === "object" && cls !== null ? cls.id : typeof cls === "number" ? cls : null
+
+              const schoolMatch = !schoolFilter || schoolId === Number(schoolFilter)
+              const classMatch = !classFilter || classId === Number(classFilter)
+
+              return schoolMatch && classMatch
+            })
+
+            // Calculate schools and classes dynamically from the filtered items
+            const schoolsMap = new Map<number, string>()
+            const classesMap = new Map<number, string>()
+
+            filteredItems.forEach((item) => {
+              const picture = item.picture
+              if (typeof picture === "object" && picture !== null) {
+                const photo = picture as SchoolPhoto
+                const school = photo.schoolDetails?.school
+                if (typeof school === "object" && school !== null) {
+                  schoolsMap.set(school.id, school.name)
+                }
+                const cls = photo.schoolDetails?.class
+                if (typeof cls === "object" && cls !== null) {
+                  classesMap.set(cls.id, cls.name)
+                }
+              }
+            })
+
+            const schoolsList = Array.from(schoolsMap.entries())
+            const classesList = Array.from(classesMap.entries())
+            
+            const filteredTotal = filteredItems.reduce((acc, item) => acc + (item.linePrice || 0), 0)
 
             return (
               <div
@@ -284,8 +324,13 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
                     </span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="font-semibold">
-                      {order.orderTotal ? formatPrice(order.orderTotal) : "-"}
+                    <span className="font-semibold text-sm">
+                      {(() => {
+                        if (filteredItems.length < order.productDetails.orderItems.length) {
+                          return `${formatPrice(filteredTotal)} (of ${formatPrice(order.orderTotal || 0)})`
+                        }
+                        return order.orderTotal ? formatPrice(order.orderTotal) : "-"
+                      })()}
                     </span>
                     {canDeleteOrders && (
                       <div onClick={(e) => e.stopPropagation()}>
@@ -312,16 +357,16 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
                     <span className="text-muted-foreground">Phone:</span>{" "}
                     {customerInfo.phone}
                   </span>
-                  {info.schools.length > 0 && (
+                  {schoolsList.length > 0 && (
                     <span>
                       <span className="text-muted-foreground">School:</span>{" "}
-                      {info.schools.map(([, name]) => name).join(", ")}
+                      {schoolsList.map(([, name]) => name).join(", ")}
                     </span>
                   )}
-                  {info.classes.length > 0 && (
+                  {classesList.length > 0 && (
                     <span>
                       <span className="text-muted-foreground">Class:</span>{" "}
-                      {info.classes.map(([, name]) => name).join(", ")}
+                      {classesList.map(([, name]) => name).join(", ")}
                     </span>
                   )}
                 </div>
@@ -329,7 +374,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
                 {/* Line Items */}
                 <div className="p-4">
                   <div className="grid gap-3">
-                    {order.productDetails.orderItems.map((item, idx) => {
+                    {filteredItems.map((item, idx) => {
                       const product = typeof item.product === "object" ? (item.product as Product) : null
                       const picture = typeof item.picture === "object" ? (item.picture as SchoolPhoto) : null
                       const productImage = product && typeof product.image === "object" ? (product.image as Media) : null
