@@ -240,7 +240,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
         )}
         <div className="ml-auto">
           <PrintPdfButton 
-            currentOrders={orders} 
+            currentOrders={filteredOrders} 
             schoolFilter={schoolFilter} 
             classFilter={classFilter} 
             paidOnly={isPaidOnly}
@@ -374,11 +374,26 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
                             <p className="font-medium truncate">
                               {product?.title ?? `Product #${typeof item.product === "number" ? item.product : "?"}`}
                             </p>
-                            <p className="text-muted-foreground truncate">
-                              {picture?.name ?? "Unknown photo"}
-                              {picture?.photoType && (
-                                <span className="ml-1 text-xs">({picture.photoType})</span>
-                              )}
+                            <p className="text-muted-foreground truncate flex items-center gap-2">
+                              <span>
+                                {picture?.name ?? "Unknown photo"}
+                                {picture?.photoType && (
+                                  <span className="ml-1 text-xs">({picture.photoType})</span>
+                                )}
+                              </span>
+                              {(() => {
+                                const cls = picture?.schoolDetails?.class
+                                const className = typeof cls === "object" && cls !== null 
+                                  ? cls.name 
+                                  : typeof cls === "number" 
+                                    ? classes.find(c => c.id === cls)?.name 
+                                    : null
+                                return className ? (
+                                  <span className="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-medium shrink-0">
+                                    Class: {className}
+                                  </span>
+                                ) : null
+                              })()}
                             </p>
                           </div>
 

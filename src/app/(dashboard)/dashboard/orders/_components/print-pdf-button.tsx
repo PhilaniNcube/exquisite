@@ -117,39 +117,90 @@ export function PrintPdfButton({
     doc.text(filterText, 14, yPos)
     yPos += 6
 
-    const totalOrders = ordersData.length
-    const totalRevenue = ordersData.reduce((acc, o) => acc + (o.orderTotal || 0), 0)
-    
-    doc.setFont("helvetica", "bold")
-    doc.text(`Total Orders: ${totalOrders}`, 14, yPos)
-    doc.text(`Total Revenue: ${formatPrice(totalRevenue)}`, 80, yPos)
-    
-    // Table Data
-    const tableBody = ordersData.map((order) => {
+    const tableBody: any[] = []
+    let totalRevenue = 0
+    let totalOrdersCount = 0
+
+    ordersData.forEach((order) => {
+      // Filter order items based on school and class filters
+      const filteredItems = (order.productDetails?.orderItems || []).filter((item) => {
+        const picture = typeof item.picture === "object" ? (item.picture as SchoolPhoto) : null
+        if (!picture) return false
+
+        const school = picture.schoolDetails?.school
+        const schoolId = typeof school === "object" && school !== null ? school.id : typeof school === "number" ? school : null
+
+        const cls = picture.schoolDetails?.class
+        const classId = typeof cls === "object" && cls !== null ? cls.id : typeof cls === "number" ? cls : null
+
+        const schoolMatch = !schoolFilter || schoolId === Number(schoolFilter)
+        const classMatch = !classFilter || classId === Number(classFilter)
+
+        return schoolMatch && classMatch
+      })
+
+      if (filteredItems.length === 0) return
+
+      totalOrdersCount++
+      const filteredTotal = filteredItems.reduce((acc, item) => acc + (item.linePrice || 0), 0)
+      totalRevenue += filteredTotal
+
       const customerInfo = extractCustomerInfo(order)
-      const schoolInfo = extractOrderSchoolInfo(order)
-      const schoolsStr = schoolInfo.schools.map(([, n]) => n).join(", ")
-      const classesStr = schoolInfo.classes.map(([, n]) => n).join(", ")
-      
-      const itemsStr = order.productDetails?.orderItems?.map(item => {
+
+      // Calculate schools and classes dynamically from the filtered items
+      const schoolsMap = new Map<number, string>()
+      const classesMap = new Map<number, string>()
+
+      filteredItems.forEach((item) => {
+        const picture = item.picture
+        if (typeof picture === "object" && picture !== null) {
+          const photo = picture as SchoolPhoto
+          const school = photo.schoolDetails?.school
+          if (typeof school === "object" && school !== null) {
+            schoolsMap.set(school.id, school.name)
+          }
+          const cls = photo.schoolDetails?.class
+          if (typeof cls === "object" && cls !== null) {
+            classesMap.set(cls.id, cls.name)
+          }
+        }
+      })
+
+      const schoolsStr = Array.from(schoolsMap.values()).join(", ")
+      const classesStr = Array.from(classesMap.values()).join(", ")
+
+      const itemsStr = filteredItems.map((item) => {
         const product = typeof item.product === "object" ? (item.product as Product) : null
         const picture = typeof item.picture === "object" ? (item.picture as SchoolPhoto) : null
         const prodName = product?.title || "Product"
         const picName = picture?.name || "Photo"
-        return `${item.quantity}x ${prodName} (${picName})`
+
+        const cls = picture?.schoolDetails?.class
+        const className = typeof cls === "object" && cls !== null 
+          ? cls.name 
+          : typeof cls === "number" 
+            ? classes.find(c => c.id === cls)?.name 
+            : ""
+
+        const classSuffix = className ? ` - Class: ${className}` : ""
+        return `${item.quantity}x ${prodName} (${picName}${classSuffix})`
       }).join("\n") || ""
 
-      return [
+      tableBody.push([
         order.id,
         format(new Date(order.createdAt), "dd MMM yyyy"),
         `${customerInfo.name}\n${customerInfo.email}\n${customerInfo.phone}`,
         order.customerDetails?.studentName || "—",
         `S: ${schoolsStr || "-"}\nC: ${classesStr || "-"}`,
         itemsStr,
-        order.orderTotal ? formatPrice(order.orderTotal) : "-",
+        formatPrice(filteredTotal),
         (order.orderStatus === "printed" ? "PRINTED & DELIVERED" : (order.orderStatus || "pending").toUpperCase())
-      ]
+      ])
     })
+
+    doc.setFont("helvetica", "bold")
+    doc.text(`Total Orders: ${totalOrdersCount}`, 14, yPos)
+    doc.text(`Total Revenue: ${formatPrice(totalRevenue)}`, 80, yPos)
 
     autoTable(doc, {
       startY: yPos + 6,

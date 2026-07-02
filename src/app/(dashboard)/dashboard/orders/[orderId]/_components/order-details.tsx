@@ -173,11 +173,27 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
                       {photo && (
                         <div className="mt-2 space-y-2">
                           <div className="text-xs text-muted-foreground bg-muted p-3 rounded-md">
-                            <p className="font-medium mb-2">
+                            <p className="font-medium mb-1">
                               Photo: {photo.name}
                             </p>
+                            {photo.schoolDetails?.school && (
+                              <p className="mb-1">
+                                School:{" "}
+                                {typeof photo.schoolDetails.school === "object"
+                                  ? photo.schoolDetails.school.name
+                                  : photo.schoolDetails.school}
+                              </p>
+                            )}
+                            {photo.schoolDetails?.class && (
+                              <p className="mb-1">
+                                Class:{" "}
+                                {typeof photo.schoolDetails.class === "object"
+                                  ? photo.schoolDetails.class.name
+                                  : photo.schoolDetails.class}
+                              </p>
+                            )}
                             {schoolPhoto?.url && (
-                              <div className="relative h-32 w-32 overflow-hidden rounded-md border bg-background">
+                              <div className="relative h-32 w-32 overflow-hidden rounded-md border bg-background mt-2">
                                 <Image
                                   src={schoolPhoto.url}
                                   alt={schoolPhoto.alt || photo.name}
