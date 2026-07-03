@@ -118,58 +118,16 @@ export function PrintPdfButton({
     yPos += 6
 
     const tableBody: any[] = []
-    let totalRevenue = 0
-    let totalOrdersCount = 0
+    const totalOrdersCount = ordersData.length
+    const totalRevenue = ordersData.reduce((acc, o) => acc + (o.orderTotal || 0), 0)
 
     ordersData.forEach((order) => {
-      // Filter order items based on school and class filters
-      const filteredItems = (order.productDetails?.orderItems || []).filter((item) => {
-        const picture = typeof item.picture === "object" ? (item.picture as SchoolPhoto) : null
-        if (!picture) return false
-
-        const school = picture.schoolDetails?.school
-        const schoolId = typeof school === "object" && school !== null ? school.id : typeof school === "number" ? school : null
-
-        const cls = picture.schoolDetails?.class
-        const classId = typeof cls === "object" && cls !== null ? cls.id : typeof cls === "number" ? cls : null
-
-        const schoolMatch = !schoolFilter || schoolId === Number(schoolFilter)
-        const classMatch = !classFilter || classId === Number(classFilter)
-
-        return schoolMatch && classMatch
-      })
-
-      if (filteredItems.length === 0) return
-
-      totalOrdersCount++
-      const filteredTotal = filteredItems.reduce((acc, item) => acc + (item.linePrice || 0), 0)
-      totalRevenue += filteredTotal
-
       const customerInfo = extractCustomerInfo(order)
+      const schoolInfo = extractOrderSchoolInfo(order)
+      const schoolsStr = schoolInfo.schools.map(([, n]) => n).join(", ")
+      const classesStr = schoolInfo.classes.map(([, n]) => n).join(", ")
 
-      // Calculate schools and classes dynamically from the filtered items
-      const schoolsMap = new Map<number, string>()
-      const classesMap = new Map<number, string>()
-
-      filteredItems.forEach((item) => {
-        const picture = item.picture
-        if (typeof picture === "object" && picture !== null) {
-          const photo = picture as SchoolPhoto
-          const school = photo.schoolDetails?.school
-          if (typeof school === "object" && school !== null) {
-            schoolsMap.set(school.id, school.name)
-          }
-          const cls = photo.schoolDetails?.class
-          if (typeof cls === "object" && cls !== null) {
-            classesMap.set(cls.id, cls.name)
-          }
-        }
-      })
-
-      const schoolsStr = Array.from(schoolsMap.values()).join(", ")
-      const classesStr = Array.from(classesMap.values()).join(", ")
-
-      const itemsStr = filteredItems.map((item) => {
+      const itemsStr = (order.productDetails?.orderItems || []).map((item) => {
         const product = typeof item.product === "object" ? (item.product as Product) : null
         const picture = typeof item.picture === "object" ? (item.picture as SchoolPhoto) : null
         const prodName = product?.title || "Product"
@@ -193,7 +151,7 @@ export function PrintPdfButton({
         order.customerDetails?.studentName || "—",
         `S: ${schoolsStr || "-"}\nC: ${classesStr || "-"}`,
         itemsStr,
-        formatPrice(filteredTotal),
+        order.orderTotal ? formatPrice(order.orderTotal) : "-",
         (order.orderStatus === "printed" ? "PRINTED & DELIVERED" : (order.orderStatus || "pending").toUpperCase())
       ])
     })
