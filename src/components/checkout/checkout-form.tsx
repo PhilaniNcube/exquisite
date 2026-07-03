@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cart-store";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { formatPrice } from "@/lib/utils";
-import { Loader2, AlertTriangle, Clock } from "lucide-react";
+import { Loader2, AlertTriangle, Clock, User } from "lucide-react";
 import Image from "next/image";
 import { useSchoolDeadlines } from "@/hooks/use-school-deadlines";
 
@@ -36,11 +36,10 @@ function redirectToPayGate(
 }
 
 export function CheckoutForm() {
-  const { items, getTotalPrice } = useCartStore();
+  const { items, getTotalPrice, updateChildName } = useCartStore();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [cellNumber, setCellNumber] = useState("");
-  const [studentName, setStudentName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -59,8 +58,26 @@ export function CheckoutForm() {
     (s) => !s.hasPassed && s.daysRemaining !== null && s.daysRemaining <= 7
   );
 
+  // Check if all items have child names filled in
+  const allChildNamesFilled = items.every(
+    (item) => item.childName && item.childName.trim().length > 0
+  );
+
+  const handleChildNameChange = useCallback(
+    (itemId: string, childName: string) => {
+      updateChildName(itemId, childName);
+    },
+    [updateChildName]
+  );
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (!allChildNamesFilled) {
+      toast.error("Please enter the child's name for each item.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -70,12 +87,13 @@ export function CheckoutForm() {
         priceAtPurchase: item.priceAtPurchase,
         linePrice: item.linePrice,
         picture: item.picture,
+        childName: item.childName,
       }));
 
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, cellNumber, studentName, orderItems }),
+        body: JSON.stringify({ name, email, cellNumber, orderItems }),
       });
 
       const result = await response.json();
@@ -115,7 +133,7 @@ export function CheckoutForm() {
   return (
     <>
       <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 lg:py-24 gap-8">
-        {/* Order Summary */}
+        {/* Order Summary with per-item child names */}
         <Card>
           <CardHeader>
             <CardTitle>Order Summary</CardTitle>
@@ -150,40 +168,54 @@ export function CheckoutForm() {
             )}
 
             {items.map((item) => (
-              <div key={item.id} className="flex gap-3 items-start">
-                {(item.productDetails?.thumbnailUrl || item.productDetails?.image) && (
-                  <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0 bg-muted">
-                    <Image
-                      src={item.productDetails.thumbnailUrl || item.productDetails.image!}
-                      alt={item.productDetails?.name || "Product"}
-                      width={64}
-                      height={64}
-                      className="object-cover w-full h-full"
-                    />
+              <div key={item.id} className="space-y-2 rounded-lg border p-3">
+                <div className="flex gap-3 items-start">
+                  {(item.productDetails?.thumbnailUrl || item.productDetails?.image) && (
+                    <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0 bg-muted">
+                      <Image
+                        src={item.productDetails.thumbnailUrl || item.productDetails.image!}
+                        alt={item.productDetails?.name || "Product"}
+                        width={64}
+                        height={64}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  )}
+                  {(item.pictureDetails?.thumbnailUrl || item.pictureDetails?.url) && (
+                    <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0 bg-muted">
+                      <Image
+                        src={item.pictureDetails.thumbnailUrl || item.pictureDetails.url!}
+                        alt={item.pictureDetails?.name || "School photo"}
+                        width={64}
+                        height={64}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium">{item.productDetails?.name}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {item.pictureDetails?.name}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Qty: {item.quantity} × {formatPrice(item.priceAtPurchase)}
+                    </p>
                   </div>
-                )}
-                {(item.pictureDetails?.thumbnailUrl || item.pictureDetails?.url) && (
-                  <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0 bg-muted">
-                    <Image
-                      src={item.pictureDetails.thumbnailUrl || item.pictureDetails.url!}
-                      alt={item.pictureDetails?.name || "School photo"}
-                      width={64}
-                      height={64}
-                      className="object-cover w-full h-full"
-                    />
+                  <div className="text-right">
+                    <p className="font-medium">{formatPrice(item.linePrice)}</p>
                   </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-medium">{item.productDetails?.name}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {item.pictureDetails?.name}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Qty: {item.quantity} × {formatPrice(item.priceAtPurchase)}
-                  </p>
                 </div>
-                <div className="text-right">
-                  <p className="font-medium">{formatPrice(item.linePrice)}</p>
+                {/* Per-item child name input */}
+                <div className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <Input
+                    type="text"
+                    placeholder="Child's name & surname"
+                    value={item.childName || ""}
+                    onChange={(e) => handleChildNameChange(item.id, e.target.value)}
+                    className="h-8 text-sm bg-muted"
+                    required
+                  />
                 </div>
               </div>
             ))}
@@ -218,19 +250,6 @@ export function CheckoutForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="studentName">Student Name & Surname *</Label>
-                <Input
-                  id="studentName"
-                  type="text"
-                  className="bg-muted"
-                  value={studentName}
-                  onChange={(e) => setStudentName(e.target.value)}
-                  placeholder="e.g., John Smith"
-                  required
-                />
-              </div>
-
-            <div className="space-y-2">
                 <Label htmlFor="cellNumber">Cell Number *</Label>
                 <Input
                   id="cellNumber"
@@ -243,10 +262,17 @@ export function CheckoutForm() {
                 />
               </div>
 
+              {!allChildNamesFilled && (
+                <p className="text-sm text-amber-600 flex items-center gap-1">
+                  <AlertTriangle className="h-4 w-4" />
+                  Please enter each child&apos;s name in the order summary
+                </p>
+              )}
+
               <div className="space-y-2">
                 <Button
                   type="submit"
-                  disabled={isSubmitting || hasExpiredDeadlines}
+                  disabled={isSubmitting || hasExpiredDeadlines || !allChildNamesFilled}
                   className="w-full"
                 >
                   {isSubmitting ? (
@@ -256,6 +282,8 @@ export function CheckoutForm() {
                     </>
                   ) : hasExpiredDeadlines ? (
                     "Remove expired items to proceed"
+                  ) : !allChildNamesFilled ? (
+                    "Enter child names to proceed"
                   ) : (
                     `Proceed to Payment (${formatPrice(totalPrice)})`
                   )}

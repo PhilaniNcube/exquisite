@@ -422,6 +422,10 @@ export interface Order {
       priceAtPurchase: number;
       linePrice: number;
       picture: number | SchoolPhoto;
+      /**
+       * Name of the child this item is for (provided by parent at checkout)
+       */
+      childName?: string | null;
       id?: string | null;
     }[];
   };
@@ -779,6 +783,7 @@ export interface OrdersSelect<T extends boolean = true> {
               priceAtPurchase?: T;
               linePrice?: T;
               picture?: T;
+              childName?: T;
               id?: T;
             };
       };

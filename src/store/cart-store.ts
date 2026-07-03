@@ -69,6 +69,13 @@ export const useCartStore = create<CartState>()(
 
       clearCart: () => set({ items: [] }),
 
+      updateChildName: (id, childName) =>
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.id === id ? { ...item, childName } : item
+          ),
+        })),
+
       getTotalItems: () => {
         const state = get();
         return state.items.reduce((total, item) => total + item.quantity, 0);

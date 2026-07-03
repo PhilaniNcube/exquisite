@@ -22,13 +22,14 @@ const orderItemSchema = z.object({
   picture: z
     .union([z.string(), z.number()])
     .transform((val) => (typeof val === "string" ? parseInt(val, 10) : val)),
+  childName: z.string().min(1, "Child name is required"),
 });
 
 const orderSchema = z.object({
   name: z.string().optional(),
   email: z.string().email("Invalid email").optional(),
   cellNumber: z.string().min(1, "Cell number is required"),
-  studentName: z.string().min(1, "Student name is required"),
+  studentName: z.string().optional(),
   orderItems: z.array(orderItemSchema).min(1, "At least one item is required"),
 });
 
@@ -58,7 +59,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, email, cellNumber, studentName, orderItems } = validationResult.data;
+    const { name, email, cellNumber, orderItems } = validationResult.data;
+
+    // Derive order-level studentName from per-item childName values for backward compatibility
+    const uniqueChildNames = [...new Set(orderItems.map((item) => item.childName).filter(Boolean))];
+    const studentName = uniqueChildNames.join(", ") || "N/A";
 
     console.log("[Orders API] Step 2b: Checking school order deadlines...");
     const pictureIds = orderItems.map((item) => item.picture);

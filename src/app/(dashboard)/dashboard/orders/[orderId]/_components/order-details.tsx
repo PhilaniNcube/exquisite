@@ -173,6 +173,11 @@ const OrderDetails = async ({ params }: OrderDetailsProps) => {
                       {photo && (
                         <div className="mt-2 space-y-2">
                           <div className="text-xs text-muted-foreground bg-muted p-3 rounded-md">
+                            {item.childName && (
+                              <p className="font-semibold text-foreground mb-1">
+                                Child: {item.childName}
+                              </p>
+                            )}
                             <p className="font-medium mb-1">
                               Photo: {photo.name}
                             </p>

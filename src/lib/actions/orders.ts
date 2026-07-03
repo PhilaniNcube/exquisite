@@ -15,12 +15,13 @@ const orderItemSchema = z.object({
   priceAtPurchase: z.number().min(0),
   linePrice: z.number().min(0),
   picture: z.union([z.string(), z.number()]).transform((val) => typeof val === 'string' ? parseInt(val, 10) : val),
+  childName: z.string().min(1, "Child name is required"),
 });
 
 const orderSchema = z.object({
   customerDetails: z.object({
     cellNumber: z.string().min(1, "Cell number is required"),
-    studentName: z.string().min(1, "Student name is required"),
+    studentName: z.string().optional(),
   }),
   productDetails: z.object({
     orderItems: z.array(orderItemSchema).min(1, "At least one item is required"),
@@ -86,12 +87,16 @@ export const createOrder = async (prevState: unknown, formData: FormData) => {
 
     const validatedData = validationResult.data;
 
+    // Derive order-level studentName from per-item childName values for backward compatibility
+    const uniqueChildNames = [...new Set(validatedData.productDetails.orderItems.map((item) => item.childName).filter(Boolean))];
+    const derivedStudentName = uniqueChildNames.join(", ") || "N/A";
+
     // Prepare order data matching the Order type from payload-types
     const finalOrderData: Omit<Order, 'id' | 'createdAt' | 'updatedAt'> = {
       customerDetails: {
         customer: user.id,
         cellNumber: validatedData.customerDetails.cellNumber,
-        studentName: validatedData.customerDetails.studentName,
+        studentName: derivedStudentName,
       },
       productDetails: {
         orderItems: validatedData.productDetails.orderItems,

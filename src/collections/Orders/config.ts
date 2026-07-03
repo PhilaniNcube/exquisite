@@ -127,6 +127,15 @@ export const Orders: CollectionConfig = {
               relationTo: "schoolPhotos",
               required: true,
               label: "Picture",
+            },
+            {
+              name: "childName",
+              type: "text",
+              required: false,
+              label: "Child Name",
+              admin: {
+                description: "Name of the child this item is for (provided by parent at checkout)",
+              },
             }
           ],
         },

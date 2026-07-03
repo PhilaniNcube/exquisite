@@ -374,13 +374,18 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
                             <p className="font-medium truncate">
                               {product?.title ?? `Product #${typeof item.product === "number" ? item.product : "?"}`}
                             </p>
-                            <p className="text-muted-foreground truncate flex items-center gap-2">
+                            <p className="text-muted-foreground truncate flex items-center gap-2 flex-wrap">
                               <span>
                                 {picture?.name ?? "Unknown photo"}
                                 {picture?.photoType && (
                                   <span className="ml-1 text-xs">({picture.photoType})</span>
                                 )}
                               </span>
+                              {item.childName && (
+                                <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium shrink-0">
+                                  Child: {item.childName}
+                                </span>
+                              )}
                               {(() => {
                                 const cls = picture?.schoolDetails?.class
                                 const className = typeof cls === "object" && cls !== null 

@@ -5,6 +5,7 @@ export interface CartItem {
   priceAtPurchase: number;
   linePrice: number;
   picture: string; // SchoolPhoto ID (relationship)
+  childName?: string; // Name of the child this item is for
   // Optional: include product details for display purposes
   productDetails?: {
     name: string;
@@ -26,6 +27,7 @@ export interface CartState {
   addItem: (item: Omit<CartItem, 'quantity' | 'linePrice'>) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
+  updateChildName: (id: string, childName: string) => void;
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
