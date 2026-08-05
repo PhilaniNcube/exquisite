@@ -19,6 +19,7 @@ interface DateRangePickerProps {
   onChange?: (range: DateRange | undefined) => void
   placeholder?: string
   className?: string
+  disabled?: boolean
 }
 
 export function DateRangePicker({
@@ -26,6 +27,7 @@ export function DateRangePicker({
   onChange,
   placeholder = "Pick a date range",
   className,
+  disabled = false,
 }: DateRangePickerProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -39,10 +41,11 @@ export function DateRangePicker({
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open && !disabled} onOpenChange={(o) => !disabled && setOpen(o)}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
+          disabled={disabled}
           className={cn(
             "w-full justify-start text-left font-normal",
             !value?.from && "text-muted-foreground",

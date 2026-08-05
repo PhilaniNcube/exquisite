@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select"
 import { useQueryState, parseAsInteger, parseAsString } from "nuqs"
 import { Order, School, Class as PayloadClass, Product, SchoolPhoto, Media, Customer } from "@/payload-types"
-import { Mail, Phone, User } from "lucide-react"
+import { Mail, Phone, User, Loader2 } from "lucide-react"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import { Route } from "next"
@@ -32,7 +32,7 @@ import { formatPrice } from "@/lib/utils"
 import { DeleteOrderButton } from "@/components/dashboard/orders/delete-order-button"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
-import { useMemo, useEffect } from "react"
+import { useMemo, useEffect, useTransition } from "react"
 import { PrintPdfButton } from "./print-pdf-button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DateRangePicker } from "@/components/ui/date-range-picker"
@@ -152,12 +152,14 @@ function orderMatchesFilters(
 }
 
 export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, classes }: OrdersTableProps) {
-  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1).withOptions({ shallow: false }))
-  const [schoolFilter, setSchoolFilter] = useQueryState("school", parseAsString.withDefault("").withOptions({ shallow: false }))
-  const [classFilter, setClassFilter] = useQueryState("class", parseAsString.withDefault("").withOptions({ shallow: false }))
-  const [paidOnly, setPaidOnly] = useQueryState("paidOnly", parseAsString.withDefault("").withOptions({ shallow: false }))
-  const [fromDate, setFromDate] = useQueryState("fromDate", parseAsString.withDefault("").withOptions({ shallow: false }))
-  const [toDate, setToDate] = useQueryState("toDate", parseAsString.withDefault("").withOptions({ shallow: false }))
+  const [isPending, startTransition] = useTransition()
+
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1).withOptions({ shallow: false, startTransition }))
+  const [schoolFilter, setSchoolFilter] = useQueryState("school", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
+  const [classFilter, setClassFilter] = useQueryState("class", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
+  const [paidOnly, setPaidOnly] = useQueryState("paidOnly", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
+  const [fromDate, setFromDate] = useQueryState("fromDate", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
+  const [toDate, setToDate] = useQueryState("toDate", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
   const isPaidOnly = paidOnly === "true"
   const router = useRouter()
 
@@ -195,13 +197,16 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           <label className="text-sm font-medium text-muted-foreground">Filter by School</label>
           <Select
             value={schoolFilter}
+            disabled={isPending}
             onValueChange={(val) => {
-              setSchoolFilter(val === "all" ? "" : val)
-              setClassFilter("")
-              setPage(null)
+              startTransition(() => {
+                setSchoolFilter(val === "all" ? "" : val)
+                setClassFilter("")
+                setPage(null)
+              })
             }}
           >
-            <SelectTrigger className="w-55">
+            <SelectTrigger className="w-55" disabled={isPending}>
               <SelectValue placeholder="All Schools" />
             </SelectTrigger>
             <SelectContent>
@@ -219,12 +224,15 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           <label className="text-sm font-medium text-muted-foreground">Filter by Class</label>
           <Select
             value={classFilter}
+            disabled={isPending}
             onValueChange={(val) => {
-              setClassFilter(val === "all" ? "" : val)
-              setPage(null)
+              startTransition(() => {
+                setClassFilter(val === "all" ? "" : val)
+                setPage(null)
+              })
             }}
           >
-            <SelectTrigger className="w-55">
+            <SelectTrigger className="w-55" disabled={isPending}>
               <SelectValue placeholder="All Classes" />
             </SelectTrigger>
             <SelectContent>
@@ -242,10 +250,13 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           <Label className="text-sm font-medium text-muted-foreground">Filter by Date Range</Label>
           <DateRangePicker
             value={dateRangeValue}
+            disabled={isPending}
             onChange={(range) => {
-              setFromDate(range?.from ? format(range.from, "yyyy-MM-dd") : "")
-              setToDate(range?.to ? format(range.to, "yyyy-MM-dd") : "")
-              setPage(null)
+              startTransition(() => {
+                setFromDate(range?.from ? format(range.from, "yyyy-MM-dd") : "")
+                setToDate(range?.to ? format(range.to, "yyyy-MM-dd") : "")
+                setPage(null)
+              })
             }}
             placeholder="All Dates"
             className="w-64"
@@ -256,9 +267,12 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           <Checkbox
             id="paidOnly"
             checked={isPaidOnly}
+            disabled={isPending}
             onCheckedChange={(checked) => {
-              setPaidOnly(checked ? "true" : "")
-              setPage(null)
+              startTransition(() => {
+                setPaidOnly(checked ? "true" : "")
+                setPage(null)
+              })
             }}
           />
           <label htmlFor="paidOnly" className="text-sm font-medium text-muted-foreground cursor-pointer">
@@ -268,18 +282,28 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
 
         {(schoolFilter || classFilter || isPaidOnly || fromDate || toDate) && (
           <button
-            className="text-sm text-muted-foreground underline hover:text-foreground pb-1"
+            disabled={isPending}
+            className="text-sm text-muted-foreground underline hover:text-foreground pb-1 disabled:opacity-50 disabled:pointer-events-none"
             onClick={() => {
-              setSchoolFilter("")
-              setClassFilter("")
-              setPaidOnly("")
-              setFromDate("")
-              setToDate("")
-              setPage(null)
+              startTransition(() => {
+                setSchoolFilter("")
+                setClassFilter("")
+                setPaidOnly("")
+                setFromDate("")
+                setToDate("")
+                setPage(null)
+              })
             }}
           >
             Clear filters
           </button>
+        )}
+
+        {isPending && (
+          <div className="flex items-center gap-1.5 pb-1 text-xs font-medium text-primary animate-pulse ml-2">
+            <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
+            <span>Updating orders...</span>
+          </div>
         )}
         <div className="ml-auto">
           <PrintPdfButton
@@ -296,7 +320,15 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
       </div>
 
       {/* Orders */}
-      <div className="space-y-3">
+      <div className="relative space-y-3">
+        {isPending && (
+          <div className="absolute inset-0 bg-background/60 backdrop-blur-[1px] rounded-lg z-20 flex items-center justify-center min-h-32 transition-opacity">
+            <div className="flex items-center gap-2 bg-card border px-4 py-2 rounded-full shadow-md text-sm font-medium text-foreground">
+              <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
+              <span>Fetching matching orders...</span>
+            </div>
+          </div>
+        )}
         {filteredOrders.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             No orders match the selected filters.
@@ -470,10 +502,14 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
               href="#"
               onClick={(e) => {
                 e.preventDefault()
-                if (page > 1) setPage(page - 1)
+                if (page > 1 && !isPending) {
+                  startTransition(() => {
+                    setPage(page - 1)
+                  })
+                }
               }}
-              aria-disabled={page <= 1}
-              className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+              aria-disabled={page <= 1 || isPending}
+              className={page <= 1 || isPending ? "pointer-events-none opacity-50" : ""}
             />
           </PaginationItem>
 
@@ -486,10 +522,14 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
               href="#"
               onClick={(e) => {
                 e.preventDefault()
-                if (page < totalPages) setPage(page + 1)
+                if (page < totalPages && !isPending) {
+                  startTransition(() => {
+                    setPage(page + 1)
+                  })
+                }
               }}
-              aria-disabled={page >= totalPages}
-              className={page >= totalPages ? "pointer-events-none opacity-50" : ""}
+              aria-disabled={page >= totalPages || isPending}
+              className={page >= totalPages || isPending ? "pointer-events-none opacity-50" : ""}
             />
           </PaginationItem>
         </PaginationContent>
