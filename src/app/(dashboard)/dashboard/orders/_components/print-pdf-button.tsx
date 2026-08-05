@@ -22,7 +22,8 @@ interface PrintPdfButtonProps {
   schoolFilter: string | null
   classFilter: string | null
   paidOnly: boolean
-  dateFilter?: string | null
+  fromDate?: string | null
+  toDate?: string | null
   schools: School[]
   classes: PayloadClass[]
 }
@@ -233,7 +234,8 @@ function generatePackingSlipPDF(
   schoolFilter: string | null,
   classFilter: string | null,
   paidOnly: boolean,
-  dateFilter: string | null | undefined,
+  fromDate: string | null | undefined,
+  toDate: string | null | undefined,
   schools: School[],
   classesLookup: PayloadClass[]
 ) {
@@ -268,9 +270,9 @@ function generatePackingSlipPDF(
     const className = classesLookup.find((c) => String(c.id) === classFilter)?.name || classFilter
     filterParts.push(`Class: ${className}`)
   }
-  if (dateFilter) {
-    const parsedDate = new Date(`${dateFilter}T00:00:00`)
-    filterParts.push(`Date: ${!isNaN(parsedDate.getTime()) ? format(parsedDate, "PP") : dateFilter}`)
+  const dateStr = formatDateRangeFilter(fromDate, toDate)
+  if (dateStr) {
+    filterParts.push(dateStr)
   }
   if (paidOnly) filterParts.push("Paid Only")
   if (filterParts.length > 0) {
@@ -450,13 +452,38 @@ function generatePackingSlipPDF(
 // Standard Orders Report (existing behavior)
 // ──────────────────────────────────────────────────────────────
 
+function formatDateRangeFilter(fromDate?: string | null, toDate?: string | null): string | null {
+  if (!fromDate && !toDate) return null
+  if (fromDate && toDate) {
+    if (fromDate === toDate) {
+      const d = new Date(`${fromDate}T00:00:00`)
+      return `Date: ${!isNaN(d.getTime()) ? format(d, "PP") : fromDate}`
+    }
+    const d1 = new Date(`${fromDate}T00:00:00`)
+    const d2 = new Date(`${toDate}T00:00:00`)
+    const str1 = !isNaN(d1.getTime()) ? format(d1, "PP") : fromDate
+    const str2 = !isNaN(d2.getTime()) ? format(d2, "PP") : toDate
+    return `Date Range: ${str1} - ${str2}`
+  }
+  if (fromDate) {
+    const d1 = new Date(`${fromDate}T00:00:00`)
+    return `From: ${!isNaN(d1.getTime()) ? format(d1, "PP") : fromDate}`
+  }
+  if (toDate) {
+    const d2 = new Date(`${toDate}T00:00:00`)
+    return `To: ${!isNaN(d2.getTime()) ? format(d2, "PP") : toDate}`
+  }
+  return null
+}
+
 function generateOrdersReportPDF(
   ordersData: Order[],
   titleSuffix: string,
   schoolFilter: string | null,
   classFilter: string | null,
   paidOnly: boolean,
-  dateFilter: string | null | undefined,
+  fromDate: string | null | undefined,
+  toDate: string | null | undefined,
   schools: School[],
   classes: PayloadClass[]
 ) {
@@ -480,7 +507,7 @@ function generateOrdersReportPDF(
   yPos += 6
 
   let filterText = "Filters: None"
-  if (schoolFilter || classFilter || paidOnly || dateFilter) {
+  if (schoolFilter || classFilter || paidOnly || fromDate || toDate) {
     const parts = []
     if (schoolFilter) {
       const schoolName = schools.find((s) => String(s.id) === schoolFilter)?.name || schoolFilter
@@ -490,9 +517,9 @@ function generateOrdersReportPDF(
       const className = classes.find((c) => String(c.id) === classFilter)?.name || classFilter
       parts.push(`Class: ${className}`)
     }
-    if (dateFilter) {
-      const parsedDate = new Date(`${dateFilter}T00:00:00`)
-      parts.push(`Date: ${!isNaN(parsedDate.getTime()) ? format(parsedDate, "PP") : dateFilter}`)
+    const dateStr = formatDateRangeFilter(fromDate, toDate)
+    if (dateStr) {
+      parts.push(dateStr)
     }
     if (paidOnly) {
       parts.push("Paid Only")
@@ -577,7 +604,8 @@ export function PrintPdfButton({
   schoolFilter,
   classFilter,
   paidOnly,
-  dateFilter,
+  fromDate,
+  toDate,
   schools,
   classes,
 }: PrintPdfButtonProps) {
@@ -586,7 +614,7 @@ export function PrintPdfButton({
   const handlePrintCurrentPage = () => {
     setIsGenerating(true)
     setTimeout(() => {
-      generateOrdersReportPDF(currentOrders, "Current Page", schoolFilter, classFilter, paidOnly, dateFilter, schools, classes)
+      generateOrdersReportPDF(currentOrders, "Current Page", schoolFilter, classFilter, paidOnly, fromDate, toDate, schools, classes)
       setIsGenerating(false)
     }, 100)
   }
@@ -594,8 +622,14 @@ export function PrintPdfButton({
   const handlePrintAllFiltered = async () => {
     try {
       setIsGenerating(true)
-      const allOrders = await getFilteredOrdersForPrint(schoolFilter || undefined, classFilter || undefined, paidOnly || undefined, dateFilter || undefined)
-      generateOrdersReportPDF(allOrders, "Filtered List", schoolFilter, classFilter, paidOnly, dateFilter, schools, classes)
+      const allOrders = await getFilteredOrdersForPrint(
+        schoolFilter || undefined,
+        classFilter || undefined,
+        paidOnly || undefined,
+        fromDate || undefined,
+        toDate || undefined
+      )
+      generateOrdersReportPDF(allOrders, "Filtered List", schoolFilter, classFilter, paidOnly, fromDate, toDate, schools, classes)
     } catch (error) {
       console.error("Failed to fetch all orders for PDF", error)
     } finally {
@@ -606,8 +640,14 @@ export function PrintPdfButton({
   const handlePackingSlip = async () => {
     try {
       setIsGenerating(true)
-      const allOrders = await getFilteredOrdersForPrint(schoolFilter || undefined, classFilter || undefined, paidOnly || undefined, dateFilter || undefined)
-      generatePackingSlipPDF(allOrders, "Packing Slip", schoolFilter, classFilter, paidOnly, dateFilter, schools, classes)
+      const allOrders = await getFilteredOrdersForPrint(
+        schoolFilter || undefined,
+        classFilter || undefined,
+        paidOnly || undefined,
+        fromDate || undefined,
+        toDate || undefined
+      )
+      generatePackingSlipPDF(allOrders, "Packing Slip", schoolFilter, classFilter, paidOnly, fromDate, toDate, schools, classes)
     } catch (error) {
       console.error("Failed to generate packing slip", error)
     } finally {
