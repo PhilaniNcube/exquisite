@@ -1,6 +1,7 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { connection } from "next/server";
+import { unstable_rethrow } from "next/navigation";
 
 export async function GET(req: Request) {
   try {
@@ -41,6 +42,7 @@ export async function GET(req: Request) {
 
     return Response.json({ success: true, deadlines });
   } catch (error) {
+    unstable_rethrow(error);
     console.error("Error fetching school deadlines:", error);
     return Response.json(
       { success: false, message: "Failed to fetch school deadlines" },
