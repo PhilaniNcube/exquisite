@@ -9,7 +9,8 @@ export const getOrders = async (
   schoolId?: string | number,
   classId?: string | number,
   paidOnly?: boolean,
-  date?: string
+  fromDate?: string,
+  toDate?: string
 ) => {
   "use cache";
   cacheLife("minutes");
@@ -42,14 +43,22 @@ export const getOrders = async (
     };
   }
 
-  if (date !== undefined && date !== null && date !== "") {
-    const startOfDay = new Date(`${date}T00:00:00.000`);
-    const endOfDay = new Date(`${date}T23:59:59.999`);
-    if (!isNaN(startOfDay.getTime()) && !isNaN(endOfDay.getTime())) {
-      where["createdAt"] = {
-        greater_than_equal: startOfDay.toISOString(),
-        less_than_equal: endOfDay.toISOString(),
-      };
+  if (fromDate || toDate) {
+    const dateQuery: any = {};
+    if (fromDate) {
+      const startOfDay = new Date(`${fromDate}T00:00:00.000`);
+      if (!isNaN(startOfDay.getTime())) {
+        dateQuery.greater_than_equal = startOfDay.toISOString();
+      }
+    }
+    if (toDate) {
+      const endOfDay = new Date(`${toDate}T23:59:59.999`);
+      if (!isNaN(endOfDay.getTime())) {
+        dateQuery.less_than_equal = endOfDay.toISOString();
+      }
+    }
+    if (Object.keys(dateQuery).length > 0) {
+      where["createdAt"] = dateQuery;
     }
   }
 

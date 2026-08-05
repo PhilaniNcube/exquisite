@@ -35,7 +35,8 @@ import Image from "next/image"
 import { useMemo, useEffect } from "react"
 import { PrintPdfButton } from "./print-pdf-button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DatePicker } from "@/components/ui/date-picker"
+import { DateRangePicker } from "@/components/ui/date-range-picker"
+import { DateRange } from "react-day-picker"
 import { Label } from "@/components/ui/label"
 
 interface OrdersTableProps {
@@ -110,15 +111,23 @@ function orderMatchesFilters(
   schoolFilter: string | null,
   classFilter: string | null,
   paidOnly: boolean,
-  dateFilter: string | null
+  fromDate: string | null,
+  toDate: string | null
 ): boolean {
   if (paidOnly && order.orderStatus !== "completed" && order.orderStatus !== "processing" && order.orderStatus !== "printed") {
     return false
   }
 
-  if (dateFilter) {
-    const orderDateStr = format(new Date(order.createdAt), "yyyy-MM-dd")
-    if (orderDateStr !== dateFilter) return false
+  if (fromDate) {
+    const orderTime = new Date(order.createdAt).getTime()
+    const startTime = new Date(`${fromDate}T00:00:00.000`).getTime()
+    if (orderTime < startTime) return false
+  }
+
+  if (toDate) {
+    const orderTime = new Date(order.createdAt).getTime()
+    const endTime = new Date(`${toDate}T23:59:59.999`).getTime()
+    if (orderTime > endTime) return false
   }
 
   if (!schoolFilter && !classFilter) return true
@@ -147,13 +156,22 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
   const [schoolFilter, setSchoolFilter] = useQueryState("school", parseAsString.withDefault("").withOptions({ shallow: false }))
   const [classFilter, setClassFilter] = useQueryState("class", parseAsString.withDefault("").withOptions({ shallow: false }))
   const [paidOnly, setPaidOnly] = useQueryState("paidOnly", parseAsString.withDefault("").withOptions({ shallow: false }))
-  const [dateFilter, setDateFilter] = useQueryState("date", parseAsString.withDefault("").withOptions({ shallow: false }))
+  const [fromDate, setFromDate] = useQueryState("fromDate", parseAsString.withDefault("").withOptions({ shallow: false }))
+  const [toDate, setToDate] = useQueryState("toDate", parseAsString.withDefault("").withOptions({ shallow: false }))
   const isPaidOnly = paidOnly === "true"
   const router = useRouter()
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }, [page])
+
+  const dateRangeValue: DateRange | null = useMemo(() => {
+    if (!fromDate && !toDate) return null
+    return {
+      from: fromDate ? new Date(`${fromDate}T00:00:00`) : undefined,
+      to: toDate ? new Date(`${toDate}T00:00:00`) : undefined,
+    }
+  }, [fromDate, toDate])
 
   const filteredClasses = useMemo(() => {
     if (!schoolFilter) return classes
@@ -165,9 +183,9 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) =>
-      orderMatchesFilters(order, schoolFilter || null, classFilter || null, isPaidOnly, dateFilter || null)
+      orderMatchesFilters(order, schoolFilter || null, classFilter || null, isPaidOnly, fromDate || null, toDate || null)
     )
-  }, [orders, schoolFilter, classFilter, isPaidOnly, dateFilter])
+  }, [orders, schoolFilter, classFilter, isPaidOnly, fromDate, toDate])
 
   return (
     <div className="space-y-4">
@@ -221,15 +239,16 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
         </div>
 
         <div className="space-y-1 flex flex-col">
-          <Label className="text-sm font-medium text-muted-foreground">Filter by Date</Label>
-          <DatePicker
-            value={dateFilter ? new Date(`${dateFilter}T00:00:00`) : null}
-            onChange={(d) => {
-              setDateFilter(d ? format(d, "yyyy-MM-dd") : "")
+          <Label className="text-sm font-medium text-muted-foreground">Filter by Date Range</Label>
+          <DateRangePicker
+            value={dateRangeValue}
+            onChange={(range) => {
+              setFromDate(range?.from ? format(range.from, "yyyy-MM-dd") : "")
+              setToDate(range?.to ? format(range.to, "yyyy-MM-dd") : "")
               setPage(null)
             }}
             placeholder="All Dates"
-            className="w-55"
+            className="w-64"
           />
         </div>
 
@@ -247,14 +266,15 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           </label>
         </div>
 
-        {(schoolFilter || classFilter || isPaidOnly || dateFilter) && (
+        {(schoolFilter || classFilter || isPaidOnly || fromDate || toDate) && (
           <button
             className="text-sm text-muted-foreground underline hover:text-foreground pb-1"
             onClick={() => {
               setSchoolFilter("")
               setClassFilter("")
               setPaidOnly("")
-              setDateFilter("")
+              setFromDate("")
+              setToDate("")
               setPage(null)
             }}
           >
@@ -267,7 +287,8 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
             schoolFilter={schoolFilter}
             classFilter={classFilter}
             paidOnly={isPaidOnly}
-            dateFilter={dateFilter}
+            fromDate={fromDate}
+            toDate={toDate}
             schools={schools}
             classes={classes}
           />
