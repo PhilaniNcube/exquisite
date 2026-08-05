@@ -35,6 +35,7 @@ import Image from "next/image"
 import { useMemo, useEffect } from "react"
 import { PrintPdfButton } from "./print-pdf-button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { DatePicker } from "@/components/ui/date-picker"
 
 interface OrdersTableProps {
   orders: Order[]
@@ -107,10 +108,16 @@ function orderMatchesFilters(
   order: Order,
   schoolFilter: string | null,
   classFilter: string | null,
-  paidOnly: boolean
+  paidOnly: boolean,
+  dateFilter: string | null
 ): boolean {
   if (paidOnly && order.orderStatus !== "completed" && order.orderStatus !== "processing" && order.orderStatus !== "printed") {
     return false
+  }
+
+  if (dateFilter) {
+    const orderDateStr = format(new Date(order.createdAt), "yyyy-MM-dd")
+    if (orderDateStr !== dateFilter) return false
   }
 
   if (!schoolFilter && !classFilter) return true
@@ -139,6 +146,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
   const [schoolFilter, setSchoolFilter] = useQueryState("school", parseAsString.withDefault("").withOptions({ shallow: false }))
   const [classFilter, setClassFilter] = useQueryState("class", parseAsString.withDefault("").withOptions({ shallow: false }))
   const [paidOnly, setPaidOnly] = useQueryState("paidOnly", parseAsString.withDefault("").withOptions({ shallow: false }))
+  const [dateFilter, setDateFilter] = useQueryState("date", parseAsString.withDefault("").withOptions({ shallow: false }))
   const isPaidOnly = paidOnly === "true"
   const router = useRouter()
 
@@ -156,9 +164,9 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) =>
-      orderMatchesFilters(order, schoolFilter || null, classFilter || null, isPaidOnly)
+      orderMatchesFilters(order, schoolFilter || null, classFilter || null, isPaidOnly, dateFilter || null)
     )
-  }, [orders, schoolFilter, classFilter, isPaidOnly])
+  }, [orders, schoolFilter, classFilter, isPaidOnly, dateFilter])
 
   return (
     <div className="space-y-4">
@@ -211,6 +219,19 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           </Select>
         </div>
 
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-muted-foreground">Filter by Date</label>
+          <DatePicker
+            value={dateFilter ? new Date(`${dateFilter}T00:00:00`) : null}
+            onChange={(d) => {
+              setDateFilter(d ? format(d, "yyyy-MM-dd") : "")
+              setPage(null)
+            }}
+            placeholder="All Dates"
+            className="w-55"
+          />
+        </div>
+
         <div className="flex items-center gap-2 pb-1">
           <Checkbox
             id="paidOnly"
@@ -225,13 +246,14 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           </label>
         </div>
 
-        {(schoolFilter || classFilter || isPaidOnly) && (
+        {(schoolFilter || classFilter || isPaidOnly || dateFilter) && (
           <button
             className="text-sm text-muted-foreground underline hover:text-foreground pb-1"
             onClick={() => {
               setSchoolFilter("")
               setClassFilter("")
               setPaidOnly("")
+              setDateFilter("")
               setPage(null)
             }}
           >
@@ -244,6 +266,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
             schoolFilter={schoolFilter} 
             classFilter={classFilter} 
             paidOnly={isPaidOnly}
+            dateFilter={dateFilter}
             schools={schools} 
             classes={classes} 
           />

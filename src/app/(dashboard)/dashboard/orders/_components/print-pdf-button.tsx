@@ -22,6 +22,7 @@ interface PrintPdfButtonProps {
   schoolFilter: string | null
   classFilter: string | null
   paidOnly: boolean
+  dateFilter?: string | null
   schools: School[]
   classes: PayloadClass[]
 }
@@ -232,6 +233,7 @@ function generatePackingSlipPDF(
   schoolFilter: string | null,
   classFilter: string | null,
   paidOnly: boolean,
+  dateFilter: string | null | undefined,
   schools: School[],
   classesLookup: PayloadClass[]
 ) {
@@ -265,6 +267,10 @@ function generatePackingSlipPDF(
   if (classFilter) {
     const className = classesLookup.find((c) => String(c.id) === classFilter)?.name || classFilter
     filterParts.push(`Class: ${className}`)
+  }
+  if (dateFilter) {
+    const parsedDate = new Date(`${dateFilter}T00:00:00`)
+    filterParts.push(`Date: ${!isNaN(parsedDate.getTime()) ? format(parsedDate, "PP") : dateFilter}`)
   }
   if (paidOnly) filterParts.push("Paid Only")
   if (filterParts.length > 0) {
@@ -450,6 +456,7 @@ function generateOrdersReportPDF(
   schoolFilter: string | null,
   classFilter: string | null,
   paidOnly: boolean,
+  dateFilter: string | null | undefined,
   schools: School[],
   classes: PayloadClass[]
 ) {
@@ -473,7 +480,7 @@ function generateOrdersReportPDF(
   yPos += 6
 
   let filterText = "Filters: None"
-  if (schoolFilter || classFilter || paidOnly) {
+  if (schoolFilter || classFilter || paidOnly || dateFilter) {
     const parts = []
     if (schoolFilter) {
       const schoolName = schools.find((s) => String(s.id) === schoolFilter)?.name || schoolFilter
@@ -482,6 +489,10 @@ function generateOrdersReportPDF(
     if (classFilter) {
       const className = classes.find((c) => String(c.id) === classFilter)?.name || classFilter
       parts.push(`Class: ${className}`)
+    }
+    if (dateFilter) {
+      const parsedDate = new Date(`${dateFilter}T00:00:00`)
+      parts.push(`Date: ${!isNaN(parsedDate.getTime()) ? format(parsedDate, "PP") : dateFilter}`)
     }
     if (paidOnly) {
       parts.push("Paid Only")
@@ -566,6 +577,7 @@ export function PrintPdfButton({
   schoolFilter,
   classFilter,
   paidOnly,
+  dateFilter,
   schools,
   classes,
 }: PrintPdfButtonProps) {
@@ -574,7 +586,7 @@ export function PrintPdfButton({
   const handlePrintCurrentPage = () => {
     setIsGenerating(true)
     setTimeout(() => {
-      generateOrdersReportPDF(currentOrders, "Current Page", schoolFilter, classFilter, paidOnly, schools, classes)
+      generateOrdersReportPDF(currentOrders, "Current Page", schoolFilter, classFilter, paidOnly, dateFilter, schools, classes)
       setIsGenerating(false)
     }, 100)
   }
@@ -582,8 +594,8 @@ export function PrintPdfButton({
   const handlePrintAllFiltered = async () => {
     try {
       setIsGenerating(true)
-      const allOrders = await getFilteredOrdersForPrint(schoolFilter || undefined, classFilter || undefined, paidOnly || undefined)
-      generateOrdersReportPDF(allOrders, "Filtered List", schoolFilter, classFilter, paidOnly, schools, classes)
+      const allOrders = await getFilteredOrdersForPrint(schoolFilter || undefined, classFilter || undefined, paidOnly || undefined, dateFilter || undefined)
+      generateOrdersReportPDF(allOrders, "Filtered List", schoolFilter, classFilter, paidOnly, dateFilter, schools, classes)
     } catch (error) {
       console.error("Failed to fetch all orders for PDF", error)
     } finally {
@@ -594,8 +606,8 @@ export function PrintPdfButton({
   const handlePackingSlip = async () => {
     try {
       setIsGenerating(true)
-      const allOrders = await getFilteredOrdersForPrint(schoolFilter || undefined, classFilter || undefined, paidOnly || undefined)
-      generatePackingSlipPDF(allOrders, "Packing Slip", schoolFilter, classFilter, paidOnly, schools, classes)
+      const allOrders = await getFilteredOrdersForPrint(schoolFilter || undefined, classFilter || undefined, paidOnly || undefined, dateFilter || undefined)
+      generatePackingSlipPDF(allOrders, "Packing Slip", schoolFilter, classFilter, paidOnly, dateFilter, schools, classes)
     } catch (error) {
       console.error("Failed to generate packing slip", error)
     } finally {

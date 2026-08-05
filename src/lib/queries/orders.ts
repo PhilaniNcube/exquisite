@@ -8,7 +8,8 @@ export const getOrders = async (
   limit = 10,
   schoolId?: string | number,
   classId?: string | number,
-  paidOnly?: boolean
+  paidOnly?: boolean,
+  date?: string
 ) => {
   "use cache";
   cacheLife("minutes");
@@ -39,6 +40,17 @@ export const getOrders = async (
     where["orderStatus"] = {
       in: ["completed", "processing", "printed"],
     };
+  }
+
+  if (date !== undefined && date !== null && date !== "") {
+    const startOfDay = new Date(`${date}T00:00:00.000`);
+    const endOfDay = new Date(`${date}T23:59:59.999`);
+    if (!isNaN(startOfDay.getTime()) && !isNaN(endOfDay.getTime())) {
+      where["createdAt"] = {
+        greater_than_equal: startOfDay.toISOString(),
+        less_than_equal: endOfDay.toISOString(),
+      };
+    }
   }
 
   const orders = await payload.find({
