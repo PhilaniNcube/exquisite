@@ -36,6 +36,7 @@ import { useMemo, useEffect } from "react"
 import { PrintPdfButton } from "./print-pdf-button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DatePicker } from "@/components/ui/date-picker"
+import { Label } from "@/components/ui/label"
 
 interface OrdersTableProps {
   orders: Order[]
@@ -219,8 +220,8 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           </Select>
         </div>
 
-        <div className="space-y-1">
-          <label className="text-sm font-medium text-muted-foreground">Filter by Date</label>
+        <div className="space-y-1 flex flex-col">
+          <Label className="text-sm font-medium text-muted-foreground">Filter by Date</Label>
           <DatePicker
             value={dateFilter ? new Date(`${dateFilter}T00:00:00`) : null}
             onChange={(d) => {
@@ -261,14 +262,14 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           </button>
         )}
         <div className="ml-auto">
-          <PrintPdfButton 
-            currentOrders={filteredOrders} 
-            schoolFilter={schoolFilter} 
-            classFilter={classFilter} 
+          <PrintPdfButton
+            currentOrders={filteredOrders}
+            schoolFilter={schoolFilter}
+            classFilter={classFilter}
             paidOnly={isPaidOnly}
             dateFilter={dateFilter}
-            schools={schools} 
-            classes={classes} 
+            schools={schools}
+            classes={classes}
           />
         </div>
       </div>
@@ -411,10 +412,10 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
                               )}
                               {(() => {
                                 const cls = picture?.schoolDetails?.class
-                                const className = typeof cls === "object" && cls !== null 
-                                  ? cls.name 
-                                  : typeof cls === "number" 
-                                    ? classes.find(c => c.id === cls)?.name 
+                                const className = typeof cls === "object" && cls !== null
+                                  ? cls.name
+                                  : typeof cls === "number"
+                                    ? classes.find(c => c.id === cls)?.name
                                     : null
                                 return className ? (
                                   <span className="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-medium shrink-0">
@@ -440,28 +441,28 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           })
         )}
       </div>
-      
+
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious 
-              href="#" 
+            <PaginationPrevious
+              href="#"
               onClick={(e) => {
                 e.preventDefault()
                 if (page > 1) setPage(page - 1)
-              }} 
+              }}
               aria-disabled={page <= 1}
               className={page <= 1 ? "pointer-events-none opacity-50" : ""}
             />
           </PaginationItem>
-          
+
           <PaginationItem>
-             <span className="px-4 text-sm">Page {page} of {totalPages}</span>
+            <span className="px-4 text-sm">Page {page} of {totalPages}</span>
           </PaginationItem>
 
           <PaginationItem>
-            <PaginationNext 
-              href="#" 
+            <PaginationNext
+              href="#"
               onClick={(e) => {
                 e.preventDefault()
                 if (page < totalPages) setPage(page + 1)
