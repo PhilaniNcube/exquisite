@@ -35,8 +35,7 @@ import Image from "next/image"
 import { useMemo, useEffect, useTransition } from "react"
 import { PrintPdfButton } from "./print-pdf-button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DateRangePicker } from "@/components/ui/date-range-picker"
-import { DateRange } from "react-day-picker"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Label } from "@/components/ui/label"
 
 interface OrdersTableProps {
@@ -167,14 +166,6 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
     window.scrollTo({ top: 0, behavior: "smooth" })
   }, [page])
 
-  const dateRangeValue: DateRange | null = useMemo(() => {
-    if (!fromDate && !toDate) return null
-    return {
-      from: fromDate ? new Date(`${fromDate}T00:00:00`) : undefined,
-      to: toDate ? new Date(`${toDate}T00:00:00`) : undefined,
-    }
-  }, [fromDate, toDate])
-
   const filteredClasses = useMemo(() => {
     if (!schoolFilter) return classes
     return classes.filter((cls) => {
@@ -247,19 +238,34 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
         </div>
 
         <div className="space-y-1 flex flex-col">
-          <Label className="text-sm font-medium text-muted-foreground">Filter by Date Range</Label>
-          <DateRangePicker
-            value={dateRangeValue}
+          <Label className="text-sm font-medium text-muted-foreground">Start Date</Label>
+          <DatePicker
+            value={fromDate ? new Date(`${fromDate}T00:00:00`) : null}
             disabled={isPending}
-            onChange={(range) => {
+            onChange={(d) => {
               startTransition(() => {
-                setFromDate(range?.from ? format(range.from, "yyyy-MM-dd") : "")
-                setToDate(range?.to ? format(range.to, "yyyy-MM-dd") : "")
+                setFromDate(d ? format(d, "yyyy-MM-dd") : "")
                 setPage(null)
               })
             }}
-            placeholder="All Dates"
-            className="w-64"
+            placeholder="From date"
+            className="w-44"
+          />
+        </div>
+
+        <div className="space-y-1 flex flex-col">
+          <Label className="text-sm font-medium text-muted-foreground">End Date</Label>
+          <DatePicker
+            value={toDate ? new Date(`${toDate}T00:00:00`) : null}
+            disabled={isPending}
+            onChange={(d) => {
+              startTransition(() => {
+                setToDate(d ? format(d, "yyyy-MM-dd") : "")
+                setPage(null)
+              })
+            }}
+            placeholder="To date"
+            className="w-44"
           />
         </div>
 
