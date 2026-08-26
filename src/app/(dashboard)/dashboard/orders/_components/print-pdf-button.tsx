@@ -395,11 +395,136 @@ function generatePackingSlipPDF(
     }
   }
 
-  // ── Order Reconciliation Table ──
-  if (yPos > doc.internal.pageSize.getHeight() - 50) {
-    doc.addPage()
-    yPos = 20
+  // ── Photos by Order Number ──
+  doc.addPage()
+  yPos = 20
+  doc.setFont("helvetica", "bold")
+  doc.setFontSize(13)
+  doc.setTextColor(41, 128, 185)
+  doc.text("PHOTOS BY ORDER NUMBER", 14, yPos)
+  yPos += 4
+  doc.setFont("helvetica", "normal")
+  doc.setFontSize(8)
+  doc.setTextColor(100, 100, 100)
+  doc.text("One page per order \u2014 sorted by order number", 14, yPos)
+  yPos += 6
+
+  const orderPhotos = new Map<
+    number,
+    {
+      customerName: string
+      customerEmail: string
+      customerPhone: string
+      total: number
+      createdAt: string
+      items: Array<{
+        photoName: string
+        photoType: string
+        productName: string
+        quantity: number
+        childName: string
+        className: string
+        schoolName: string
+      }>
+    }
+  >()
+  for (const order of ordersData) {
+    const customerInfo = extractCustomerInfo(order)
+    if (!orderPhotos.has(order.id)) {
+      orderPhotos.set(order.id, {
+        customerName: customerInfo.name,
+        customerEmail: customerInfo.email,
+        customerPhone: customerInfo.phone,
+        total: order.orderTotal || 0,
+        createdAt: order.createdAt,
+        items: [],
+      })
+    }
+    if (!order.productDetails?.orderItems) continue
+    for (const item of order.productDetails.orderItems) {
+      const picture = typeof item.picture === "object" ? (item.picture as SchoolPhoto) : null
+      const product = typeof item.product === "object" ? (item.product as Product) : null
+      let schoolName = "Unknown School"
+      if (picture?.schoolDetails?.school && typeof picture.schoolDetails.school === "object" && picture.schoolDetails.school !== null) {
+        schoolName = (picture.schoolDetails.school as School).name
+      }
+      let className = "Unclassified"
+      if (picture?.schoolDetails?.class) {
+        const cls = picture.schoolDetails.class
+        if (typeof cls === "object" && cls !== null) {
+          className = (cls as PayloadClass).name
+        } else if (typeof cls === "number") {
+          className = classesLookup.find((c) => c.id === cls)?.name || `Class #${cls}`
+        }
+      }
+      orderPhotos.get(order.id)!.items.push({
+        photoName: picture?.name || "Photo",
+        photoType: picture?.photoType || "Unknown",
+        productName: product?.title || "Product",
+        quantity: item.quantity,
+        childName: item.childName || order.customerDetails?.studentName || "Unknown",
+        className,
+        schoolName,
+      })
+    }
   }
+
+  const sortedOrderIds = Array.from(orderPhotos.keys()).sort((a, b) => a - b)
+  let isFirstOrder = true
+  for (const orderId of sortedOrderIds) {
+    const orderData = orderPhotos.get(orderId)!
+    if (!isFirstOrder) {
+      doc.addPage()
+      yPos = 20
+    }
+    isFirstOrder = false
+    let dateStr = ""
+    try {
+      dateStr = format(new Date(orderData.createdAt), "dd MMM yyyy")
+    } catch {
+      dateStr = ""
+    }
+    doc.setFillColor(44, 62, 80)
+    doc.rect(14, yPos - 5, pageWidth - 28, 8, "F")
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(10)
+    doc.setTextColor(255, 255, 255)
+    const headerText = `Order #${orderId}  \u2014  ${orderData.customerName}  |  ${orderData.customerPhone}${dateStr ? `  |  ${dateStr}` : ""}  |  ${formatPrice(orderData.total)}`
+    doc.text(headerText, 18, yPos)
+    yPos += 6
+    if (orderData.customerEmail && orderData.customerEmail !== "\u2014") {
+      doc.setFont("helvetica", "normal")
+      doc.setFontSize(7.5)
+      doc.setTextColor(90, 90, 90)
+      doc.text(orderData.customerEmail, 18, yPos)
+      yPos += 3
+    }
+    yPos += 1
+    const body = orderData.items.map((it) => [it.photoName, it.photoType, it.productName, String(it.quantity), it.childName, it.className, it.schoolName])
+    autoTable(doc, {
+      startY: yPos,
+      head: [["Photo Name", "Type", "Product", "Qty", "Child", "Class", "School"]],
+      body,
+      theme: "striped",
+      headStyles: { fillColor: [41, 128, 185], textColor: 255, fontSize: 8 },
+      styles: { fontSize: 7.5, cellPadding: 2, lineColor: [220, 220, 220], lineWidth: 0.2, overflow: "linebreak" },
+      columnStyles: {
+        0: { cellWidth: 50 },
+        1: { cellWidth: 22 },
+        2: { cellWidth: 45 },
+        3: { cellWidth: 15, halign: "center" },
+        4: { cellWidth: 32 },
+        5: { cellWidth: 32 },
+        6: { cellWidth: 40 },
+      },
+      margin: { left: 14, right: 14 },
+    })
+    yPos = (doc as any).lastAutoTable.finalY + 6
+  }
+
+  // ── Order Reconciliation Table ──
+  doc.addPage()
+  yPos = 20
 
   doc.setFont("helvetica", "bold")
   doc.setFontSize(13)
