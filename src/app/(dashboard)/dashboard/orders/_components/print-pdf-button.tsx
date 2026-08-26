@@ -406,7 +406,7 @@ function generatePackingSlipPDF(
   doc.setFont("helvetica", "normal")
   doc.setFontSize(8)
   doc.setTextColor(100, 100, 100)
-  doc.text("One page per order \u2014 sorted by order number", 14, yPos)
+  doc.text("Grouped by order \u2014 sorted by order number", 14, yPos)
   yPos += 6
 
   const orderPhotos = new Map<
@@ -470,14 +470,12 @@ function generatePackingSlipPDF(
   }
 
   const sortedOrderIds = Array.from(orderPhotos.keys()).sort((a, b) => a - b)
-  let isFirstOrder = true
   for (const orderId of sortedOrderIds) {
     const orderData = orderPhotos.get(orderId)!
-    if (!isFirstOrder) {
+    if (yPos > doc.internal.pageSize.getHeight() - 35) {
       doc.addPage()
       yPos = 20
     }
-    isFirstOrder = false
     let dateStr = ""
     try {
       dateStr = format(new Date(orderData.createdAt), "dd MMM yyyy")
