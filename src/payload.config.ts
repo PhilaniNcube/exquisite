@@ -1,5 +1,5 @@
 // storage-adapter-import-placeholder
-import { postgresAdapter } from "@payloadcms/db-postgres";
+import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import path from "path";
 import { buildConfig } from "payload";
@@ -22,76 +22,77 @@ import { Orders } from "./collections/Orders/config";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
-export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',
-  admin: {
-    user: Users.slug,
-    importMap: {
-      baseDir: path.resolve(dirname),
-    },
-  },
-  email: resendAdapter({
-    defaultFromAddress: "este@exquisitephoto.co.za",
-    defaultFromName: "Exquisite Photography",
-    apiKey: process.env.RESEND_API_KEY || "",
-    
-  }),
-  collections: [
-    Users,
-    Media,
-    Categories,
-    Photos,
-    Customers,
-    ClientGalleries,
-    Schools,
-    Classes,
-    Products,
-    SchoolPhotos,
-    Orders,
-  ],
-  editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || "",
-  typescript: {
-    outputFile: path.resolve(dirname, "payload-types.ts"),
-  },
-  // database-adapter-config-start
-  db: postgresAdapter({
-    pool: {
-      connectionString: (() => {
-        let url = process.env.DATABASE_URI || process.env.DATABASE_URL || '';
-        if (url) {
-          // Upgrade warning-triggering SSL modes to verify-full to maintain secure behavior
-          url = url.replace('sslmode=require', 'sslmode=verify-full')
-                   .replace('sslmode=prefer', 'sslmode=verify-full')
-                   .replace('sslmode=verify-ca', 'sslmode=verify-full');
-        }
-        return url;
-      })(),
-    },
-    // Explicitly configure SSL to avoid future deprecation warnings
-    migrationDir: path.resolve(dirname, 'migrations'),
-  }),
-  // database-adapter-config-end
-  sharp,
-  plugins: [
-    // payloadCloudPlugin(),
-    // storage-adapter-placeholder
-    s3Storage({
-      collections: {
-        media: true,
+/**
+ * Builds the Payload config with a provided database adapter.
+ *
+ * This is exported so that one-off data migration scripts can reuse the exact
+ * same collections, plugins and settings while talking to a different database
+ * (e.g. exporting from the legacy Postgres/Neon database).
+ */
+export const buildPayloadConfig = (db: any) =>
+  buildConfig({
+    serverURL: process.env.NEXT_PUBLIC_SERVER_URL || '',
+    admin: {
+      user: Users.slug,
+      importMap: {
+        baseDir: path.resolve(dirname),
       },
-      clientUploads: true,
-      bucket: process.env.S3_BUCKET || "",
-      config: {
-        credentials: {
-          accessKeyId: process.env.S3_ACCESS_KEY_ID || "",
-          secretAccessKey: process.env.S3_ACCESS_SECRET || "",
-        },
-        region: "auto",
-        endpoint: process.env.S3_ENDPOINT || "",
-        forcePathStyle: true,
-      },
+    },
+    email: resendAdapter({
+      defaultFromAddress: "este@exquisitephoto.co.za",
+      defaultFromName: "Exquisite Photography",
+      apiKey: process.env.RESEND_API_KEY || "",
     }),
-  ],
-});
+    collections: [
+      Users,
+      Media,
+      Categories,
+      Photos,
+      Customers,
+      ClientGalleries,
+      Schools,
+      Classes,
+      Products,
+      SchoolPhotos,
+      Orders,
+    ],
+    editor: lexicalEditor(),
+    secret: process.env.PAYLOAD_SECRET || "",
+    typescript: {
+      outputFile: path.resolve(dirname, "payload-types.ts"),
+    },
+    db,
+    sharp,
+    plugins: [
+      // payloadCloudPlugin(),
+      // storage-adapter-placeholder
+      s3Storage({
+        collections: {
+          media: true,
+        },
+        clientUploads: true,
+        bucket: process.env.S3_BUCKET || "",
+        config: {
+          credentials: {
+            accessKeyId: process.env.S3_ACCESS_KEY_ID || "",
+            secretAccessKey: process.env.S3_ACCESS_SECRET || "",
+          },
+          region: "auto",
+          endpoint: process.env.S3_ENDPOINT || "",
+          forcePathStyle: true,
+        },
+      }),
+    ],
+  });
 
+export default buildPayloadConfig(
+  sqliteAdapter({
+    client: {
+      url: process.env.TURSO_DATABASE_URL || '',
+      authToken: process.env.TURSO_ACCESS_TOKEN,
+    },
+    migrationDir: path.resolve(dirname, 'migrations-sqlite'),
+    // We manage the schema with migrations, so disable Drizzle's dev "push".
+    push: false,
+  })
+);

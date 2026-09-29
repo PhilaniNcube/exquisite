@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# data migration artifacts (large dumps, local staging db)
+/src/scripts/_migration/data/
+/src/scripts/_migration/.local.db
