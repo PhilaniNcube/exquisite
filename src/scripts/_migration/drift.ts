@@ -60,7 +60,8 @@ const main = async () => {
       ? '\nNo drift - Turso matches Neon for all checked collections.'
       : `\n${drifted} table(s) drifted.`,
   )
-  process.exit(drifted === 0 ? 0 : 2)
+  turso.close()
+  process.exitCode = drifted === 0 ? 0 : 2
 }
 
 main().catch((error) => {

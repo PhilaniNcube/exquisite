@@ -64,7 +64,53 @@ const main = async () => {
       .join('; ') || '(none)'}`,
   )
 
-  process.exit(0)
+  // Ensure the missing orders only reference documents that exist in Turso.
+  if (missing.length) {
+    const idList = missing.join(',')
+    const customers = (
+      await neonSql.query(
+        `select distinct customer_details_customer_id as id from orders
+          where id in (${idList}) and customer_details_customer_id is not null`,
+        [],
+      )
+    ).map((row) => Number(row.id))
+
+    const items = (await neonSql.query(
+      `select distinct product_id, picture_id from orders_product_details_order_items
+        where _parent_id in (${idList})`,
+      [],
+    )) as Array<{ product_id: number | null; picture_id: number | null }>
+
+    const productIds = [...new Set(items.map((i) => i.product_id).filter(Boolean))] as number[]
+    const pictureIds = [...new Set(items.map((i) => i.picture_id).filter(Boolean))] as number[]
+
+    const missingIds = async (table: string, ids: number[]) => {
+      if (!ids.length) return []
+      const rows = (
+        await turso.execute({
+          sql: `select id from "${table}" where id in (${ids.map(() => '?').join(',')})`,
+          args: ids,
+        })
+      ).rows.map((row) => Number(row.id))
+      const present = new Set(rows)
+      return ids.filter((id) => !present.has(id))
+    }
+
+    const deps = [
+      { table: 'customers', ids: await missingIds('customers', customers) },
+      { table: 'products', ids: await missingIds('products', productIds) },
+      { table: 'school_photos', ids: await missingIds('school_photos', pictureIds) },
+    ].filter((dep) => dep.ids.length)
+
+    console.log(
+      deps.length
+        ? `Missing dependencies in Turso: ${deps.map((d) => `${d.table}[${d.ids.join(',')}]`).join(', ')}`
+        : 'All dependencies of the missing orders already exist in Turso.',
+    )
+  }
+
+  turso.close()
+  return
 }
 
 main().catch((error) => {
