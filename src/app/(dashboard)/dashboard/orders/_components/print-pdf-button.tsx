@@ -24,6 +24,7 @@ interface PrintPdfButtonProps {
   paidOnly: boolean
   fromDate?: string | null
   toDate?: string | null
+  orderNumber?: string | null
   schools: School[]
   classes: PayloadClass[]
 }
@@ -237,7 +238,8 @@ function generatePackingSlipPDF(
   fromDate: string | null | undefined,
   toDate: string | null | undefined,
   schools: School[],
-  classesLookup: PayloadClass[]
+  classesLookup: PayloadClass[],
+  orderNumber?: string | null
 ) {
   const doc = new jsPDF({ orientation: "landscape" })
   const pageWidth = doc.internal.pageSize.getWidth()
@@ -275,6 +277,7 @@ function generatePackingSlipPDF(
     filterParts.push(dateStr)
   }
   if (paidOnly) filterParts.push("Paid Only")
+  if (orderNumber) filterParts.push(`Order #${orderNumber}`)
   if (filterParts.length > 0) {
     doc.text(`Filters: ${filterParts.join(" | ")}`, 120, yPos)
   }
@@ -608,7 +611,8 @@ function generateOrdersReportPDF(
   fromDate: string | null | undefined,
   toDate: string | null | undefined,
   schools: School[],
-  classes: PayloadClass[]
+  classes: PayloadClass[],
+  orderNumber?: string | null
 ) {
   const doc = new jsPDF()
 
@@ -630,8 +634,11 @@ function generateOrdersReportPDF(
   yPos += 6
 
   let filterText = "Filters: None"
-  if (schoolFilter || classFilter || paidOnly || fromDate || toDate) {
+  if (schoolFilter || classFilter || paidOnly || fromDate || toDate || orderNumber) {
     const parts = []
+    if (orderNumber) {
+      parts.push(`Order #${orderNumber}`)
+    }
     if (schoolFilter) {
       const schoolName = schools.find((s) => String(s.id) === schoolFilter)?.name || schoolFilter
       parts.push(`School: ${schoolName}`)
@@ -729,6 +736,7 @@ export function PrintPdfButton({
   paidOnly,
   fromDate,
   toDate,
+  orderNumber,
   schools,
   classes,
 }: PrintPdfButtonProps) {
@@ -737,7 +745,7 @@ export function PrintPdfButton({
   const handlePrintCurrentPage = () => {
     setIsGenerating(true)
     setTimeout(() => {
-      generateOrdersReportPDF(currentOrders, "Current Page", schoolFilter, classFilter, paidOnly, fromDate, toDate, schools, classes)
+      generateOrdersReportPDF(currentOrders, "Current Page", schoolFilter, classFilter, paidOnly, fromDate, toDate, schools, classes, orderNumber)
       setIsGenerating(false)
     }, 100)
   }
@@ -750,9 +758,10 @@ export function PrintPdfButton({
         classFilter || undefined,
         paidOnly || undefined,
         fromDate || undefined,
-        toDate || undefined
+        toDate || undefined,
+        orderNumber || undefined
       )
-      generateOrdersReportPDF(allOrders, "Filtered List", schoolFilter, classFilter, paidOnly, fromDate, toDate, schools, classes)
+      generateOrdersReportPDF(allOrders, "Filtered List", schoolFilter, classFilter, paidOnly, fromDate, toDate, schools, classes, orderNumber)
     } catch (error) {
       console.error("Failed to fetch all orders for PDF", error)
     } finally {
@@ -768,9 +777,10 @@ export function PrintPdfButton({
         classFilter || undefined,
         paidOnly || undefined,
         fromDate || undefined,
-        toDate || undefined
+        toDate || undefined,
+        orderNumber || undefined
       )
-      generatePackingSlipPDF(allOrders, "Packing Slip", schoolFilter, classFilter, paidOnly, fromDate, toDate, schools, classes)
+      generatePackingSlipPDF(allOrders, "Packing Slip", schoolFilter, classFilter, paidOnly, fromDate, toDate, schools, classes, orderNumber)
     } catch (error) {
       console.error("Failed to generate packing slip", error)
     } finally {

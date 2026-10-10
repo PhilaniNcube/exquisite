@@ -4,9 +4,18 @@ import { getPayload } from "payload"
 import config from "@payload-config"
 import { Order } from "@/payload-types"
 
-export async function getFilteredOrdersForPrint(schoolId?: string, classId?: string, paidOnly?: boolean, fromDate?: string, toDate?: string): Promise<Order[]> {
+export async function getFilteredOrdersForPrint(schoolId?: string, classId?: string, paidOnly?: boolean, fromDate?: string, toDate?: string, orderNumber?: string): Promise<Order[]> {
   const payload = await getPayload({ config })
   const where: any = {}
+
+  if (orderNumber) {
+    const numOrderId = Number(orderNumber)
+    if (!isNaN(numOrderId)) {
+      where["id"] = {
+        equals: numOrderId,
+      }
+    }
+  }
 
   if (schoolId && schoolId !== "all") {
     const numSchoolId = Number(schoolId)

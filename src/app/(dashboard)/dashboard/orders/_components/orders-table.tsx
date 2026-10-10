@@ -22,9 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useQueryState, parseAsInteger, parseAsString } from "nuqs"
+import { useQueryState, parseAsInteger, parseAsString, debounce } from "nuqs"
 import { Order, School, Class as PayloadClass, Product, SchoolPhoto, Media, Customer } from "@/payload-types"
-import { Mail, Phone, User, Loader2 } from "lucide-react"
+import { Mail, Phone, User, Loader2, Search, X } from "lucide-react"
 import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 import { Route } from "next"
@@ -37,6 +37,7 @@ import { PrintPdfButton } from "./print-pdf-button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DatePicker } from "@/components/ui/date-picker"
 import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 
 interface OrdersTableProps {
   orders: Order[]
@@ -107,12 +108,20 @@ function extractOrderSchoolInfo(order: Order) {
 
 function orderMatchesFilters(
   order: Order,
+  orderNumber: string | null,
   schoolFilter: string | null,
   classFilter: string | null,
   paidOnly: boolean,
   fromDate: string | null,
   toDate: string | null
 ): boolean {
+  if (orderNumber) {
+    const query = orderNumber.trim()
+    if (query && !String(order.id).includes(query)) {
+      return false
+    }
+  }
+
   if (paidOnly && order.orderStatus !== "completed" && order.orderStatus !== "processing" && order.orderStatus !== "printed") {
     return false
   }
@@ -154,6 +163,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
   const [isPending, startTransition] = useTransition()
 
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1).withOptions({ shallow: false, startTransition }))
+  const [orderNumber, setOrderNumber] = useQueryState("orderNumber", parseAsString.withDefault("").withOptions({ shallow: false, startTransition, limitUrlUpdates: debounce(400) }))
   const [schoolFilter, setSchoolFilter] = useQueryState("school", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
   const [classFilter, setClassFilter] = useQueryState("class", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
   const [paidOnly, setPaidOnly] = useQueryState("paidOnly", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
@@ -176,14 +186,52 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) =>
-      orderMatchesFilters(order, schoolFilter || null, classFilter || null, isPaidOnly, fromDate || null, toDate || null)
+      orderMatchesFilters(order, orderNumber || null, schoolFilter || null, classFilter || null, isPaidOnly, fromDate || null, toDate || null)
     )
-  }, [orders, schoolFilter, classFilter, isPaidOnly, fromDate, toDate])
+  }, [orders, orderNumber, schoolFilter, classFilter, isPaidOnly, fromDate, toDate])
 
   return (
     <div className="space-y-4">
       {/* Filters */}
       <div className="flex flex-wrap gap-3 items-end">
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-muted-foreground">Search by Order Number</label>
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              type="text"
+              inputMode="numeric"
+              value={orderNumber}
+              disabled={isPending}
+              onChange={(e) => {
+                const value = e.target.value
+                startTransition(() => {
+                  setOrderNumber(value || "")
+                  setPage(null)
+                })
+              }}
+              placeholder="e.g. 1234"
+              className="w-44 pl-8 pr-8"
+            />
+            {orderNumber && (
+              <button
+                type="button"
+                aria-label="Clear order number search"
+                disabled={isPending}
+                onClick={() => {
+                  startTransition(() => {
+                    setOrderNumber("")
+                    setPage(null)
+                  })
+                }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
         <div className="space-y-1">
           <label className="text-sm font-medium text-muted-foreground">Filter by School</label>
           <Select
@@ -286,12 +334,13 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
           </label>
         </div>
 
-        {(schoolFilter || classFilter || isPaidOnly || fromDate || toDate) && (
+        {(orderNumber || schoolFilter || classFilter || isPaidOnly || fromDate || toDate) && (
           <button
             disabled={isPending}
             className="text-sm text-muted-foreground underline hover:text-foreground pb-1 disabled:opacity-50 disabled:pointer-events-none"
             onClick={() => {
               startTransition(() => {
+                setOrderNumber("")
                 setSchoolFilter("")
                 setClassFilter("")
                 setPaidOnly("")
@@ -319,6 +368,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
             paidOnly={isPaidOnly}
             fromDate={fromDate}
             toDate={toDate}
+            orderNumber={orderNumber}
             schools={schools}
             classes={classes}
           />

@@ -10,7 +10,8 @@ export const getOrders = async (
   classId?: string | number,
   paidOnly?: boolean,
   fromDate?: string,
-  toDate?: string
+  toDate?: string,
+  orderNumber?: string
 ) => {
   "use cache";
   cacheLife("minutes");
@@ -18,6 +19,15 @@ export const getOrders = async (
   const payload = await getPayload({ config });
 
   const where: any = {};
+
+  if (orderNumber !== undefined && orderNumber !== null && orderNumber !== "") {
+    const numOrderId = Number(orderNumber);
+    if (!isNaN(numOrderId)) {
+      where["id"] = {
+        equals: numOrderId,
+      };
+    }
+  }
 
   if (schoolId !== undefined && schoolId !== null && schoolId !== "") {
     const numSchoolId = typeof schoolId === "string" ? Number(schoolId) : schoolId;
