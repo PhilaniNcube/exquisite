@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useQueryState, parseAsInteger, parseAsString, debounce } from "nuqs"
+import { useQueryState, parseAsInteger, parseAsString } from "nuqs"
 import { Order, School, Class as PayloadClass, Product, SchoolPhoto, Media, Customer } from "@/payload-types"
 import { Mail, Phone, User, Loader2, Search, X } from "lucide-react"
 import { format } from "date-fns"
@@ -32,7 +32,7 @@ import { formatPrice } from "@/lib/utils"
 import { DeleteOrderButton } from "@/components/dashboard/orders/delete-order-button"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
-import { useMemo, useEffect, useTransition } from "react"
+import { useMemo, useEffect, useState, useTransition } from "react"
 import { PrintPdfButton } from "./print-pdf-button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DatePicker } from "@/components/ui/date-picker"
@@ -163,7 +163,7 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
   const [isPending, startTransition] = useTransition()
 
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1).withOptions({ shallow: false, startTransition }))
-  const [orderNumber, setOrderNumber] = useQueryState("orderNumber", parseAsString.withDefault("").withOptions({ shallow: false, startTransition, limitUrlUpdates: debounce(400) }))
+  const [orderNumber, setOrderNumber] = useQueryState("orderNumber", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
   const [schoolFilter, setSchoolFilter] = useQueryState("school", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
   const [classFilter, setClassFilter] = useQueryState("class", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
   const [paidOnly, setPaidOnly] = useQueryState("paidOnly", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
@@ -171,6 +171,28 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
   const [toDate, setToDate] = useQueryState("toDate", parseAsString.withDefault("").withOptions({ shallow: false, startTransition }))
   const isPaidOnly = paidOnly === "true"
   const router = useRouter()
+
+  // Local, uncontrolled input value so the user can type freely while the
+  // committed (URL/server) query is debounced below.
+  const [orderInput, setOrderInput] = useState(orderNumber)
+
+  // Keep the input in sync when the query changes externally (clear filters,
+  // back/forward navigation, etc.).
+  useEffect(() => {
+    setOrderInput(orderNumber)
+  }, [orderNumber])
+
+  // Debounce committing the typed order number to the URL / server query.
+  useEffect(() => {
+    if (orderInput === orderNumber) return
+    const timer = setTimeout(() => {
+      startTransition(() => {
+        setOrderNumber(orderInput || "")
+        setPage(null)
+      })
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [orderInput, orderNumber, setOrderNumber, setPage, startTransition])
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" })
@@ -201,30 +223,26 @@ export function OrdersTable({ orders, totalPages, canDeleteOrders, schools, clas
             <Input
               type="text"
               inputMode="numeric"
-              value={orderNumber}
-              disabled={isPending}
+              value={orderInput}
               onChange={(e) => {
-                const value = e.target.value
-                startTransition(() => {
-                  setOrderNumber(value || "")
-                  setPage(null)
-                })
+                const value = e.target.value.replace(/\D/g, "")
+                setOrderInput(value)
               }}
               placeholder="e.g. 1234"
               className="w-44 pl-8 pr-8"
             />
-            {orderNumber && (
+            {orderInput && (
               <button
                 type="button"
                 aria-label="Clear order number search"
-                disabled={isPending}
                 onClick={() => {
                   startTransition(() => {
+                    setOrderInput("")
                     setOrderNumber("")
                     setPage(null)
                   })
                 }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
                 <X className="h-4 w-4" />
               </button>
