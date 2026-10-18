@@ -164,6 +164,22 @@ const PublicNavigation = ({ categories, children }: PublicNavigationProps) => {
                     asChild
                     className={`${navigationMenuTriggerStyle()} bg-transparent hover:text-black`}
                   >
+                    <Link href="/orders" passHref>
+                      <span className={cn(
+                        isScrolled ? "text-black" : "text-gray-900",
+                        "font-medium"
+                      )}>
+                      Order History
+                      </span>
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    asChild
+                    className={`${navigationMenuTriggerStyle()} bg-transparent hover:text-black`}
+                  >
                     <Link href="/contact" passHref>
                       <span className={cn(
                         isScrolled ? "text-black" : "text-gray-900",

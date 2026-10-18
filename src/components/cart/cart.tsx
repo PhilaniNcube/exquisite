@@ -35,6 +35,8 @@ export function Cart({ trigger }: CartProps) {
   const { deadlineStatuses, hasExpiredDeadlines, hasApproachingDeadlines } =
     useSchoolDeadlines(schoolIds);
 
+  const hasMultipleSchools = new Set(schoolIds.filter(Boolean)).size > 1;
+
   const expiredStatuses = deadlineStatuses.filter((s) => s.hasPassed);
   const approachingStatuses = deadlineStatuses.filter(
     (s) => !s.hasPassed && s.daysRemaining !== null && s.daysRemaining <= 7
@@ -91,6 +93,18 @@ export function Cart({ trigger }: CartProps) {
           ) : (
             <>
               <div className="flex-1 overflow-y-auto py-4 space-y-4">
+                {hasMultipleSchools && (
+                  <Alert variant="destructive">
+                    <AlertTriangle />
+                    <AlertDescription>
+                      Your cart contains photos from more than one school. Each
+                      order can only include photos from one school. Please
+                      remove the items for the other school, then place a
+                      separate order for them.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 {hasExpiredDeadlines && (
                   <Alert variant="destructive">
                     <AlertTriangle />
@@ -140,9 +154,11 @@ export function Cart({ trigger }: CartProps) {
                   className="w-full"
                   size="lg"
                   onClick={handleCheckout}
-                  disabled={hasExpiredDeadlines}
+                  disabled={hasExpiredDeadlines || hasMultipleSchools}
                 >
-                  Proceed to Checkout
+                  {hasMultipleSchools
+                    ? "Remove other school items to proceed"
+                    : "Proceed to Checkout"}
                 </Button>
                 <Button
                   className="w-full"

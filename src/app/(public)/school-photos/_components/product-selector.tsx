@@ -40,6 +40,24 @@ export function ProductSelector({
     const schoolId = typeof school === "number" ? school.toString() : (school ? school.id.toString() : undefined);
     const schoolName = typeof school === "object" && school ? school.name : undefined;
 
+    // Only allow one school per cart/order. If the cart already holds photos
+    // from a different school, block the add and tell the parent to finish or
+    // clear that order first. The API enforces this too, as a safety net.
+    const existingItem = useCartStore
+      .getState()
+      .items.find((item) => item.pictureDetails?.schoolId);
+    const existingSchoolId = existingItem?.pictureDetails?.schoolId;
+    if (existingSchoolId && schoolId && existingSchoolId !== schoolId) {
+      const existingSchoolName =
+        existingItem?.pictureDetails?.schoolName ||
+        "another school";
+      toast.error(
+        `Your cart already contains photos from ${existingSchoolName}. Please complete or clear that order before ordering from ${schoolName || "this school"}.`,
+      );
+      setIsOpen(true);
+      return;
+    }
+
     addItem({
       id: `${product.id}-${schoolPhoto.id}`,
       product: product.id.toString(),

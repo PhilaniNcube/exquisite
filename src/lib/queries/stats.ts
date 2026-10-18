@@ -1,50 +1,56 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
-export const getDashboardStats = async () => {
+const PAID_STATUSES = ["completed", "processing", "printed"];
+
+const orderRevenue = (order: any): number =>
+  order.orderTotal ||
+  order.productDetails?.orderItems?.reduce(
+    (sum: number, item: any) => sum + (item.linePrice || 0),
+    0,
+  ) ||
+  0;
+
+export const getOrdersRevenue = async () => {
   "use cache";
   cacheLife("hours");
+  cacheTag("orders");
   const payload = await getPayload({ config });
 
-  const [
-    orders,
-    productsCount,
-    customersCount,
-    schoolsCount,
-    photosCount,
-    usersCount,
-    schoolPhotosCount,
-    clientGalleriesCount
-  ] = await Promise.all([
-    payload.find({ collection: "orders", limit: 0, depth: 1 }),
-    payload.count({ collection: "products" }),
-    payload.count({ collection: "customers" }),
-    payload.count({ collection: "schools" }),
-    payload.count({ collection: "photos" }),
-    payload.count({ collection: "users" }),
-    payload.count({ collection: "schoolPhotos" }),
-    payload.count({ collection: "client-galleries" }),
-  ]);
+  // depth 0: totals come from the persisted line price, so we never populate
+  // the (potentially huge) product/picture relationships just to add up money.
+  const orders = await payload.find({ collection: "orders", limit: 0, depth: 0 });
 
-  const paidRevenue = orders.docs
-    .filter(order => order.orderStatus === 'completed' || order.orderStatus === 'processing' || order.orderStatus === 'printed')
-    .reduce((acc, order) => acc + (order.orderTotal || 0), 0);
+  let paidRevenue = 0;
+  let pendingRevenue = 0;
 
-  const pendingRevenue = orders.docs
-    .filter(order => order.orderStatus === 'pending' || order.orderStatus === 'cancelled' || !order.orderStatus)
-    .reduce((acc, order) => acc + (order.orderTotal || 0), 0);
+  for (const order of orders.docs) {
+    const revenue = orderRevenue(order);
+    if (PAID_STATUSES.includes(order.orderStatus ?? "")) {
+      paidRevenue += revenue;
+    } else {
+      pendingRevenue += revenue;
+    }
+  }
 
-  return {
-    orders: orders.totalDocs,
-    paidRevenue,
-    pendingRevenue,
-    products: productsCount.totalDocs,
-    customers: customersCount.totalDocs,
-    schools: schoolsCount.totalDocs,
-    photos: photosCount.totalDocs,
-    users: usersCount.totalDocs,
-    schoolPhotos: schoolPhotosCount.totalDocs,
-    clientGalleries: clientGalleriesCount.totalDocs,
-  };
+  return { paidRevenue, pendingRevenue };
+};
+
+export type StatCollection =
+  | "products"
+  | "customers"
+  | "schools"
+  | "schoolPhotos"
+  | "client-galleries"
+  | "photos"
+  | "users";
+
+export const getCollectionCount = async (collection: StatCollection) => {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(collection);
+  const payload = await getPayload({ config });
+  const result = await payload.count({ collection });
+  return result.totalDocs;
 };

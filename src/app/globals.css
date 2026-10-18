@@ -120,3 +120,18 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  header,
+  footer,
+  nav,
+  button,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
+

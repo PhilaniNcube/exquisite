@@ -1,42 +1,48 @@
-import { CollectionConfig } from "payload";
+import { CollectionConfig, Where } from "payload";
 import { checkRole } from "../Users/access/checkRole";
 import { User } from "@/payload-types";
 import admin from "../Users/access/admin";
+import editor from "../Users/access/editor";
 
 export const Orders: CollectionConfig = {
   slug: "orders",
   access: {
     read: ({ req }) => {
+      // Staff (admin or editor) can read all orders
       if (req.user?.collection === "users") {
-        return checkRole(["admin"], req.user as User);
+        return checkRole(["admin", "editor"], req.user as User);
       }
 
       if (req.user?.collection === "customers") {
-        return {
-          "customerDetails.customer": {
-            equals: req.user.id,
+        const orConditions: Where[] = [
+          {
+            "customerDetails.customer": {
+              equals: req.user.id,
+            },
           },
+        ];
+
+        if (req.user.email) {
+          orConditions.push({
+            "customerDetails.email": {
+              equals: req.user.email,
+            },
+          });
+        }
+
+        return {
+          or: orConditions,
         };
       }
 
       return false;
     },
+    // Anyone can create an order (guest checkout & customer checkout)
     create: () => true,
-    update: ({ req }) => {
-      if (req.user?.collection === "users") {
-        return checkRole(["admin"], req.user as User);
-      }
-
-      if (req.user?.collection === "customers") {
-        return {
-          "customerDetails.customer": {
-            equals: req.user.id,
-          },
-        };
-      }
-
-      return false;
-    },
+    // Only staff (admin or editor) can update orders. Customers must never be
+    // able to modify their own orders (status, totals, payment details, items).
+    update: editor,
+    // Only admins can delete orders
     delete: admin,
   },
   fields: [
@@ -245,7 +251,12 @@ export const Orders: CollectionConfig = {
         if (doc.productDetails?.orderItems) {
           let total = 0;
           for (const item of doc.productDetails.orderItems) {
-            if (
+            // Prefer the persisted line price (price at purchase), so the total
+            // does not depend on populating the related product and does not
+            // drift if the product price is changed later.
+            if (typeof item.linePrice === "number") {
+              total += item.linePrice;
+            } else if (
               item.product &&
               typeof item.product === "object" &&
               item.product.price

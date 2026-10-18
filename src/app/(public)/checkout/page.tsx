@@ -2,8 +2,11 @@ import React, { Suspense } from "react";
 import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { CheckoutPageSkeleton } from "@/components/checkout/checkout-page-skeleton";
 
+import { getUser } from "@/lib/auth";
+
 const CheckoutContent = async () => {
-  return <CheckoutForm />;
+  const user = await getUser();
+  return <CheckoutForm currentUser={user} />;
 };
 
 const CheckoutPage = () => {

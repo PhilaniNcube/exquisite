@@ -19,6 +19,7 @@ const navigationItems: { href: Route; label: string }[] = [
   { href: "/portfolio", label: "Portfolio" },
   { href: "/about", label: "About" },
   { href: "/schools", label: "Schools" },
+  { href: "/orders" as Route, label: "Order History & Proofs" },
   { href: "/contact", label: "Contact Us" },
 ];
 

@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Sparkles } from "lucide-react";
 import { ClearCart } from "./clear-cart";
 import { CheckoutSuccessPageSkeleton } from "@/components/checkout/checkout-success-skeleton";
+import { OrderProofButton } from "@/components/orders/order-proof-button";
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { formatPrice } from "@/lib/utils";
@@ -123,27 +124,30 @@ async function SuccessContent({ searchParams }: SuccessPageProps) {
             {/* Order Status */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>Order #{order.id}</span>
-                  <Badge
-                    variant={
-                      order.orderStatus === "completed" || order.orderStatus === "printed"
-                        ? "default"
-                        : order.orderStatus === "processing"
-                        ? "secondary"
-                        : order.orderStatus === "cancelled"
-                        ? "destructive"
-                        : "outline"
-                    }
-                  >
-                    {order.orderStatus
-                      ? order.orderStatus === "printed"
-                        ? "Printed & Delivered"
-                        : order.orderStatus.charAt(0).toUpperCase() +
-                          order.orderStatus.slice(1)
-                      : "Pending"}
-                  </Badge>
-                </CardTitle>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <CardTitle className="text-xl">Order #{order.id}</CardTitle>
+                    <Badge
+                      variant={
+                        order.orderStatus === "completed" || order.orderStatus === "printed"
+                          ? "default"
+                          : order.orderStatus === "processing"
+                          ? "secondary"
+                          : order.orderStatus === "cancelled"
+                          ? "destructive"
+                          : "outline"
+                      }
+                    >
+                      {order.orderStatus
+                        ? order.orderStatus === "printed"
+                          ? "Printed & Delivered"
+                          : order.orderStatus.charAt(0).toUpperCase() +
+                            order.orderStatus.slice(1)
+                        : "Pending"}
+                    </Badge>
+                  </div>
+                  <OrderProofButton order={order} size="sm" />
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -220,15 +224,61 @@ async function SuccessContent({ searchParams }: SuccessPageProps) {
           </>
         )}
 
+        {/* For guest checkouts: invite them to save this order to a new or existing account */}
+        {!user && order && (
+          <Card className="border-primary/20 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 shadow-xs">
+            <CardContent className="p-6 space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-semibold text-base text-slate-900">
+                    Easily access this order proof & history anytime
+                  </h3>
+                  <p className="text-sm text-slate-600">
+                    Create a free parent account with{" "}
+                    <span className="font-semibold text-slate-900">
+                      {order.customerDetails?.email || "your email"}
+                    </span>{" "}
+                    to view order proofs, track printing & delivery status, and keep your receipts organized.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <Button asChild size="default" className="font-medium">
+                  <Link
+                    href={`/create-account?email=${encodeURIComponent(
+                      order.customerDetails?.email || ""
+                    )}&redirect=${encodeURIComponent(`/orders?orderId=${order.id}`)}`}
+                  >
+                    Create Parent Account
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="default" className="bg-white">
+                  <Link
+                    href={`/login?redirect=${encodeURIComponent(`/orders?orderId=${order.id}`)}`}
+                  >
+                    Already have an account? Sign In
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4">
           <Button asChild className="flex-1">
             <Link href="/">Continue Shopping</Link>
           </Button>
-          {/* Only show "My Orders" for logged-in users */}
-          {user && (
+          {user ? (
             <Button asChild variant="outline" className="flex-1">
-              <Link href="/orders">My Orders</Link>
+              <Link href="/orders">View All Orders</Link>
+            </Button>
+          ) : (
+            <Button asChild variant="outline" className="flex-1">
+              <Link href="/orders">Order Lookup / Sign In</Link>
             </Button>
           )}
         </div>

@@ -11,9 +11,15 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { formatPrice } from "@/lib/utils";
-import { Loader2, AlertTriangle, Clock, User } from "lucide-react";
+import { Loader2, AlertTriangle, Clock, User, UserCheck, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useSchoolDeadlines } from "@/hooks/use-school-deadlines";
+import { Customer } from "@/payload-types";
+import { Badge } from "@/components/ui/badge";
+
+interface CheckoutFormProps {
+  currentUser?: Customer | null;
+}
 
 function redirectToPayGate(
   paymentUrl: string,
@@ -35,10 +41,12 @@ function redirectToPayGate(
   form.submit();
 }
 
-export function CheckoutForm() {
+export function CheckoutForm({ currentUser }: CheckoutFormProps) {
   const { items, getTotalPrice, updateChildName } = useCartStore();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState(
+    [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(" ")
+  );
+  const [email, setEmail] = useState(currentUser?.email || "");
   const [cellNumber, setCellNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -52,6 +60,11 @@ export function CheckoutForm() {
 
   const { deadlineStatuses, hasExpiredDeadlines, hasApproachingDeadlines } =
     useSchoolDeadlines(schoolIds);
+
+  const hasMultipleSchools = useMemo(
+    () => new Set(schoolIds.filter(Boolean)).size > 1,
+    [schoolIds]
+  );
 
   const expiredStatuses = deadlineStatuses.filter((s) => s.hasPassed);
   const approachingStatuses = deadlineStatuses.filter(
@@ -139,6 +152,18 @@ export function CheckoutForm() {
             <CardTitle>Order Summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {hasMultipleSchools && (
+              <Alert variant="destructive">
+                <AlertTriangle />
+                <AlertDescription>
+                  Your cart contains photos from more than one school. Each order
+                  can only include photos from one school. Please remove the
+                  items for the other school, then place a separate order for
+                  them.
+                </AlertDescription>
+              </Alert>
+            )}
+
             {hasExpiredDeadlines && (
               <Alert variant="destructive">
                 <AlertTriangle />
@@ -235,7 +260,81 @@ export function CheckoutForm() {
             <CardTitle>Customer Details & Payment</CardTitle>
           </CardHeader>
           <CardContent>
+            {currentUser ? (
+              <div className="bg-muted/60 border rounded-lg p-3.5 mb-5 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                    {currentUser.firstName
+                      ? currentUser.firstName[0].toUpperCase()
+                      : currentUser.email[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold">
+                        Signed in as {currentUser.firstName ? `${currentUser.firstName} ${currentUser.lastName || ""}`.trim() : currentUser.email}
+                      </span>
+                      <Badge variant="outline" className="text-xs text-primary border-primary/30 bg-primary/5">
+                        Account
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{currentUser.email}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-emerald-600 font-medium flex items-center gap-1 justify-end">
+                    <UserCheck className="h-3.5 w-3.5" />
+                    Linked to order history
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gradient-to-r from-blue-50/90 to-indigo-50/80 border border-blue-200/80 rounded-lg p-4 mb-5 shadow-xs">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+                      <Sparkles className="h-4 w-4 text-primary" />
+                      Want to track & view proof of your orders?
+                    </p>
+                    <p className="text-xs text-slate-600">
+                      Sign in to save this order to your account history and download official proofs anytime.
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 text-xs h-8 bg-white border-blue-200 text-blue-900 font-medium hover:bg-blue-50 shadow-xs"
+                    onClick={() => router.push("/login?redirect=/checkout")}
+                  >
+                    Sign In
+                  </Button>
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-blue-200/60 flex items-center justify-between text-xs text-slate-600">
+                  <span>Checking out as guest? You can still order below.</span>
+                  <button
+                    type="button"
+                    onClick={() => router.push("/create-account?redirect=/checkout")}
+                    className="underline text-primary font-medium hover:text-primary/80"
+                  >
+                    Create account
+                  </button>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="parentName">Parent / Guardian Name</Label>
+                <Input
+                  id="parentName"
+                  type="text"
+                  className="bg-muted"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g., Jane Doe"
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="email">Email *</Label>
                 <Input
@@ -272,7 +371,7 @@ export function CheckoutForm() {
               <div className="space-y-2">
                 <Button
                   type="submit"
-                  disabled={isSubmitting || hasExpiredDeadlines || !allChildNamesFilled}
+                  disabled={isSubmitting || hasExpiredDeadlines || hasMultipleSchools || !allChildNamesFilled}
                   className="w-full"
                 >
                   {isSubmitting ? (
@@ -280,6 +379,8 @@ export function CheckoutForm() {
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Processing...
                     </>
+                  ) : hasMultipleSchools ? (
+                    "One school per order — remove other school items"
                   ) : hasExpiredDeadlines ? (
                     "Remove expired items to proceed"
                   ) : !allChildNamesFilled ? (

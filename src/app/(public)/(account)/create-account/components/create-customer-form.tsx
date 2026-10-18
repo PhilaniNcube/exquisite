@@ -32,7 +32,13 @@ interface FormState {
   error?: string;
 }
 
+import { useSearchParams } from "next/navigation";
+
 export function CreateCustomerForm() {
+  const searchParams = useSearchParams();
+  const prefilledEmail = searchParams.get("email") || "";
+  const redirectTo = searchParams.get("redirect") || "/orders";
+
   const [state, formAction, isPending] = useActionState<FormState, FormData>(
     async (prevState, formData) => {
       return await createAccount(formData);
@@ -43,7 +49,7 @@ export function CreateCustomerForm() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      email: prefilledEmail,
       password: "",
       firstName: "",
       lastName: "",
@@ -71,7 +77,9 @@ export function CreateCustomerForm() {
             </p>
           </div>
           <Button asChild className="w-full">
-            <Link href="/login">Go to Sign In</Link>
+            <Link href={redirectTo ? `/login?redirect=${encodeURIComponent(redirectTo)}` : "/login"}>
+              Go to Sign In
+            </Link>
           </Button>
         </div>
       </div>
@@ -174,8 +182,10 @@ export function CreateCustomerForm() {
           </Form>
         </CardContent>
         <CardFooter>
-          <Button asChild variant='ghost' className="w-full">
-            <Link href="/login">Go to Sign In</Link>
+          <Button asChild variant="ghost" className="w-full">
+            <Link href={redirectTo ? `/login?redirect=${encodeURIComponent(redirectTo)}` : "/login"}>
+              Already have an account? Sign In
+            </Link>
           </Button>
         </CardFooter>
       </Card>

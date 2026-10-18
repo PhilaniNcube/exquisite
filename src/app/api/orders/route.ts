@@ -91,6 +91,22 @@ export async function POST(req: Request) {
         limit: schoolIds.size,
       });
 
+      // Enforce one school per order. A single order must never mix photos from
+      // multiple schools, otherwise one order number / one payment would appear
+      // against several schools' order lists.
+      if (schoolIds.size > 1) {
+        const schoolNames = schools.docs.map((school) => school.name).join(", ");
+        return Response.json(
+          {
+            success: false,
+            message: `Your cart contains photos from more than one school${
+              schoolNames ? ` (${schoolNames})` : ""
+            }. Each order can only include photos from one school. Please remove the items for the other school and place a separate order for them.`,
+          },
+          { status: 400 }
+        );
+      }
+
       const now = new Date();
       for (const school of schools.docs) {
         if (school.order_deadline) {

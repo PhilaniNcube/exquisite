@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { loginUser } from "../actions/login";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -34,13 +34,17 @@ interface FormState {
 export function CustomerLoginForm() {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/orders";
+
   const [state, formAction] = useActionState<FormState, FormData>(
     async (prevState, formData) => {
       const result = await loginUser(formData);
       if (result.success) {
         startTransition(() => {
-          console.log("Login successful", { result });
-          router.push("/");
+          console.log("Login successful, redirecting to:", redirectTo);
+          router.push(redirectTo as any);
+          router.refresh();
         });
       }
       return result;
@@ -125,8 +129,12 @@ export function CustomerLoginForm() {
           <div className="text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
             <Link
-              href="/create-account"
-              className="text-primary hover:underline"
+              href={
+                redirectTo
+                  ? `/create-account?redirect=${encodeURIComponent(redirectTo)}`
+                  : "/create-account"
+              }
+              className="text-primary hover:underline font-medium"
             >
               Create account
             </Link>
