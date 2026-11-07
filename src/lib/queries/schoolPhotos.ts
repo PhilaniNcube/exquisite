@@ -14,6 +14,11 @@ interface SchoolPhotoQueryOptions {
   photoType?: string;
   sortOrder?: PhotoSortOrder;
   search?: string;
+  /**
+   * "public" (default) only returns photos visible in the public gallery.
+   * Admin views must explicitly pass "all" to include pending/hidden photos.
+   */
+  visibility?: "public" | "all";
 }
 
 /**
@@ -24,6 +29,10 @@ export function buildSchoolPhotoWhere(
   options: SchoolPhotoQueryOptions
 ): Where | undefined {
   const filters: Where[] = [];
+
+  if (options.visibility !== "all") {
+    filters.push({ visibility: { equals: "public" } });
+  }
 
   if (options.schoolId !== undefined && options.schoolId !== "") {
     filters.push({ "schoolDetails.school": { equals: options.schoolId } });

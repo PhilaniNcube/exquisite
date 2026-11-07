@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Camera } from "lucide-react";
 import { useState, useMemo, useEffect, useRef } from "react";
 import PhotoFilters from "./photo-filters";
+import { PhotoRemovalRequestButton } from "@/components/school-photos/photo-removal-request-button";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
@@ -217,6 +218,14 @@ const SchoolPhotosGallery = ({
                 }
               >
                 <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 relative p-0 cursor-pointer">
+                  <div className="absolute right-2 top-2 z-10">
+                    <PhotoRemovalRequestButton
+                      photo={photo}
+                      schoolName={schoolName}
+                      label="Request removal"
+                      className="h-8 bg-white/90 px-2 text-xs text-gray-900 shadow-sm backdrop-blur hover:bg-white"
+                    />
+                  </div>
                   <Link
                     href={`/school-photos/${photo.id}`}
                     className="relative overflow-hidden block"

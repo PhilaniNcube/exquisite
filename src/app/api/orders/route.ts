@@ -69,10 +69,26 @@ export async function POST(req: Request) {
     const pictureIds = orderItems.map((item) => item.picture);
     const schoolPhotos = await payload.find({
       collection: "schoolPhotos",
-      where: { id: { in: pictureIds } },
+      where: {
+        id: { in: pictureIds },
+        // Photos pending removal or hidden by an admin cannot be ordered.
+        visibility: { equals: "public" },
+      },
       depth: 1,
       limit: pictureIds.length,
     });
+
+    const uniquePictureIds = new Set(pictureIds);
+    if (schoolPhotos.docs.length !== uniquePictureIds.size) {
+      return Response.json(
+        {
+          success: false,
+          message:
+            "One or more photos in your cart are no longer available. Please remove them and add the photos again.",
+        },
+        { status: 400 }
+      );
+    }
 
     const schoolIds = new Set<number>();
     const photoSchoolMap = new Map<number, number>();

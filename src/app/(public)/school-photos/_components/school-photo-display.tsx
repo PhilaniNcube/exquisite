@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { Class, Media, School, SchoolPhoto } from "@/payload-types";
+import { PhotoRemovalRequestButton } from "@/components/school-photos/photo-removal-request-button";
 interface SchoolPhotoDisplayProps {
   photo: SchoolPhoto;
 }
@@ -84,6 +85,12 @@ export function SchoolPhotoDisplay({ photo }: SchoolPhotoDisplayProps) {
         <div className="pt-2 border-t text-xs text-muted-foreground">
           Photo ID: {photo.id}
         </div>
+
+        <PhotoRemovalRequestButton
+          photo={photo}
+          schoolName={school?.name}
+          className="w-full"
+        />
       </div>
     </Card>
   );

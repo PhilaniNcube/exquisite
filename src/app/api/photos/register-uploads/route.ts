@@ -111,6 +111,7 @@ export async function POST(request: NextRequest) {
               },
               studentName: '',
               photo: media.id,
+              visibility: 'public',
             },
           })
 

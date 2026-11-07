@@ -54,6 +54,7 @@ export async function createSchoolPhoto(
         },
         studentName,
         photo: mediaId,
+        visibility: "public",
       },
     })
 

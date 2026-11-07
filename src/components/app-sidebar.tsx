@@ -11,6 +11,7 @@ import {
   Package,
   School,
   Settings,
+  ShieldAlert,
   ShoppingCart,
   Tags,
   UserCog,
@@ -77,6 +78,11 @@ const data = {
       title: "School Photos",
       url: "/dashboard/school-photos",
       icon: Camera,
+    },
+    {
+      title: "Photo Requests",
+      url: "/dashboard/photo-requests",
+      icon: ShieldAlert,
     },
   ],
   gallery: [

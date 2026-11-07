@@ -127,6 +127,23 @@ const PrivacyPolicy = async () => {
             <li>Schools and parents can request removal of images from our systems</li>
             <li>Special consent is obtained when photographing children under 12 years of age</li>
           </ul>
+
+          <h3 className="text-xl font-semibold mb-3 mt-6">Requesting Removal of a Child&apos;s Photo</h3>
+          <p className="mb-4">
+            Parents and legal guardians can request removal of photos of their children from a school gallery.
+            Use the <strong>Request removal</strong> button on the photo in the school gallery, or contact us at{" "}
+            <a className="underline underline-offset-2" href="mailto:este@exquisitephoto.co.za">
+              este@exquisitephoto.co.za
+            </a>{" "}
+            with the school name, child&apos;s name, class, and photo ID.
+          </p>
+          <ul className="space-y-2 mb-4">
+            <li>The requested photo is hidden from the public gallery immediately while we verify the request</li>
+            <li>We aim to review removal requests within 5 business days</li>
+            <li>Approved requests keep the photo hidden from public view and the ordering flow</li>
+            <li>Order records that reference a removed photo are retained for accounting and dispute-resolution purposes</li>
+            <li>Group, class, and sports photos may require additional care because they include other children</li>
+          </ul>
         </section>
 
         <section className="mb-8">

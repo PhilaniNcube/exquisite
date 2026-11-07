@@ -88,6 +88,7 @@ export interface Config {
     classes: Class;
     products: Product;
     schoolPhotos: SchoolPhoto;
+    photoDeletionRequests: PhotoDeletionRequest;
     orders: Order;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -106,6 +107,7 @@ export interface Config {
     classes: ClassesSelect<false> | ClassesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     schoolPhotos: SchoolPhotosSelect<false> | SchoolPhotosSelect<true>;
+    photoDeletionRequests: PhotoDeletionRequestsSelect<false> | PhotoDeletionRequestsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -399,6 +401,54 @@ export interface SchoolPhoto {
   };
   studentName?: string | null;
   photo: number | Media;
+  /**
+   * Hidden and pending-removal photos are excluded from the public gallery and ordering flow.
+   */
+  visibility: 'public' | 'pending_removal' | 'hidden';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "photoDeletionRequests".
+ */
+export interface PhotoDeletionRequest {
+  id: number;
+  reference: string;
+  status: 'pending' | 'in_review' | 'approved' | 'rejected' | 'completed';
+  parentName: string;
+  parentEmail: string;
+  parentPhone?: string | null;
+  relationship: 'Parent' | 'Guardian' | 'Other';
+  /**
+   * Optional — helps us verify the requester faster.
+   */
+  orderNumber?: string | null;
+  childNames: string;
+  school: number | School;
+  class?: (number | null) | Class;
+  photos: (number | SchoolPhoto)[];
+  /**
+   * Photo names and types captured when the request was submitted.
+   */
+  photoSnapshot?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  requestType: 'selected_photos' | 'all_child_photos' | 'group_photo_exclusion';
+  reason?: string | null;
+  declaration: boolean;
+  adminNotes?: string | null;
+  reviewedBy?: (number | null) | User;
+  reviewedAt?: string | null;
+  completedAt?: string | null;
+  requesterIp?: string | null;
+  requesterUserAgent?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -508,6 +558,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'schoolPhotos';
         value: number | SchoolPhoto;
+      } | null)
+    | ({
+        relationTo: 'photoDeletionRequests';
+        value: number | PhotoDeletionRequest;
       } | null)
     | ({
         relationTo: 'orders';
@@ -755,6 +809,36 @@ export interface SchoolPhotosSelect<T extends boolean = true> {
       };
   studentName?: T;
   photo?: T;
+  visibility?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "photoDeletionRequests_select".
+ */
+export interface PhotoDeletionRequestsSelect<T extends boolean = true> {
+  reference?: T;
+  status?: T;
+  parentName?: T;
+  parentEmail?: T;
+  parentPhone?: T;
+  relationship?: T;
+  orderNumber?: T;
+  childNames?: T;
+  school?: T;
+  class?: T;
+  photos?: T;
+  photoSnapshot?: T;
+  requestType?: T;
+  reason?: T;
+  declaration?: T;
+  adminNotes?: T;
+  reviewedBy?: T;
+  reviewedAt?: T;
+  completedAt?: T;
+  requesterIp?: T;
+  requesterUserAgent?: T;
   updatedAt?: T;
   createdAt?: T;
 }

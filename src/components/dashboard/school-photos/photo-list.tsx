@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Media } from '@/payload-types'
 import { Pagination } from './pagination'
 import { getSchoolPhotos } from '@/lib/queries/schoolPhotos'
@@ -28,6 +29,7 @@ export async function SchoolPhotosList({
     classId,
     sortOrder,
     search,
+    visibility: "all",
   })
 
   return (
@@ -63,6 +65,11 @@ export async function SchoolPhotosList({
                     <span className="text-xs text-muted-foreground shrink-0">
                       #{photo.id}
                     </span>
+                    {photo.visibility && photo.visibility !== 'public' && (
+                      <Badge variant="secondary" className="shrink-0 text-[10px] uppercase">
+                        {photo.visibility === 'pending_removal' ? 'Removal requested' : 'Hidden'}
+                      </Badge>
+                    )}
                     <Button asChild variant="outline" size="sm" className="ml-2">
                     <Link href={`/dashboard/school-photos/${photo.id}`}>View</Link>
                     </Button>

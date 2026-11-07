@@ -11,6 +11,7 @@ export const SchoolPhotos: CollectionConfig = {
   },
   admin: {
     useAsTitle: "name",
+    defaultColumns: ["name", "photoType", "visibility", "schoolDetails.school"],
   },
   fields: [
     {
@@ -70,6 +71,24 @@ export const SchoolPhotos: CollectionConfig = {
       relationTo: "media",
       required: true,
       label: "Photo",
+    },
+    {
+      name: "visibility",
+      type: "select",
+      label: "Visibility",
+      required: true,
+      defaultValue: "public",
+      index: true,
+      options: [
+        { label: "Public", value: "public" },
+        { label: "Pending removal", value: "pending_removal" },
+        { label: "Hidden", value: "hidden" },
+      ],
+      admin: {
+        position: "sidebar",
+        description:
+          "Hidden and pending-removal photos are excluded from the public gallery and ordering flow.",
+      },
     },
   ],
 };

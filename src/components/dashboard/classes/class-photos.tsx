@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { DeletePhotoButton } from "./delete-photo-button"
 import { getSchoolPhotosByClassId } from "@/lib/queries/schoolPhotos"
@@ -25,6 +26,7 @@ export default async function ClassPhotos({
     limit: 100,
     sortOrder,
     search,
+    visibility: "all",
   })
 
   return (
@@ -65,6 +67,16 @@ export default async function ClassPhotos({
                     className="object-cover"
                   />
                   <DeletePhotoButton photoId={photo.id} classId={id} />
+                  {photo.visibility && photo.visibility !== "public" && (
+                    <Badge
+                      variant="secondary"
+                      className="absolute left-1 top-1 text-[10px] uppercase"
+                    >
+                      {photo.visibility === "pending_removal"
+                        ? "Removal requested"
+                        : "Hidden"}
+                    </Badge>
+                  )}
                   <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 truncate">
                     {photo.name}
                   </div>

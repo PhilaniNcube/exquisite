@@ -37,6 +37,7 @@ export default async function SchoolPhotos({
     limit: 12,
     sortOrder,
     search,
+    visibility: "all",
   });
 
   // Count photos by type
@@ -151,6 +152,13 @@ export default async function SchoolPhotos({
                       <p className="text-xs text-muted-foreground">
                         {photo.photoType}
                       </p>
+                    )}
+                    {photo.visibility && photo.visibility !== "public" && (
+                      <Badge variant="secondary" className="mt-1 text-[10px] uppercase">
+                        {photo.visibility === "pending_removal"
+                          ? "Removal requested"
+                          : "Hidden"}
+                      </Badge>
                     )}
                   </div>
                 </div>

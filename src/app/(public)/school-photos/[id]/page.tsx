@@ -1,6 +1,7 @@
 import { getProducts } from "@/lib/queries/products";
 import { getSchoolPhotoById } from "@/lib/queries/schoolPhotos";
 import React, { Suspense } from "react";
+import { notFound } from "next/navigation";
 import { SchoolPhotoDisplay } from "../_components/school-photo-display";
 import { ProductSelector } from "../_components/product-selector";
 import { cacheLife, cacheTag } from "next/cache";
@@ -18,6 +19,12 @@ const SchoolPhotoContent = async ({ params }: { params: Promise<{ id: string }> 
     schoolPhotoPromise,
     productsPromise,
   ]);
+
+  // Photos pending removal or hidden by an admin must not be publicly visible,
+  // even via a direct link.
+  if (!schoolPhoto || (schoolPhoto.visibility && schoolPhoto.visibility !== "public")) {
+    notFound();
+  }
 
   return (
     <>

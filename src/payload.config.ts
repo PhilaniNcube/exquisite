@@ -17,6 +17,7 @@ import { Schools } from "./collections/Schools/config";
 import { Classes } from "./collections/Classes/config";
 import { Products } from "./collections/Products/config";
 import { SchoolPhotos } from "./collections/SchoolPhotos/config";
+import { PhotoDeletionRequests } from "./collections/PhotoDeletionRequests/config";
 import { Orders } from "./collections/Orders/config";
 
 const filename = fileURLToPath(import.meta.url);
@@ -54,6 +55,7 @@ export const buildPayloadConfig = (db: any) =>
       Classes,
       Products,
       SchoolPhotos,
+      PhotoDeletionRequests,
       Orders,
     ],
     editor: lexicalEditor(),
