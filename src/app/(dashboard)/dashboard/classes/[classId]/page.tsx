@@ -9,8 +9,10 @@ import { UploadButtons } from "@/components/dashboard/classes/upload-buttons";
 
 const ClassPage = ({
   params,
+  searchParams,
 }: {
   params: Promise<{ classId: string }>;
+  searchParams: Promise<{ sort?: string; q?: string }>;
 }) => {
   return (
     <div className="container mx-auto py-10 space-y-6">
@@ -38,7 +40,7 @@ const ClassPage = ({
       </Suspense>
 
       <Suspense fallback={<ClassPhotosSkeleton />}>
-        <ClassPhotos params={params} />
+        <ClassPhotos params={params} searchParams={searchParams} />
       </Suspense>
     </div>
   );

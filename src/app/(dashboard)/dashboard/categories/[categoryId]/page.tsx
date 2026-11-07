@@ -4,8 +4,10 @@ import React, { Suspense } from "react";
 
 const CategoryPage = async ({
   params,
+  searchParams,
 }: {
   params: Promise<{ categoryId: string }>;
+  searchParams: Promise<{ sort?: string; q?: string }>;
 }) => {
   return (
     <div>
@@ -13,7 +15,7 @@ const CategoryPage = async ({
         <CategoryDetails params={params} />
       </Suspense>
       <Suspense fallback={<div>Loading category photos...</div>}>
-        <CategoryPhotos params={params} />
+        <CategoryPhotos params={params} searchParams={searchParams} />
       </Suspense>
     </div>
   );

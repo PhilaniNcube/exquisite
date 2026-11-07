@@ -6,7 +6,7 @@ import { SchoolPhotosFilterSkeleton, SchoolPhotosListSkeleton } from '@/componen
 export default function SchoolPhotosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; school?: string; class?: string }>
+  searchParams: Promise<{ page?: string; school?: string; class?: string; sort?: string; q?: string }>
 }) {
   return (
     <div className="container mx-auto py-10">

@@ -1,47 +1,33 @@
 import React from 'react'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Media } from '@/payload-types'
 import { Pagination } from './pagination'
+import { getSchoolPhotos } from '@/lib/queries/schoolPhotos'
+import { normalizePhotoSearch, normalizePhotoSortOrder } from '@/lib/photo-query'
 
 export async function SchoolPhotosList({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; school?: string; class?: string }>
+  searchParams: Promise<{ page?: string; school?: string; class?: string; sort?: string; q?: string }>
 }) {
   const resolvedSearchParams = await searchParams
   const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1
   const schoolId = resolvedSearchParams?.school
   const classId = resolvedSearchParams?.class
+  const sortOrder = normalizePhotoSortOrder(resolvedSearchParams?.sort)
+  const search = normalizePhotoSearch(resolvedSearchParams?.q)
   const limit = 12
 
-  const payload = await getPayload({ config: configPromise })
-
-  // Build query
-  const where: any = {}
-  
-  if (schoolId) {
-    where['schoolDetails.school'] = {
-      equals: schoolId,
-    }
-  }
-
-  if (classId) {
-    where['schoolDetails.class'] = {
-      equals: classId,
-    }
-  }
-
-  const photos = await payload.find({
-    collection: 'schoolPhotos',
-    limit,
+  const photos = await getSchoolPhotos({
     page,
-    where,
-    depth: 1,
+    limit,
+    schoolId,
+    classId,
+    sortOrder,
+    search,
   })
 
   return (
@@ -74,7 +60,10 @@ export async function SchoolPhotosList({
                     <span className="font-medium truncate flex-1 mr-2" title={photo.name}>
                     {photo.name || 'Untitled'}
                     </span>
-                    <Button asChild variant="outline" size="sm">
+                    <span className="text-xs text-muted-foreground shrink-0">
+                      #{photo.id}
+                    </span>
+                    <Button asChild variant="outline" size="sm" className="ml-2">
                     <Link href={`/dashboard/school-photos/${photo.id}`}>View</Link>
                     </Button>
                 </div>
@@ -98,7 +87,9 @@ export async function SchoolPhotosList({
 
       {photos.docs.length === 0 && (
         <div className="text-center py-10 text-muted-foreground">
-          No school photos found matching your criteria.
+          {search
+            ? `No school photos found for "${search}".`
+            : 'No school photos found matching your criteria.'}
         </div>
       )}
 

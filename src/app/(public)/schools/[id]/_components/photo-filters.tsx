@@ -1,11 +1,13 @@
 "use client";
 
-import { Class, SchoolPhoto } from "@/payload-types";
+import { Class } from "@/payload-types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { X, Filter } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQueryState, parseAsString } from "nuqs";
+import { PhotoSearchInput } from "@/components/dashboard/photos/photo-search-input";
+import { PhotoSortSelect } from "@/components/dashboard/photos/photo-sort-select";
 
 interface PhotoFiltersProps {
   classes: Class[];
@@ -19,6 +21,16 @@ const PhotoFilters = ({ classes }: PhotoFiltersProps) => {
   
   const [photoTypeFilter, setPhotoTypeFilter] = useQueryState(
     "photoType",
+    parseAsString.withDefault("").withOptions({ shallow: false })
+  );
+
+  const [search, setSearch] = useQueryState(
+    "q",
+    parseAsString.withDefault("").withOptions({ shallow: false })
+  );
+
+  const [sortOrder, setSortOrder] = useQueryState(
+    "sort",
     parseAsString.withDefault("").withOptions({ shallow: false })
   );
   
@@ -42,17 +54,20 @@ const PhotoFilters = ({ classes }: PhotoFiltersProps) => {
   const clearFilters = () => {
     setClassFilter(null);
     setPhotoTypeFilter(null);
+    setSearch(null);
+    setSortOrder(null);
     setPage(null);
   };
 
-  const hasActiveFilters = classFilter || photoTypeFilter;
+  const hasActiveFilters =
+    Boolean(classFilter || photoTypeFilter || search) || sortOrder === "desc";
 
   return (
     <Card className="mb-6">
       <CardContent className="p-6">
         <div className="flex items-center gap-2 mb-4">
           <Filter className="w-5 h-5 text-gray-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Filter Photos</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Search & Filter Photos</h3>
           {hasActiveFilters && (
             <Button
               variant="ghost"
@@ -66,7 +81,18 @@ const PhotoFilters = ({ classes }: PhotoFiltersProps) => {
           )}
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Search */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Search by Name or ID
+            </label>
+            <PhotoSearchInput
+              label={null}
+              placeholder="e.g. John Smith or #123"
+            />
+          </div>
+
           {/* Class Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -105,6 +131,14 @@ const PhotoFilters = ({ classes }: PhotoFiltersProps) => {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Sort */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Sort by Name
+            </label>
+            <PhotoSortSelect label={null} />
           </div>
         </div>
       </CardContent>

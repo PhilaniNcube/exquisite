@@ -12,28 +12,31 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Camera, Trash2 } from "lucide-react";
-import type { Media, SchoolPhoto } from "@/payload-types";
+import type { Media } from "@/payload-types";
+import { getSchoolPhotosBySchoolId } from "@/lib/queries/schoolPhotos";
+import { normalizePhotoSearch, normalizePhotoSortOrder } from "@/lib/photo-query";
+import { PhotoSearchInput } from "@/components/dashboard/photos/photo-search-input";
+import { PhotoSortSelect } from "@/components/dashboard/photos/photo-sort-select";
 
 export default async function SchoolPhotos({
   schoolId,
+  sort,
+  q,
 }: {
   schoolId: string;
+  sort?: string;
+  q?: string;
 }) {
   const id = parseInt(schoolId, 10);
   if (isNaN(id)) return null;
 
-  const payload = await getPayload({ config });
+  const sortOrder = normalizePhotoSortOrder(sort);
+  const search = normalizePhotoSearch(q);
 
-  const photos = await payload.find({
-    collection: "schoolPhotos",
-    where: {
-      "schoolDetails.school": {
-        equals: id,
-      },
-    },
+  const photos = await getSchoolPhotosBySchoolId(schoolId, {
     limit: 12,
-    depth: 1,
-    sort: "-createdAt",
+    sortOrder,
+    search,
   });
 
   // Count photos by type
@@ -71,6 +74,17 @@ export default async function SchoolPhotos({
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-4 items-end">
+          <PhotoSearchInput
+            className="w-full sm:max-w-xs"
+            placeholder="Search by name or ID..."
+          />
+          <PhotoSortSelect
+            className="w-full sm:w-[200px]"
+            label="Sort by name"
+          />
+        </div>
+
         {/* Photo type breakdown */}
         {Object.keys(typeCounts).length > 0 && (
           <div className="flex flex-wrap gap-2">
@@ -85,7 +99,9 @@ export default async function SchoolPhotos({
         {/* Photo grid */}
         {photos.docs.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            No photos have been uploaded for this school yet.
+            {search
+              ? `No photos found for "${search}".`
+              : "No photos have been uploaded for this school yet."}
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">

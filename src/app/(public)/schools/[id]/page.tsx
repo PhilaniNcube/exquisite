@@ -12,9 +12,19 @@ const SchoolAccessGate = async ({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ pass_code?: string; page?: string; class?: string; photoType?: string }>;
+  searchParams: Promise<{
+    pass_code?: string;
+    page?: string;
+    class?: string;
+    photoType?: string;
+    q?: string;
+    sort?: string;
+  }>;
 }) => {
-  const [{ id }, { pass_code, page, class: classFilter, photoType }] = await Promise.all([params, searchParams]);
+  const [
+    { id },
+    { pass_code, page, class: classFilter, photoType, q, sort },
+  ] = await Promise.all([params, searchParams]);
 
   const payload = await getPayload({ config });
 
@@ -44,6 +54,8 @@ const SchoolAccessGate = async ({
           page={currentPage}
           classFilter={classFilter}
           photoType={photoType}
+          search={q}
+          sort={sort}
         />
       </Suspense>
     </div>
@@ -55,7 +67,14 @@ const SchoolPage = ({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ pass_code?: string; page?: string; class?: string; photoType?: string }>;
+  searchParams: Promise<{
+    pass_code?: string;
+    page?: string;
+    class?: string;
+    photoType?: string;
+    q?: string;
+    sort?: string;
+  }>;
 }) => {
   return (
     <Suspense fallback={<SchoolPageSkeleton />}>

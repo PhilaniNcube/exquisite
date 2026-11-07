@@ -1,29 +1,30 @@
-import { getPayload } from "payload"
-import config from "@payload-config"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
 import { DeletePhotoButton } from "./delete-photo-button"
+import { getSchoolPhotosByClassId } from "@/lib/queries/schoolPhotos"
+import { normalizePhotoSearch, normalizePhotoSortOrder } from "@/lib/photo-query"
+import { PhotoSearchInput } from "@/components/dashboard/photos/photo-search-input"
+import { PhotoSortSelect } from "@/components/dashboard/photos/photo-sort-select"
 
 export default async function ClassPhotos({
   params,
+  searchParams,
 }: {
   params: Promise<{ classId: string }>
+  searchParams: Promise<{ sort?: string; q?: string }>
 }) {
   const { classId } = await params
+  const { sort, q } = await searchParams
   const id = parseInt(classId, 10)
   if (isNaN(id)) return null
 
-  const payload = await getPayload({ config })
-  
-  const photos = await payload.find({
-    collection: "schoolPhotos",
-    where: {
-      "schoolDetails.class": {
-        equals: id,
-      },
-    },
+  const sortOrder = normalizePhotoSortOrder(sort)
+  const search = normalizePhotoSearch(q)
+
+  const photos = await getSchoolPhotosByClassId(classId, {
     limit: 100,
-    depth: 1,
+    sortOrder,
+    search,
   })
 
   return (
@@ -31,10 +32,23 @@ export default async function ClassPhotos({
       <CardHeader>
         <CardTitle>Photos ({photos.totalDocs})</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-4 items-end">
+          <PhotoSearchInput
+            className="w-full sm:max-w-xs"
+            placeholder="Search by name or ID..."
+          />
+          <PhotoSortSelect
+            className="w-full sm:w-[200px]"
+            label="Sort by name"
+          />
+        </div>
+
         {photos.docs.length === 0 ? (
           <div className="text-center py-10 text-muted-foreground">
-            No photos found for this class.
+            {search
+              ? `No photos found for "${search}".`
+              : 'No photos found for this class.'}
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">

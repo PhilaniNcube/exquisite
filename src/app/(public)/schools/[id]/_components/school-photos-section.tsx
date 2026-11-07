@@ -1,5 +1,9 @@
 import { getSchoolPhotosBySchoolId } from "@/lib/queries/schoolPhotos";
 import { getClassesBySchoolId } from "@/lib/queries/classes";
+import {
+  normalizePhotoSearch,
+  normalizePhotoSortOrder,
+} from "@/lib/photo-query";
 import SchoolPhotosGallery from "./school-photos-gallery";
 
 const SchoolPhotosSection = async ({
@@ -8,19 +12,28 @@ const SchoolPhotosSection = async ({
   page = 1,
   classFilter,
   photoType,
+  search,
+  sort,
 }: {
   schoolId: string;
   schoolName: string;
   page?: number;
   classFilter?: string;
   photoType?: string;
+  search?: string;
+  sort?: string;
 }) => {
+  const searchTerm = normalizePhotoSearch(search);
+  const sortOrder = normalizePhotoSortOrder(sort);
+
   const [photosData, classesData] = await Promise.all([
     getSchoolPhotosBySchoolId(schoolId, {
       limit: 36,
       page,
       classId: classFilter,
       photoType,
+      search: searchTerm,
+      sortOrder,
     }),
     getClassesBySchoolId(schoolId, { limit: 1000 }),
   ]);

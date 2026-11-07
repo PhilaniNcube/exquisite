@@ -1,17 +1,32 @@
-import { getPayload } from "payload";
+import { getPayload, type Where } from "payload";
 import config from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
+import {
+  buildPhotoSearchWhere,
+  getPhotoSortValue,
+  type PhotoSortOrder,
+} from "@/lib/photo-query";
 
 
 
-export const getCategoryPhotos = async (categoryId: number) => {
+export const getCategoryPhotos = async (
+  categoryId: number,
+  sortOrder: PhotoSortOrder = "asc",
+  search = ""
+) => {
   "use cache";
   cacheTag(`category-photos-${categoryId}`);
   cacheLife("hours")
   const payload = await getPayload({ config });
+  const searchWhere = buildPhotoSearchWhere(search, "title");
+  const where: Where = searchWhere
+    ? { and: [{ category: { equals: categoryId } }, searchWhere] }
+    : { category: { equals: categoryId } };
+
   const photos = await payload.find({
     collection: "photos",
-    where: { category: { equals: categoryId } },
+    where,
+    sort: getPhotoSortValue(sortOrder, "title"),
     limit: 100,
   });
   return photos;
@@ -54,16 +69,24 @@ export const getPhotoById = async (id: number) => {
   return photo;
 };
 
-export const getPhotos = async (page: number = 1, limit: number = 12) => {
+export const getPhotos = async (
+  page: number = 1,
+  limit: number = 12,
+  sortOrder: PhotoSortOrder = "asc",
+  search = ""
+) => {
   "use cache";
   cacheTag(`photos-page-${page}`);
   cacheLife("hours");
   const payload = await getPayload({ config });
+  const searchWhere = buildPhotoSearchWhere(search, "title");
   const photos = await payload.find({
     collection: "photos",
     limit,
     page,
     depth: 1,
+    sort: getPhotoSortValue(sortOrder, "title"),
+    ...(searchWhere ? { where: searchWhere } : {}),
   });
   return photos;
 };

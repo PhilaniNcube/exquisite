@@ -146,26 +146,17 @@ const SchoolPhotosGallery = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const hasActiveFilters = Boolean(
+    searchParams.get("q") ||
+      searchParams.get("class") ||
+      searchParams.get("photoType")
+  );
+
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", pageNumber.toString());
     return `${pathname}?${params.toString()}`;
   };
-
-  if (photos.length === 0) {
-    return (
-      <div className="text-center py-16">
-        <Camera className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-2xl font-semibold text-gray-600 mb-2">
-          No Photos Yet
-        </h3>
-        <p className="text-gray-500">
-          Photos from {schoolName} will appear here once they&apos;re
-          available.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div>
@@ -184,10 +175,12 @@ const SchoolPhotosGallery = ({
         <div className="text-center py-16">
           <Camera className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-2xl font-semibold text-gray-600 mb-2">
-            No Photos Found
+            {hasActiveFilters ? "No Photos Found" : "No Photos Yet"}
           </h3>
           <p className="text-gray-500">
-            Try adjusting your filters to see more photos.
+            {hasActiveFilters
+              ? "Try adjusting your search or filters to see more photos."
+              : `Photos from ${schoolName} will appear here once they're available.`}
           </p>
         </div>
       ) : (

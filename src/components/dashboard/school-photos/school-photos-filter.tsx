@@ -12,6 +12,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
 import { Class, School } from '@/payload-types'
+import { PhotoSearchInput } from '@/components/dashboard/photos/photo-search-input'
+import { PhotoSortSelect } from '@/components/dashboard/photos/photo-sort-select'
 
 interface SchoolPhotosFilterProps {
   schools: School[]
@@ -27,19 +29,31 @@ export function SchoolPhotosFilter({ schools, classes }: SchoolPhotosFilterProps
     'class',
     parseAsString.withOptions({ shallow: false })
   )
+  const [search, setSearch] = useQueryState(
+    'q',
+    parseAsString.withOptions({ shallow: false })
+  )
+  const [, setPage] = useQueryState(
+    'page',
+    parseAsString.withOptions({ shallow: false })
+  )
 
   const handleSchoolChange = (value: string) => {
     setSchoolId(value)
     setClassId(null) // Reset class when school changes
+    setPage(null)
   }
 
   const handleClassChange = (value: string) => {
     setClassId(value)
+    setPage(null)
   }
 
   const clearFilters = () => {
     setSchoolId(null)
     setClassId(null)
+    setSearch(null)
+    setPage(null)
   }
 
   // Filter classes based on selected school
@@ -50,8 +64,15 @@ export function SchoolPhotosFilter({ schools, classes }: SchoolPhotosFilterProps
       })
     : []
 
+  const hasFilters = Boolean(schoolId || classId || search)
+
   return (
-    <div className="flex flex-col sm:flex-row gap-4 mb-6 items-end">
+    <div className="flex flex-col sm:flex-row flex-wrap gap-4 mb-6 items-end">
+      <PhotoSearchInput
+        className="w-full sm:w-[240px]"
+        placeholder="Search by name or ID..."
+      />
+
       <div className="w-full sm:w-[200px]">
         <label className="text-sm font-medium mb-2 block">School</label>
         <Select value={schoolId || ''} onValueChange={handleSchoolChange}>
@@ -88,7 +109,12 @@ export function SchoolPhotosFilter({ schools, classes }: SchoolPhotosFilterProps
         </Select>
       </div>
 
-      {(schoolId || classId) && (
+      <PhotoSortSelect
+        className="w-full sm:w-[200px]"
+        label="Sort by name"
+      />
+
+      {hasFilters && (
         <Button variant="ghost" onClick={clearFilters} className="mb-0.5">
           <X className="h-4 w-4 mr-2" />
           Clear Filters

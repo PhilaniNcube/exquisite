@@ -3,7 +3,15 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 
 export function SchoolPhotosFilterSkeleton() {
   return (
-    <div className="flex flex-col sm:flex-row gap-4 mb-6 items-end">
+    <div className="flex flex-col sm:flex-row flex-wrap gap-4 mb-6 items-end">
+      <div className="w-full sm:w-[240px]">
+        <Skeleton className="h-5 w-16 mb-2" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      <div className="w-full sm:w-[200px]">
+        <Skeleton className="h-5 w-16 mb-2" />
+        <Skeleton className="h-10 w-full" />
+      </div>
       <div className="w-full sm:w-[200px]">
         <Skeleton className="h-5 w-16 mb-2" />
         <Skeleton className="h-10 w-full" />

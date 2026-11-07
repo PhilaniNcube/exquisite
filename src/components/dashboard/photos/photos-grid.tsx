@@ -1,22 +1,34 @@
 import React from 'react'
 import { getPhotos } from '@/lib/queries/photos'
+import { normalizePhotoSearch, normalizePhotoSortOrder } from '@/lib/photo-query'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Media } from '@/payload-types'
+import { Route } from 'next'
 
 export async function PhotosGrid({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<{ page?: string; sort?: string; q?: string }>
 }) {
   const resolvedSearchParams = await searchParams
   const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1
+  const sortOrder = normalizePhotoSortOrder(resolvedSearchParams?.sort)
+  const search = normalizePhotoSearch(resolvedSearchParams?.q)
   const limit = 12
 
-  const photos = await getPhotos(page, limit)
+  const photos = await getPhotos(page, limit, sortOrder, search)
+
+  const buildPageHref = (pageNumber: number) => {
+    const params = new URLSearchParams()
+    if (search) params.set('q', search)
+    if (sortOrder === 'desc') params.set('sort', 'desc')
+    params.set('page', pageNumber.toString())
+    return `/dashboard/photos?${params.toString()}` as Route
+  }
 
   return (
     <>
@@ -43,8 +55,15 @@ export async function PhotosGrid({
                   )}
                 </div>
               </CardContent>
-              <CardFooter className="p-4 flex justify-between items-center">
-               
+              <CardFooter className="p-4 flex flex-col items-stretch gap-2">
+                <div className="flex items-center justify-between gap-2 min-w-0">
+                  <span className="font-medium truncate" title={photo.title || 'Untitled photo'}>
+                    {photo.title || 'Untitled photo'}
+                  </span>
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    #{photo.id}
+                  </span>
+                </div>
                 <Button asChild variant="outline" className='w-full'>
                   <Link href={`/dashboard/photos/${photo.id}`}>View</Link>
                 </Button>
@@ -56,7 +75,7 @@ export async function PhotosGrid({
 
       {photos.docs.length === 0 && (
         <div className="text-center py-10 text-muted-foreground">
-          No photos found.
+          {search ? `No photos found for "${search}".` : 'No photos found.'}
         </div>
       )}
 
@@ -69,7 +88,7 @@ export async function PhotosGrid({
             asChild={photos.hasPrevPage}
           >
             {photos.hasPrevPage ? (
-              <Link href={`/dashboard/photos?page=${photos.prevPage}`}>
+              <Link href={buildPageHref(photos.prevPage ?? 1)}>
                 <ChevronLeft className="h-4 w-4" />
               </Link>
             ) : (
@@ -88,7 +107,7 @@ export async function PhotosGrid({
             asChild={photos.hasNextPage}
           >
             {photos.hasNextPage ? (
-              <Link href={`/dashboard/photos?page=${photos.nextPage}`}>
+              <Link href={buildPageHref(photos.nextPage ?? 1)}>
                 <ChevronRight className="h-4 w-4" />
               </Link>
             ) : (

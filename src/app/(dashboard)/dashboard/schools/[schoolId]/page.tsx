@@ -12,13 +12,15 @@ import { DeleteSchoolButton } from "@/components/dashboard/schools/delete-school
 
 const SchoolPage = ({
   params,
+  searchParams,
 }: {
   params: Promise<{ schoolId: string }>;
+  searchParams: Promise<{ sort?: string; q?: string }>;
 }) => {
   return (
     <div className="container mx-auto py-10 space-y-6">
       <Suspense fallback={<SchoolPageSkeleton />}>
-        <SchoolPageContent params={params} />
+        <SchoolPageContent params={params} searchParams={searchParams} />
       </Suspense>
     </div>
   );
@@ -26,11 +28,14 @@ const SchoolPage = ({
 
 async function SchoolPageContent({
   params,
+  searchParams,
 }: {
   params: Promise<{ schoolId: string }>;
+  searchParams: Promise<{ sort?: string; q?: string }>;
 }) {
   await connection();
   const { schoolId } = await params;
+  const { sort, q } = await searchParams;
 
   return (
     <>
@@ -67,7 +72,7 @@ async function SchoolPageContent({
       </div>
 
       <Suspense fallback={<SchoolPhotosSkeleton />}>
-        <SchoolPhotos schoolId={schoolId} />
+        <SchoolPhotos schoolId={schoolId} sort={sort} q={q} />
       </Suspense>
     </>
   );
