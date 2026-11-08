@@ -55,18 +55,19 @@ const SchoolPhotoDetails = async ({
         <div className="lg:col-span-2">
           <Card className="overflow-hidden p-0">
             <CardContent className="p-0">
-              <div className="relative aspect-4/3 flex items-center justify-center">
+              <div className="flex w-full items-center justify-center bg-muted/30">
                 {imageUrl ? (
                   <Image
                     src={imageUrl}
                     alt={photo.name || "School Photo"}
-                    fill
-                    className="object-cover"
+                    width={image.width || 800}
+                    height={image.height || 1000}
+                    className="h-auto w-full object-contain"
                     priority
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 66vw"
                   />
                 ) : (
-                  <div className="text-muted-foreground">
+                  <div className="py-24 text-muted-foreground">
                     No Image Available
                   </div>
                 )}
