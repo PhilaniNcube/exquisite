@@ -131,7 +131,7 @@ const PrivacyPolicy = async () => {
           <h3 className="text-xl font-semibold mb-3 mt-6">Requesting Removal of a Child&apos;s Photo</h3>
           <p className="mb-4">
             Parents and legal guardians can request removal of photos of their children from a school gallery.
-            Use the <strong>Request removal</strong> button on the photo in the school gallery, or contact us at{" "}
+            Open the photo in the school gallery and use the <strong>Request removal</strong> button, or contact us at{" "}
             <a className="underline underline-offset-2" href="mailto:este@exquisitephoto.co.za">
               este@exquisitephoto.co.za
             </a>{" "}
