@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Media } from '@/payload-types'
 import { Pagination } from './pagination'
+import { DeletePhotoButton } from './delete-photo-button'
 import { getSchoolPhotos } from '@/lib/queries/schoolPhotos'
 import { normalizePhotoSearch, normalizePhotoSortOrder } from '@/lib/photo-query'
 
@@ -73,6 +74,11 @@ export async function SchoolPhotosList({
                     <Button asChild variant="outline" size="sm" className="ml-2">
                     <Link href={`/dashboard/school-photos/${photo.id}`}>View</Link>
                     </Button>
+                    <DeletePhotoButton
+                      photoId={photo.id}
+                      photoName={photo.name}
+                      className="ml-1 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    />
                 </div>
                 <div className="text-xs text-muted-foreground w-full">
                     {photo.schoolDetails?.school && (

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DeletePhotoButton } from "./delete-photo-button";
 import { getSchoolPhotoById } from "@/lib/queries/schoolPhotos";
 import { Class, Media, School } from "@/payload-types";
 import { Badge, ChevronLeft, Download } from "lucide-react";
@@ -131,6 +132,14 @@ const SchoolPhotoDetails = async ({
                   </a>
                 </Button>
               )}
+
+              <DeletePhotoButton
+                photoId={photo.id}
+                photoName={photo.name}
+                variant="button"
+                redirectTo="/dashboard/school-photos"
+                className="w-full"
+              />
             </CardContent>
           </Card>
         </div>

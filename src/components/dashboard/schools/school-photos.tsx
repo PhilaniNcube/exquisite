@@ -1,8 +1,5 @@
-import { getPayload } from "payload";
-import config from "@payload-config";
 import Image from "next/image";
 import Link from "next/link";
-import { revalidatePath } from "next/cache";
 import {
   Card,
   CardContent,
@@ -11,12 +8,13 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Camera, Trash2 } from "lucide-react";
+import { Camera } from "lucide-react";
 import type { Media } from "@/payload-types";
 import { getSchoolPhotosBySchoolId } from "@/lib/queries/schoolPhotos";
 import { normalizePhotoSearch, normalizePhotoSortOrder } from "@/lib/photo-query";
 import { PhotoSearchInput } from "@/components/dashboard/photos/photo-search-input";
 import { PhotoSortSelect } from "@/components/dashboard/photos/photo-sort-select";
+import { DeletePhotoButton } from "@/components/dashboard/school-photos/delete-photo-button";
 
 export default async function SchoolPhotos({
   schoolId,
@@ -49,16 +47,6 @@ export default async function SchoolPhotos({
     },
     {} as Record<string, number>
   );
-
-  async function deletePhoto(photoId: string | number) {
-    "use server";
-    const payload = await getPayload({ config });
-    await payload.delete({
-      collection: "schoolPhotos",
-      id: photoId,
-    });
-    revalidatePath(`/dashboard/schools/${id}`);
-  }
 
   return (
     <Card>
@@ -135,14 +123,11 @@ export default async function SchoolPhotos({
                     </div>
                   </Link>
                   
-                  <form 
-                    action={deletePhoto.bind(null, photo.id)} 
-                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                  >
-                     <Button type="submit" variant="destructive" size="icon" className="h-7 w-7 rounded-full shadow-md" title="Delete photo">
-                       <Trash2 className="h-3.5 w-3.5" />
-                     </Button>
-                  </form>
+                  <DeletePhotoButton
+                    photoId={photo.id}
+                    photoName={photo.name}
+                    className="absolute top-2 right-2 z-10 h-7 w-7 rounded-full bg-destructive text-destructive-foreground opacity-100 shadow-md transition-opacity hover:bg-destructive/90 hover:text-destructive-foreground focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
+                  />
 
                   <div className="mt-1">
                     <p className="text-sm truncate" title={photo.name || ""}>
