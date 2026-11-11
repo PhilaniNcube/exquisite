@@ -18,7 +18,7 @@ const PhotoFilters = ({ classes }: PhotoFiltersProps) => {
     "class",
     parseAsString.withDefault("").withOptions({ shallow: false })
   );
-  
+
   const [photoTypeFilter, setPhotoTypeFilter] = useQueryState(
     "photoType",
     parseAsString.withDefault("").withOptions({ shallow: false })
@@ -33,7 +33,7 @@ const PhotoFilters = ({ classes }: PhotoFiltersProps) => {
     "sort",
     parseAsString.withDefault("").withOptions({ shallow: false })
   );
-  
+
   const [, setPage] = useQueryState(
     "page",
     parseAsString.withDefault("").withOptions({ shallow: false })
@@ -80,10 +80,10 @@ const PhotoFilters = ({ classes }: PhotoFiltersProps) => {
             </Button>
           )}
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Search */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Search by Name or ID
             </label>
@@ -91,7 +91,7 @@ const PhotoFilters = ({ classes }: PhotoFiltersProps) => {
               label={null}
               placeholder="e.g. John Smith or #123"
             />
-          </div>
+          </div> */}
 
           {/* Class Filter */}
           <div>
