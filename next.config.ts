@@ -5,6 +5,10 @@ import path from "path";
 const nextConfig: NextConfig = {
   cacheComponents: true, // Enable Cache Components
   typedRoutes: true,
+  experimental: {
+    // Adopted by the Next.js security upgrade agent (16.4.2 -> 16.4.6).
+    agentUpgrade: "security",
+  },
   logging: {
     fetches: {
       fullUrl: true,
