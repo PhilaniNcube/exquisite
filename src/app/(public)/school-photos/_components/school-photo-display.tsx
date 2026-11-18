@@ -12,6 +12,9 @@ interface SchoolPhotoDisplayProps {
 export function SchoolPhotoDisplay({ photo }: SchoolPhotoDisplayProps) {
   const photoMedia =
     typeof photo.photo === "number" ? null : (photo.photo as Media);
+  // Payload generates a 768px webp `card` at upload. The original is only used
+  // as a fallback, and only then do we let the optimizer touch it.
+  const display = photoMedia?.sizes?.card ?? null;
   const school =
     !photo.schoolDetails || typeof photo.schoolDetails.school === "number"
       ? null
@@ -32,10 +35,12 @@ export function SchoolPhotoDisplay({ photo }: SchoolPhotoDisplayProps) {
       <div className="relative bg-muted">
         {photoMedia?.url ? (
           <Image
-            src={photoMedia.url || "/placeholder.svg"}
+            src={display?.url || photoMedia.url || "/placeholder.svg"}
             alt={photoMedia.alt || photo.name}
-            width={photoMedia.width || 800}
-            height={photoMedia.height || 1000}
+            width={display?.width || photoMedia.width || 800}
+            height={display?.height || photoMedia.height || 1000}
+            sizes="(min-width: 1024px) 400px, 100vw"
+            unoptimized={Boolean(display?.url)}
             style={{ width: "100%", height: "auto" }}
             className="block"
             priority

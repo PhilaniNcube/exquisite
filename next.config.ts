@@ -11,8 +11,17 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    qualities: [25, 50, 70, 75, 80, 85, 90, 95, 100],
-    dangerouslyAllowSVG: true,
+    // Only the qualities the UI actually requests: 50 (portfolio grid),
+    // 75 (the default) and 80 (heroes / masonry). Every extra entry becomes a
+    // separate transformation + cache entry for every image.
+    qualities: [50, 75, 80],
+    // Upload filenames are unique (name-timestamp-random) and never rewritten,
+    // so optimized output can be cached for a year instead of the 4h default.
+    minimumCacheTTL: 31536000,
+    // Trimmed srcset ladder. The widest surface is a full-bleed hero, so 1920
+    // covers it; 2048/3840 only produced upscales of smaller source files.
+    deviceSizes: [640, 828, 1080, 1920],
+    imageSizes: [256, 384],
     remotePatterns: [
       {
         protocol: "https",

@@ -242,6 +242,10 @@ const SchoolPhotosGallery = ({
                           photo.photo.height ||
                           600
                         }
+                        // Already a 400px webp from Payload: re-optimizing it
+                        // only produced an upscaled 800w duplicate per photo.
+                        unoptimized={Boolean(photo.photo.sizes?.thumbnail?.url)}
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         style={{ width: "100%", height: "auto" }}
                         className="group-hover:scale-105 transition-transform duration-300"
                       />

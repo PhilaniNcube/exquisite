@@ -25,9 +25,11 @@ const PhotoModal = ({ photo, isOpen, onClose }: PhotoModalProps) => {
             {photo.photo && typeof photo.photo === "object" && (
               <div className="relative w-full h-[80vh]">
                 <Image
-                  src={photo.photo.url || ""}
+                  src={photo.photo.sizes?.card?.url || photo.photo.url || ""}
                   alt={photo.photo.alt || "School photo"}
                   fill
+                  sizes="100vw"
+                  unoptimized={Boolean(photo.photo.sizes?.card?.url)}
                   className="object-contain"
                 />
               </div>

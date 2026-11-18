@@ -34,9 +34,11 @@ export function CartItem({ item }: CartItemProps) {
       {item.pictureDetails?.url && (
         <div className="relative w-16 h-16 flex-shrink-0">
           <Image
-            src={item.pictureDetails.url}
+            src={item.pictureDetails.thumbnailUrl || item.pictureDetails.url}
             alt={item.productDetails?.name || "Product image"}
             fill
+            sizes="64px"
+            unoptimized={Boolean(item.pictureDetails.thumbnailUrl)}
             className="object-cover rounded-md"
           />
         </div>

@@ -106,9 +106,15 @@ export function ProductSelector({
               <div className="aspect-square relative bg-muted">
                 {productImage?.url ? (
                   <Image
-                    src={productImage.url || "/placeholder.svg"}
+                    src={
+                      productImage.sizes?.thumbnail?.url ||
+                      productImage.url ||
+                      "/placeholder.svg"
+                    }
                     alt={productImage.alt || product.title}
                     fill
+                    sizes="(max-width: 1024px) 50vw, 25vw"
+                    unoptimized={Boolean(productImage.sizes?.thumbnail?.url)}
                     className="object-cover"
                   />
                 ) : (

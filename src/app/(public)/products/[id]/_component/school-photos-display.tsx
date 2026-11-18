@@ -71,11 +71,14 @@ const SchoolPhotosDisplay = async ({
             typeof photo.photo === "object" &&
             photo.photo.url ? (
               <Image
-                src={photo.photo.url}
+                src={
+                  photo.photo.sizes?.thumbnail?.url || photo.photo.url
+                }
                 alt={photo.photo.alt || `School photo ${photo.id}`}
                 fill
-                className="object-cover hover:scale-105 transition-transform duration-200"
                 sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                unoptimized={Boolean(photo.photo.sizes?.thumbnail?.url)}
+                className="object-cover hover:scale-105 transition-transform duration-200"
               />
             ) : (
               <div className="w-full h-full bg-gray-200 flex items-center justify-center">

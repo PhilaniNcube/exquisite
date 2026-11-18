@@ -215,10 +215,18 @@ const OrdersContent = async ({ searchParams }: OrdersPageProps) => {
                         {schoolPhoto?.photo && typeof schoolPhoto.photo === "object" && (
                           <div className="relative w-14 h-14 rounded-md overflow-hidden bg-muted shrink-0 border">
                             <Image
-                              src={(schoolPhoto.photo as any).url || "/placeholder.jpg"}
+                              src={
+                                schoolPhoto.photo.sizes?.thumbnail?.url ||
+                                schoolPhoto.photo.url ||
+                                "/placeholder.jpg"
+                              }
                               alt={schoolPhoto.name || "School photo"}
                               width={56}
                               height={56}
+                              sizes="56px"
+                              unoptimized={Boolean(
+                                schoolPhoto.photo.sizes?.thumbnail?.url
+                              )}
                               className="object-cover w-full h-full"
                             />
                           </div>

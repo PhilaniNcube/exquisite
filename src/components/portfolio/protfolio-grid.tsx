@@ -37,9 +37,10 @@ const PortfolioGrid = async () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {categories.map((category) => {
           const image = category.image as Media;
-          const isLocal = image?.url?.includes("localhost") || image?.url?.includes("127.0.0.1");
-
-     
+          // Payload already generates a 768px webp `card` on upload. Feeding the
+          // full-resolution original (up to 24MB) to the image optimizer meant
+          // ten variants of a 32MP JPEG per card.
+          const src = image?.sizes?.card?.url || image?.url;
           return (
             <Link
               key={category.id}
@@ -48,15 +49,13 @@ const PortfolioGrid = async () => {
             >
               <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-accent/50 aspect-video overflow-hidden p-0">
                 <div className="relative w-full h-full">
-                  {image?.url ? (
+                  {src ? (
                     <Image
-                      src={image.url}
+                      src={src}
                       alt={image.alt || category.name}
                       fill
-                      quality={50}
-                      unoptimized={isLocal}
+                      unoptimized
                       className="object-cover transition-transform duration-300 group-hover:scale-110"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                       priority={false}
                     />
                   ) : (

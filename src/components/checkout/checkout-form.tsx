@@ -202,6 +202,8 @@ export function CheckoutForm({ currentUser }: CheckoutFormProps) {
                         alt={item.productDetails?.name || "Product"}
                         width={64}
                         height={64}
+                        sizes="64px"
+                        unoptimized={Boolean(item.productDetails.thumbnailUrl)}
                         className="object-cover w-full h-full"
                       />
                     </div>
@@ -213,6 +215,8 @@ export function CheckoutForm({ currentUser }: CheckoutFormProps) {
                         alt={item.pictureDetails?.name || "School photo"}
                         width={64}
                         height={64}
+                        sizes="64px"
+                        unoptimized={Boolean(item.pictureDetails.thumbnailUrl)}
                         className="object-cover w-full h-full"
                       />
                     </div>

@@ -9,24 +9,18 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  // Extract image URL from product
-  const getImageUrl = (): string => {
-    if (typeof product.image === "number") {
-      return `/placeholder.svg?height=400&width=400&query=product-${product.id}`
-    }
-    return (
-      product.image.url ||
-      product.image.thumbnailURL ||
-      `/placeholder.svg?height=400&width=400&query=product-${product.id}`
-    )
-  }
+  const image = typeof product.image === "number" ? null : product.image
+  // Payload generates a 400px webp thumbnail on upload; use it directly instead
+  // of sending the original through the optimizer.
+  const thumbnail = image?.sizes?.thumbnail
 
-  const getImageAlt = (): string => {
-    if (typeof product.image === "number") {
-      return product.title
-    }
-    return product.image.alt || product.title
-  }
+  const src =
+    thumbnail?.url ||
+    image?.url ||
+    image?.thumbnailURL ||
+    `/placeholder.svg?height=400&width=400&query=product-${product.id}`
+
+  const alt = image?.alt || product.title
 
   return (
     <Link href={`/products/${product.id}`} className="group block">
@@ -34,9 +28,10 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Image Container */}
         <div className="relative aspect-square overflow-hidden bg-muted mb-4">
           <Image
-            src={getImageUrl() || "/placeholder.svg"}
-            alt={getImageAlt()}
+            src={src}
+            alt={alt}
             fill
+            unoptimized={Boolean(thumbnail?.url)}
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />

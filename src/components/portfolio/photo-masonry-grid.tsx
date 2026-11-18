@@ -107,6 +107,11 @@ const PhotoMasonryGrid = ({ photos }: { photos: Photo[] }) => {
           {photos.map((photo, index) => {
             const imageUrl = (photo.image as any)?.url;
             const isLocal = imageUrl?.includes("localhost") || imageUrl?.includes("127.0.0.1");
+            // Prefer Payload's pre-generated 768px webp. When it is missing we
+            // fall back to the original and keep the optimizer enabled, because
+            // shipping a multi-megabyte original unoptimized would be worse.
+            const card =
+              typeof photo.image === "object" ? photo.image.sizes?.card : undefined;
 
             return (
               <div
@@ -117,15 +122,12 @@ const PhotoMasonryGrid = ({ photos }: { photos: Photo[] }) => {
                 <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
                   {typeof photo.image === "object" && photo.image?.url && (
                     <Image
-                      src={
-                        (photo.image as any).sizes?.card?.url ||
-                        photo.image.sizes?.card?.url
-                      }
+                      src={card?.url || imageUrl}
                       alt={photo.image.alt || photo.title || "Photo"}
-                      width={500}
-                      height={500}
+                      width={card?.width ?? photo.image.width ?? 500}
+                      height={card?.height ?? photo.image.height ?? 500}
                       quality={80}
-                      unoptimized={isLocal}
+                      unoptimized={Boolean(card?.url) || isLocal}
                       sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       priority={index < 8}
                       className="w-full h-auto group-hover:scale-105 transition-transform duration-300"
@@ -195,6 +197,7 @@ const PhotoMasonryGrid = ({ photos }: { photos: Photo[] }) => {
                   )}
                   <Image
                     src={
+                      currentPhoto.image.sizes?.tablet?.url ||
                       currentPhoto.image.sizes?.card?.url ||
                       currentPhoto.image.url
                     }
@@ -202,18 +205,22 @@ const PhotoMasonryGrid = ({ photos }: { photos: Photo[] }) => {
                       currentPhoto.image.alt || currentPhoto.title || "Photo"
                     }
                     width={
-                      currentPhoto.image.width
-                        ? currentPhoto.image.width / 2
-                        : 800
+                      currentPhoto.image.sizes?.tablet?.width ||
+                      currentPhoto.image.width ||
+                      800
                     }
                     height={
-                      currentPhoto.image.height
-                        ? currentPhoto.image.height / 2
-                        : 600
+                      currentPhoto.image.sizes?.tablet?.height ||
+                      currentPhoto.image.height ||
+                      600
                     }
                     className="max-w-full max-h-full object-contain"
                     priority
-                    unoptimized={isCurrentPhotoLocal}
+                    unoptimized={
+                      Boolean(currentPhoto.image.sizes?.tablet?.url) ||
+                      Boolean(currentPhoto.image.sizes?.card?.url) ||
+                      isCurrentPhotoLocal
+                    }
                     onLoad={() => setIsImageLoading(false)}
                     placeholder="blur"
                     blurDataURL={`data:image/svg+xml;base64,${toBase64(

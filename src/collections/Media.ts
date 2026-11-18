@@ -35,5 +35,13 @@ export const Media: CollectionConfig = {
     ],
     adminThumbnail: 'thumbnail',
     mimeTypes: ['image/*'],
+    // Media files are uploaded once under a unique filename and never rewritten,
+    // so they are safe to cache immutably. Without this the S3 static handler
+    // falls back to Payload's `public, max-age=0, must-revalidate`, which makes
+    // the CDN revalidate (and re-fetch from origin) on every single view.
+    modifyResponseHeaders: ({ headers }) => {
+      headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+      return headers
+    },
   },
 }

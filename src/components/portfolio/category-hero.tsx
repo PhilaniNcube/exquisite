@@ -12,6 +12,8 @@ const CategoryHero = ({ category }: Props) => {
       : null;
 
   const isLocal = media?.url?.includes("localhost") || media?.url?.includes("127.0.0.1");
+  // Payload's 1024px webp is already the right size for a 55vh hero.
+  const tablet = media?.sizes?.tablet;
 
   const shimmer = (w: number, h: number) => `
     <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -41,12 +43,12 @@ const CategoryHero = ({ category }: Props) => {
     <section className="relative w-full h-[55vh] max-h-[70vh] overflow-hidden">
       {media?.url && (
         <Image
-          src={media.sizes?.tablet?.url || media.url}
+          src={tablet?.url || media.url}
           alt={media.alt || category.name}
           fill
           priority
-          quality={80}
-          unoptimized={isLocal}
+          unoptimized={Boolean(tablet?.url) || isLocal}
+          sizes="100vw"
           className="object-cover object-center"
           placeholder="blur"
           blurDataURL={blur}

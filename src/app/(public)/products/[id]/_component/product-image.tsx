@@ -8,31 +8,24 @@ interface ProductImageProps {
 }
 
 export function ProductImage({ product }: ProductImageProps) {
-  // Extract image URL from product
-  const getImageUrl = (): string => {
-    if (typeof product.image === "number") {
-      return `/placeholder.svg?height=800&width=800&query=${encodeURIComponent(product.title)}`;
-    }
-    return (
-      product.image.url ||
-      product.image.thumbnailURL ||
-      `/placeholder.svg?height=800&width=800&query=${encodeURIComponent(product.title)}`
-    );
-  };
+  const image = typeof product.image === "number" ? null : product.image;
+  // Payload already produced the 400px webp; re-optimizing it only burns
+  // transformations and cache writes.
+  const thumbnail = image?.sizes?.thumbnail;
 
-  const getImageAlt = (): string => {
-    if (typeof product.image === "number") {
-      return product.title;
-    }
-    return product.image.alt || product.title;
-  };
+  const src =
+    thumbnail?.url ||
+    image?.url ||
+    image?.thumbnailURL ||
+    `/placeholder.svg?height=800&width=800&query=${encodeURIComponent(product.title)}`;
 
   return (
     <div className="relative aspect-square overflow-hidden bg-muted rounded-lg">
       <Image
-        src={getImageUrl() || "/placeholder.svg"}
-        alt={getImageAlt()}
+        src={src}
+        alt={image?.alt || product.title}
         fill
+        unoptimized={Boolean(thumbnail?.url)}
         className="object-cover"
         sizes="(max-width: 1024px) 100vw, 50vw"
         priority
